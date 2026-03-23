@@ -65,11 +65,11 @@
         .screen.active {
             opacity: 1;
         }
-        
+
         #login-screen.active {
             display: flex !important;
         }
-        
+
         #dashboard-screen.active {
             display: block !important;
         }
@@ -191,6 +191,103 @@
                 box-shadow: none;
             }
         }
+
+        /* Botón Editar Finca */
+        #edit-farm-btn {
+            background-color: #1b5e20;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #edit-farm-btn:hover {
+            background-color: #2e7d32;
+        }
+
+        #edit-farm-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Estilos Mini-Formulario Sensor */
+        .add-sensor-form {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .add-sensor-form h3 {
+            color: #1a5d1a;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            font-size: 0.875rem;
+            color: #374151;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: white;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+        }
+        .btn-add-sensor {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .btn-add-sensor:hover { background-color: #1b5e20; }
+        .btn-add-sensor:active { transform: scale(0.98); }
+
+        .custom-sensor-card {
+            background-color: #ffffff;
+            border-left: 5px solid #2e7d32;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .custom-sensor-card .sensor-title {
+            color: #374151;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .custom-sensor-card .sensor-detail {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
     </style>
 </head>
 
@@ -200,13 +297,20 @@
         <div id="login-screen" class="screen active p-6 pt-safe-top pb-safe-bottom min-h-screen flex flex-col">
             <header class="text-center mb-12 mt-8">
                 <div class="relative mx-auto mb-4 w-32 h-32 flex items-center justify-center">
-                    <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-lg">
-                        <path d="M100 40 C120 40, 140 60, 140 90 C140 120, 120 150, 100 160 C80 150, 60 120, 60 90 C60 60, 80 40, 100 40 Z" fill="#22c55e" opacity="0.9" />
+                    <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        class="drop-shadow-lg">
+                        <path
+                            d="M100 40 C120 40, 140 60, 140 90 C140 120, 120 150, 100 160 C80 150, 60 120, 60 90 C60 60, 80 40, 100 40 Z"
+                            fill="#22c55e" opacity="0.9" />
                         <path d="M100 40 L100 160" stroke="#16a34a" stroke-width="2" stroke-linecap="round" />
-                        <path d="M75 90 C75 78, 85 70, 95 70" stroke="#374151" stroke-width="3" stroke-linecap="round" />
-                        <path d="M95 70 L90 65 M95 70 L90 75" stroke="#374151" stroke-width="3" stroke-linecap="round" />
-                        <path d="M125 90 C125 102, 115 110, 105 110" stroke="#374151" stroke-width="3" stroke-linecap="round" />
-                        <path d="M105 110 L110 115 M105 110 L110 105" stroke="#374151" stroke-width="3" stroke-linecap="round" />
+                        <path d="M75 90 C75 78, 85 70, 95 70" stroke="#374151" stroke-width="3"
+                            stroke-linecap="round" />
+                        <path d="M95 70 L90 65 M95 70 L90 75" stroke="#374151" stroke-width="3"
+                            stroke-linecap="round" />
+                        <path d="M125 90 C125 102, 115 110, 105 110" stroke="#374151" stroke-width="3"
+                            stroke-linecap="round" />
+                        <path d="M105 110 L110 115 M105 110 L110 105" stroke="#374151" stroke-width="3"
+                            stroke-linecap="round" />
                         <circle cx="85" cy="100" r="3" fill="#374151" />
                         <circle cx="100" cy="95" r="3" fill="#374151" />
                         <circle cx="115" cy="100" r="3" fill="#374151" />
@@ -268,25 +372,34 @@
                         <i class="fas fa-arrow-left text-lg"></i>
                     </button>
                     <div class="flex items-center gap-3">
-                        <svg width="36" height="36" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M100 40 C120 40, 140 60, 140 90 C140 120, 120 150, 100 160 C80 150, 60 120, 60 90 C60 60, 80 40, 100 40 Z" fill="#22c55e" opacity="0.9"/>
-                            <path d="M100 40 L100 160" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M75 90 C75 78, 85 70, 95 70" stroke="#374151" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M95 70 L90 65 M95 70 L90 75" stroke="#374151" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M125 90 C125 102, 115 110, 105 110" stroke="#374151" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M105 110 L110 115 M105 110 L110 105" stroke="#374151" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="85" cy="100" r="3" fill="#374151"/>
-                            <circle cx="100" cy="95" r="3" fill="#374151"/>
-                            <circle cx="115" cy="100" r="3" fill="#374151"/>
+                        <svg width="36" height="36" viewBox="0 0 200 200" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M100 40 C120 40, 140 60, 140 90 C140 120, 120 150, 100 160 C80 150, 60 120, 60 90 C60 60, 80 40, 100 40 Z"
+                                fill="#22c55e" opacity="0.9" />
+                            <path d="M100 40 L100 160" stroke="#16a34a" stroke-width="2" stroke-linecap="round" />
+                            <path d="M75 90 C75 78, 85 70, 95 70" stroke="#374151" stroke-width="3"
+                                stroke-linecap="round" />
+                            <path d="M95 70 L90 65 M95 70 L90 75" stroke="#374151" stroke-width="3"
+                                stroke-linecap="round" />
+                            <path d="M125 90 C125 102, 115 110, 105 110" stroke="#374151" stroke-width="3"
+                                stroke-linecap="round" />
+                            <path d="M105 110 L110 115 M105 110 L110 105" stroke="#374151" stroke-width="3"
+                                stroke-linecap="round" />
+                            <circle cx="85" cy="100" r="3" fill="#374151" />
+                            <circle cx="100" cy="95" r="3" fill="#374151" />
+                            <circle cx="115" cy="100" r="3" fill="#374151" />
                         </svg>
                         <div>
                             <h1 class="text-xl font-bold tracking-tight leading-none mb-1">
                                 <span class="text-[#22c55e]">Agri</span><span class="text-[#374151]">Sync</span>
                             </h1>
                             <div class="flex items-center">
-                                <span class="status-indicator status-connected transform scale-75 origin-left mb-0"></span>
+                                <span
+                                    class="status-indicator status-connected transform scale-75 origin-left mb-0"></span>
                                 <span class="text-xs text-text-light" id="connection-status">Conectado</span>
-                                <span class="text-xs font-bold text-primary ml-2 border-l border-gray-300 pl-2" id="user-role-display"></span>
+                                <span class="text-xs font-bold text-primary ml-2 border-l border-gray-300 pl-2"
+                                    id="user-role-display"></span>
                             </div>
                         </div>
                     </div>
@@ -314,8 +427,11 @@
                 <div class="card bg-card p-5 mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h2 class="text-lg font-semibold text-primary">Finca El Roble</h2>
-                            <p class="text-sm text-text-light">Cultivo: Maíz • Sector: Norte</p>
+                            <div class="flex items-center gap-3">
+                                <h2 id="farm-name" class="text-lg font-semibold text-primary">Finca Principal</h2>
+                                <button id="edit-farm-btn">Editar Finca</button>
+                            </div>
+                            <p class="text-sm text-text-light mt-1">Cultivo: Maíz • Sector: Norte</p>
                         </div>
                         <span class="px-3 py-1 bg-green-100 text-primary rounded-full text-sm font-medium">
                             <i class="fas fa-check-circle mr-1"></i> Activo
@@ -332,6 +448,38 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Formulario Añadir Sensor/Parcela -->
+                <div class="add-sensor-form tracking-wide">
+                    <h3>Configurar Nuevo Sensor</h3>
+                    <form id="sensor-form">
+                        <div class="form-group">
+                            <label for="plot-name">Nombre de la Parcela</label>
+                            <input type="text" id="plot-name" placeholder="Ej: Sector Variante" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-type">Tipo de Cultivo</label>
+                            <input type="text" id="crop-type" placeholder="Ej: Tomate Cherry" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="metric-type">Métrica a Medir</label>
+                            <select id="metric-type" required>
+                                <option value="Humedad">Humedad (%)</option>
+                                <option value="Temperatura">Temperatura (°C)</option>
+                                <option value="pH">Nivel de pH</option>
+                                <option value="Luz">Luz (lux)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ideal-value">Valor Ideal</label>
+                            <input type="number" id="ideal-value" placeholder="Ej: 60 (humedad) o 25 (temp)" step="0.1" required>
+                        </div>
+                        <button type="submit" class="btn-add-sensor">➕ Añadir Sensor</button>
+                    </form>
+                </div>
+                
+                <!-- Contenedor vacío donde la lógica JS pintará las tarjetas -->
+                <div id="contenedorSensores" class="mb-8 font-sans"></div>
 
                 <!-- Tarjetas de sensores -->
                 <div class="mb-8">
@@ -780,7 +928,7 @@
                             container.style.bottom = "20px";
                             container.style.right = "20px";
                             container.style.zIndex = "9999";
-                            
+
                             const iframe = document.createElement("iframe");
                             iframe.src = "https://landbot.online/v3/H-3370127-8JPG7J2A13ZDBZ8P/index.html";
                             iframe.style.width = "calc(100vw - 40px)";
@@ -793,7 +941,7 @@
                             iframe.style.display = "none";
                             iframe.style.marginBottom = "15px";
                             iframe.style.backgroundColor = "white";
-                            
+
                             const bubble = document.createElement("button");
                             bubble.innerHTML = '<i class="fas fa-comment-dots" style="color:white; font-size:24px;"></i>';
                             bubble.style.width = "60px";
@@ -808,18 +956,18 @@
                             bubble.style.border = "none";
                             bubble.style.marginLeft = "auto";
                             bubble.style.transition = "transform 0.2s ease";
-                            
+
                             bubble.onmouseover = () => bubble.style.transform = "scale(1.05)";
                             bubble.onmouseout = () => bubble.style.transform = "scale(1)";
-                            
+
                             let isOpen = false;
-                            bubble.onclick = function(e) {
+                            bubble.onclick = function (e) {
                                 e.preventDefault();
                                 isOpen = !isOpen;
                                 iframe.style.display = isOpen ? "block" : "none";
                                 bubble.innerHTML = isOpen ? '<i class="fas fa-times" style="color:white; font-size:24px;"></i>' : '<i class="fas fa-comment-dots" style="color:white; font-size:24px;"></i>';
                             };
-                            
+
                             container.appendChild(iframe);
                             container.appendChild(bubble);
                             document.body.appendChild(container);
@@ -951,6 +1099,87 @@
             const now = new Date();
             document.getElementById("last-update").textContent =
                 `Última: ${now.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}`;
+
+            // ==================== EDICIÓN DE NOMBRE DE FINCA ====================
+            const farmNameTitle = document.getElementById("farm-name");
+            const editFarmBtn = document.getElementById("edit-farm-btn");
+
+            if (farmNameTitle && editFarmBtn) {
+                const savedFarmName = localStorage.getItem("nombreFinca");
+                if (savedFarmName) {
+                    farmNameTitle.textContent = savedFarmName;
+                }
+
+                editFarmBtn.addEventListener("click", () => {
+                    const newName = prompt("Introduce el nuevo nombre para tu instalación agrícola:");
+                    if (newName && newName.trim() !== "") {
+                        const cleanName = newName.trim();
+                        farmNameTitle.textContent = cleanName;
+                        localStorage.setItem("nombreFinca", cleanName);
+                    }
+                });
+            }
+
+            // ==================== AÑADIR NUEVO SENSOR ====================
+            const sensorForm = document.getElementById("sensor-form");
+            const plotNameInput = document.getElementById("plot-name");
+            const cropTypeInput = document.getElementById("crop-type");
+            const metricTypeInput = document.getElementById("metric-type");
+            const idealValueInput = document.getElementById("ideal-value");
+            const contenedorSensores = document.getElementById("contenedorSensores");
+
+            if (sensorForm && contenedorSensores) {
+                const renderizarSensores = () => {
+                    contenedorSensores.innerHTML = "";
+                    const sensoresGuardados = JSON.parse(localStorage.getItem("misParcelas")) || [];
+                    sensoresGuardados.forEach((sensor, index) => {
+                        const cardElement = document.createElement("div");
+                        cardElement.className = "custom-sensor-card relative";
+                        cardElement.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div class="sensor-title">${sensor.nombreParcela}</div>
+                                <button type="button" class="text-red-500 hover:text-red-700 delete-sensor-btn p-1" data-index="${index}" title="Eliminar sensor">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="sensor-detail mt-2">
+                                <i class="fas fa-seedling mr-1" style="color:#2e7d32"></i> Cultivo: <strong>${sensor.tipoCultivo}</strong><br>
+                                <i class="fas fa-chart-line mr-1" style="color:#3b82f6"></i> ${sensor.tipoMetrica} Ideal: <strong>${sensor.valorIdeal}</strong>
+                            </div>
+                        `;
+                        contenedorSensores.appendChild(cardElement);
+                    });
+                };
+                
+                renderizarSensores();
+
+                sensorForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const nuevoSensor = {
+                        nombreParcela: plotNameInput.value.trim(),
+                        tipoCultivo: cropTypeInput.value.trim(),
+                        tipoMetrica: metricTypeInput.value,
+                        valorIdeal: idealValueInput.value.trim()
+                    };
+                    const arrayDeSensores = JSON.parse(localStorage.getItem("misParcelas")) || [];
+                    arrayDeSensores.push(nuevoSensor);
+                    localStorage.setItem("misParcelas", JSON.stringify(arrayDeSensores));
+                    sensorForm.reset();
+                    renderizarSensores();
+                });
+
+                // Eliminar sensor delegando el evento en el contenedor padre
+                contenedorSensores.addEventListener("click", function(e) {
+                    const btn = e.target.closest(".delete-sensor-btn");
+                    if (btn) {
+                        const index = parseInt(btn.getAttribute("data-index"), 10);
+                        const arrayDeSensores = JSON.parse(localStorage.getItem("misParcelas")) || [];
+                        arrayDeSensores.splice(index, 1);
+                        localStorage.setItem("misParcelas", JSON.stringify(arrayDeSensores));
+                        renderizarSensores();
+                    }
+                });
+            }
         });
 
         // ==================== ACTUALIZACIÓN AUTOMÁTICA ====================
