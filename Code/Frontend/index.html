@@ -224,24 +224,29 @@
             margin-bottom: 24px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
+
         .add-sensor-form h3 {
             color: #1a5d1a;
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 16px;
         }
+
         .form-group {
             display: flex;
             flex-direction: column;
             margin-bottom: 16px;
         }
+
         .form-group label {
             font-size: 0.875rem;
             color: #374151;
             margin-bottom: 4px;
             font-weight: 500;
         }
-        .form-group input, .form-group select {
+
+        .form-group input,
+        .form-group select {
             border: 1px solid #d1d5db;
             border-radius: 8px;
             padding: 10px 12px;
@@ -249,11 +254,14 @@
             transition: border-color 0.2s, box-shadow 0.2s;
             background-color: white;
         }
-        .form-group input:focus, .form-group select:focus {
+
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #2e7d32;
             box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
         }
+
         .btn-add-sensor {
             background-color: #2e7d32;
             color: white;
@@ -267,8 +275,14 @@
             width: 100%;
             margin-top: 8px;
         }
-        .btn-add-sensor:hover { background-color: #1b5e20; }
-        .btn-add-sensor:active { transform: scale(0.98); }
+
+        .btn-add-sensor:hover {
+            background-color: #1b5e20;
+        }
+
+        .btn-add-sensor:active {
+            transform: scale(0.98);
+        }
 
         .custom-sensor-card {
             background-color: #ffffff;
@@ -276,13 +290,15 @@
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
+
         .custom-sensor-card .sensor-title {
             color: #374151;
             font-weight: 600;
             font-size: 1.1rem;
         }
+
         .custom-sensor-card .sensor-detail {
             color: #6b7280;
             font-size: 0.9rem;
@@ -406,11 +422,14 @@
                 </div>
 
                 <div class="flex items-center space-x-3">
+                    <button id="open-crop-guide-btn" class="p-1.5 px-3 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg text-sm font-semibold transition-colors border border-amber-200 flex items-center gap-1.5 shadow-sm" title="Guía Inteligente de Cultivos">
+                        <i class="fas fa-book-open"></i> <span class="hidden sm:inline">Guía de Cultivos</span>
+                    </button>
                     <button id="test-slack-btn"
                         class="hidden p-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg text-xs font-bold transition-colors">
                         <i class="fas fa-bell mr-1"></i> Probar Alerta
                     </button>
-                    <button id="refresh-data" class="p-2 text-primary hover:bg-gray-100 rounded-lg">
+                    <button id="refresh-data" class="p-2 text-primary hover:bg-gray-100 rounded-lg" title="Sincronizar Datos">
                         <i class="fas fa-sync-alt"></i>
                     </button>
                     <div class="relative">
@@ -472,12 +491,13 @@
                         </div>
                         <div class="form-group">
                             <label for="ideal-value">Valor Ideal</label>
-                            <input type="number" id="ideal-value" placeholder="Ej: 60 (humedad) o 25 (temp)" step="0.1" required>
+                            <input type="number" id="ideal-value" placeholder="Ej: 60 (humedad) o 25 (temp)" step="0.1"
+                                required>
                         </div>
                         <button type="submit" class="btn-add-sensor">➕ Añadir Sensor</button>
                     </form>
                 </div>
-                
+
                 <!-- Contenedor vacío donde la lógica JS pintará las tarjetas -->
                 <div id="contenedorSensores" class="mb-8 font-sans"></div>
 
@@ -517,7 +537,7 @@
                 <!-- Historial de Sensores (Filtro por Fechas y Sensor) -->
                 <div class="card bg-card p-5 mb-6">
                     <h2 class="text-lg font-semibold text-primary mb-4">Historial y Análisis de Sensores</h2>
-                    
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <div>
                             <label class="block text-sm font-medium text-text-light mb-1">Fecha de Inicio</label>
@@ -536,7 +556,8 @@
                             </select>
                         </div>
                         <div class="flex items-end">
-                            <button id="filter-history-btn" class="btn-primary w-full py-2 h-[42px] text-white font-semibold shadow-md whitespace-nowrap px-2 text-sm">
+                            <button id="filter-history-btn"
+                                class="btn-primary w-full py-2 h-[42px] text-white font-semibold shadow-md whitespace-nowrap px-2 text-sm">
                                 <i class="fas fa-search mr-1"></i>Filtrar y Analizar
                             </button>
                         </div>
@@ -548,7 +569,8 @@
                     </p>
 
                     <!-- Resumen de Medias (Oculto por defecto) -->
-                    <div id="history-summary" class="hidden mb-4 p-4 bg-green-50 text-green-900 rounded-lg border border-green-200 shadow-sm flex items-center justify-between">
+                    <div id="history-summary"
+                        class="hidden mb-4 p-4 bg-green-50 text-green-900 rounded-lg border border-green-200 shadow-sm flex items-center justify-between">
                         <!-- Promedios inyectados por JS -->
                     </div>
 
@@ -556,10 +578,12 @@
                     <div class="overflow-x-auto hidden" id="history-table-container">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr id="history-table-head" class="bg-green-50 text-primary border-b-2 border-green-200">
+                                <tr id="history-table-head"
+                                    class="bg-green-50 text-primary border-b-2 border-green-200">
                                     <th class="p-3 font-semibold text-sm">Fecha</th>
                                     <th class="p-3 font-semibold text-sm">Finca</th>
-                                    <th id="th-temperatura" class="p-3 font-semibold text-center text-sm">Temperatura</th>
+                                    <th id="th-temperatura" class="p-3 font-semibold text-center text-sm">Temperatura
+                                    </th>
                                     <th id="th-humedad" class="p-3 font-semibold text-center text-sm">Humedad</th>
                                 </tr>
                             </thead>
@@ -572,15 +596,153 @@
 
             </main>
 
-            <footer class="mt-8 pt-6 border-t border-gray-200">
-                <div class="text-center">
+            <footer class="mt-8 pt-6 border-t border-gray-200 pb-6">
+                <div class="text-center flex flex-col items-center">
                     <p class="text-sm text-text-light mb-2">
                         <i class="fas fa-cloud mr-1"></i>
-                        Sincronizado con Google Sheets
+                        Sincronización de Datos
                     </p>
-                    <p class="text-xs text-text-light">Actualización automática cada 30 segundos</p>
+                    <div class="flex items-center justify-center gap-3 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm mt-1">
+                        <label for="refresh-interval-select" class="text-xs font-medium text-text-light">
+                            <i class="fas fa-sync-alt mr-1"></i> Actualización:
+                        </label>
+                        <select id="refresh-interval-select" class="text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-primary outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 cursor-pointer transition-all">
+                            <option value="5000">Cada 5 segundos</option>
+                            <option value="15000">Cada 15 segundos</option>
+                            <option value="30000" selected>Cada 30 segundos</option>
+                            <option value="60000">Cada minuto</option>
+                            <option value="0">Pausada (Manual)</option>
+                        </select>
+                    </div>
                 </div>
             </footer>
+        </div>
+
+        <!-- Modal Guía de Cultivos -->
+        <div id="crop-guide-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60] hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300">
+                <!-- Header -->
+                <div class="sticky top-0 bg-white/90 backdrop-blur-md px-6 py-4 border-b border-gray-100 flex justify-between items-center z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-amber-100 text-amber-600 p-2.5 rounded-xl shadow-inner">
+                            <i class="fas fa-lightbulb text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800 tracking-tight leading-none">Guía de Cultivos</h3>
+                            <p class="text-sm text-gray-500 mt-1">Recomendaciones basadas en tus sensores actuales</p>
+                        </div>
+                    </div>
+                    <button id="close-crop-guide-btn" class="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Magic Touch Alert -->
+                <div class="px-6 pt-6">
+                    <div id="magic-crop-alert" class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl p-4 flex items-start gap-4 shadow-inner">
+                        <div class="bg-white p-2.5 text-emerald-500 rounded-full shadow-sm">
+                            <i class="fas fa-magic text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800 text-lg mb-1">Análisis Inteligente en Tiempo Real</h4>
+                            <p id="magic-crop-text" class="text-emerald-700 text-sm font-medium leading-relaxed">
+                                Cargando datos de los sensores...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid de Cultivos -->
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Tomate -->
+                    <div class="border border-gray-100 rounded-2xl p-5 hover:border-red-200 hover:shadow-md transition-all group cursor-default">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🍅</div>
+                            <h4 class="text-xl font-bold text-gray-800">Tomate</h4>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-red-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-thermometer-half text-orange-500 w-4"></i> Temp:</span>
+                                <span class="font-bold text-gray-800">20°C - 30°C</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-red-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-tint text-blue-500 w-4"></i> Humedad:</span>
+                                <span class="font-bold text-gray-800">60% - 80%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-red-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-vial text-purple-500 w-4"></i> pH:</span>
+                                <span class="font-bold text-gray-800">6.0 - 6.8</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maíz -->
+                    <div class="border border-gray-100 rounded-2xl p-5 hover:border-yellow-200 hover:shadow-md transition-all group cursor-default">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🌽</div>
+                            <h4 class="text-xl font-bold text-gray-800">Maíz</h4>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-yellow-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-thermometer-half text-orange-500 w-4"></i> Temp:</span>
+                                <span class="font-bold text-gray-800">15°C - 32°C</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-yellow-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-tint text-blue-500 w-4"></i> Humedad:</span>
+                                <span class="font-bold text-gray-800">50% - 70%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-yellow-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-vial text-purple-500 w-4"></i> pH:</span>
+                                <span class="font-bold text-gray-800">5.8 - 7.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lechuga -->
+                    <div class="border border-gray-100 rounded-2xl p-5 hover:border-green-200 hover:shadow-md transition-all group cursor-default">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🥬</div>
+                            <h4 class="text-xl font-bold text-gray-800">Lechuga</h4>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-green-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-thermometer-half text-orange-500 w-4"></i> Temp:</span>
+                                <span class="font-bold text-gray-800">15°C - 22°C</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-green-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-tint text-blue-500 w-4"></i> Humedad:</span>
+                                <span class="font-bold text-gray-800">70% - 90%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-green-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-vial text-purple-500 w-4"></i> pH:</span>
+                                <span class="font-bold text-gray-800">6.0 - 7.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patata -->
+                    <div class="border border-gray-100 rounded-2xl p-5 hover:border-amber-200 hover:shadow-md transition-all group cursor-default">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🥔</div>
+                            <h4 class="text-xl font-bold text-gray-800">Patata</h4>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-amber-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-thermometer-half text-orange-500 w-4"></i> Temp:</span>
+                                <span class="font-bold text-gray-800">15°C - 20°C</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-amber-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-tint text-blue-500 w-4"></i> Humedad:</span>
+                                <span class="font-bold text-gray-800">50% - 70%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm bg-gray-50 p-2.5 rounded-lg border border-transparent group-hover:bg-amber-50/50 transition-colors">
+                                <span class="text-gray-600 flex items-center gap-2"><i class="fas fa-vial text-purple-500 w-4"></i> pH:</span>
+                                <span class="font-bold text-gray-800">5.0 - 6.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Modal de contacto -->
@@ -1190,26 +1352,98 @@
             if (sensorForm && contenedorSensores) {
                 const renderizarSensores = () => {
                     contenedorSensores.innerHTML = "";
+                    contenedorSensores.className = "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 mt-4";
+
                     const sensoresGuardados = JSON.parse(localStorage.getItem("misParcelas")) || [];
+
                     sensoresGuardados.forEach((sensor, index) => {
+                        let iconMetrica = "fas fa-leaf";
+                        let bgAccent = "from-emerald-50 to-teal-100";
+                        let textAccent = "text-teal-600";
+                        let badgeGradient = "from-emerald-500 to-teal-600";
+                        let shadowAccent = "shadow-emerald-200";
+                        let unit = "";
+
+                        if (sensor.tipoMetrica === "Humedad") {
+                            iconMetrica = "fas fa-tint";
+                            bgAccent = "from-blue-50 to-cyan-100";
+                            textAccent = "text-blue-600";
+                            badgeGradient = "from-blue-500 to-cyan-600";
+                            shadowAccent = "shadow-blue-200";
+                            unit = "%";
+                        }
+                        if (sensor.tipoMetrica === "Temperatura") {
+                            iconMetrica = "fas fa-thermometer-half";
+                            bgAccent = "from-orange-50 to-red-100";
+                            textAccent = "text-orange-600";
+                            badgeGradient = "from-orange-500 to-red-500";
+                            shadowAccent = "shadow-orange-200";
+                            unit = "°C";
+                        }
+                        if (sensor.tipoMetrica === "Luz") {
+                            iconMetrica = "fas fa-sun";
+                            bgAccent = "from-yellow-50 to-amber-100";
+                            textAccent = "text-yellow-600";
+                            badgeGradient = "from-amber-400 to-orange-500";
+                            shadowAccent = "shadow-yellow-200";
+                            unit = "lux";
+                        }
+
                         const cardElement = document.createElement("div");
-                        cardElement.className = "custom-sensor-card relative";
+                        cardElement.className = "relative bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 transform hover:-translate-y-1 group";
+
                         cardElement.innerHTML = `
-                            <div class="flex justify-between items-start">
-                                <div class="sensor-title">${sensor.nombreParcela}</div>
-                                <button type="button" class="text-red-500 hover:text-red-700 delete-sensor-btn p-1" data-index="${index}" title="Eliminar sensor">
-                                    <i class="fas fa-trash"></i>
+                            <!-- Decoración de fondo suave -->
+                            <i class="${iconMetrica} absolute -right-6 -bottom-6 text-9xl ${textAccent} opacity-[0.03] rotate-12 transition-transform group-hover:scale-110 duration-500 pointer-events-none"></i>
+                            
+                            <div class="relative z-10 flex justify-between items-start mb-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${bgAccent} flex items-center justify-center ${textAccent} shadow-inner">
+                                        <i class="${iconMetrica} text-2xl drop-shadow-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[0.65rem] font-bold tracking-widest ${textAccent} uppercase mb-1 opacity-80">Sector Activo</p>
+                                        <h4 class="font-extrabold text-xl text-gray-800 tracking-tight leading-none">${sensor.nombreParcela}</h4>
+                                    </div>
+                                </div>
+                                <button type="button" class="delete-sensor-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm" data-index="${index}" title="Eliminar sensor">
+                                    <i class="fas fa-trash-alt text-sm"></i>
                                 </button>
                             </div>
-                            <div class="sensor-detail mt-2">
-                                <i class="fas fa-seedling mr-1" style="color:#2e7d32"></i> Cultivo: <strong>${sensor.tipoCultivo}</strong><br>
-                                <i class="fas fa-chart-line mr-1" style="color:#3b82f6"></i> ${sensor.tipoMetrica} Ideal: <strong>${sensor.valorIdeal}</strong>
+
+                            <div class="relative z-10 grid grid-cols-2 gap-3">
+                                <div class="bg-gray-50/80 rounded-2xl p-4 border border-gray-100 hover:bg-white hover:shadow-md transition-all duration-300 group/item">
+                                    <div class="flex items-center gap-2 mb-2 text-gray-400 group-hover/item:text-gray-600 transition-colors">
+                                        <i class="fas fa-seedling ${textAccent}"></i>
+                                        <span class="text-[0.65rem] font-bold uppercase tracking-widest">Cultivo</span>
+                                    </div>
+                                    <p class="font-bold text-gray-800 truncate text-sm">${sensor.tipoCultivo}</p>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br ${badgeGradient} rounded-2xl p-4 shadow-lg ${shadowAccent} hover:-translate-y-0.5 transition-transform duration-300 text-white relative overflow-hidden">
+                                     <!-- Brillo reflectante interno -->
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-white opacity-10 rounded-full blur-xl -mr-4 -mt-4"></div>
+                                    
+                                    <div class="flex items-center gap-2 mb-2 text-white/80">
+                                        <i class="fas fa-bullseye"></i>
+                                        <span class="text-[0.65rem] font-bold uppercase tracking-widest truncate">Meta ${sensor.tipoMetrica}</span>
+                                    </div>
+                                    <div class="flex items-end gap-1">
+                                        <p class="font-black text-2xl leading-none tracking-tight">${sensor.valorIdeal}</p>
+                                        <span class="text-xs font-semibold text-white/80 mb-0.5">${unit}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Barra de progreso decorativa inferior -->
+                            <div class="absolute bottom-0 left-0 w-full h-1.5 bg-gray-50">
+                                <div class="h-full bg-gradient-to-r ${badgeGradient} w-full opacity-60"></div>
                             </div>
                         `;
                         contenedorSensores.appendChild(cardElement);
                     });
                 };
-                
+
                 renderizarSensores();
 
                 sensorForm.addEventListener("submit", function (e) {
@@ -1228,7 +1462,7 @@
                 });
 
                 // Eliminar sensor delegando el evento en el contenedor padre
-                contenedorSensores.addEventListener("click", function(e) {
+                contenedorSensores.addEventListener("click", function (e) {
                     const btn = e.target.closest(".delete-sensor-btn");
                     if (btn) {
                         const index = parseInt(btn.getAttribute("data-index"), 10);
@@ -1261,7 +1495,7 @@
                     const dateStr = d.toISOString().split('T')[0];
                     const temp = (15 + Math.random() * 20).toFixed(1);
                     const hum = Math.floor(40 + Math.random() * 40);
-                    
+
                     historicalData.push({
                         fecha: dateStr,
                         finca: 'Finca Principal',
@@ -1277,19 +1511,19 @@
                     const endStr = historyEndDate.value;
                     const selectedSensor = historySensorFilter ? historySensorFilter.value : 'Todos';
 
-                    if (!startStr || !endStr) { 
-                        alert("Por favor, selecciona fecha de inicio y fin."); 
-                        return; 
+                    if (!startStr || !endStr) {
+                        alert("Por favor, selecciona fecha de inicio y fin.");
+                        return;
                     }
-                    if (new Date(startStr) > new Date(endStr)) { 
-                        alert("La fecha de inicio no puede ser mayor que la fecha final."); 
-                        return; 
+                    if (new Date(startStr) > new Date(endStr)) {
+                        alert("La fecha de inicio no puede ser mayor que la fecha final.");
+                        return;
                     }
-                    
+
                     const filtered = historicalData.filter(record => record.fecha >= startStr && record.fecha <= endStr);
                     historyStatusMsg.classList.add('hidden');
                     historyTableContainer.classList.remove('hidden');
-                    
+
                     if (historySummary) historySummary.classList.add('hidden');
                     historyTableBody.innerHTML = '';
 
@@ -1324,7 +1558,7 @@
                         if (historySummary) {
                             historySummary.classList.remove('hidden');
                             let summaryHtml = '<div class="flex flex-col"><span class="text-sm font-bold uppercase tracking-wider opacity-80 mb-2"><i class="fas fa-chart-pie mr-2"></i> Análisis de la Selección (Media)</span><div class="flex gap-6">';
-                            
+
                             if (selectedSensor === 'Temperatura' || selectedSensor === 'Todos') {
                                 summaryHtml += `<div><span class="text-xs text-green-800 uppercase block">Temp. Media</span><span class="text-xl font-bold bg-white px-3 py-1 rounded-md shadow-sm text-green-700">${avgTemp} °C</span></div>`;
                             }
@@ -1339,7 +1573,7 @@
                         filtered.forEach(record => {
                             const tr = document.createElement('tr');
                             tr.className = 'hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0';
-                            
+
                             let rowHtml = `
                                 <td class="p-3 text-sm font-medium text-gray-800">${record.fecha}</td>
                                 <td class="p-3 text-sm text-gray-600">${record.finca}</td>
@@ -1351,38 +1585,150 @@
                             if (selectedSensor === 'Humedad' || selectedSensor === 'Todos') {
                                 rowHtml += `<td class="p-3 text-sm text-center font-semibold text-blue-600">${record.humedad}%</td>`;
                             }
-                            
+
                             tr.innerHTML = rowHtml;
                             historyTableBody.appendChild(tr);
                         });
                     }
                 });
             }
+
+            // ==================== GUÍA DE CULTIVOS ====================
+            const cropGuideBtn = document.getElementById("open-crop-guide-btn");
+            const cropGuideModal = document.getElementById("crop-guide-modal");
+            const closeCropGuideBtn = document.getElementById("close-crop-guide-btn");
+            const magicCropText = document.getElementById("magic-crop-text");
+
+            if (cropGuideBtn && cropGuideModal) {
+                // Función Mágica
+                const analyzeCurrentConditions = () => {
+                    const tempObj = sensorData.find(s => s.id === "air-temperature");
+                    const humObj = sensorData.find(s => s.id === "soil-moisture");
+                    
+                    if (!tempObj || !humObj) return;
+
+                    const currentTemp = tempObj.value;
+                    const currentHum = humObj.value;
+
+                    // Condiciones Ideales
+                    const crops = [
+                        { name: "Tomates 🍅", minTemp: 20, maxTemp: 30, minHum: 60, maxHum: 80 },
+                        { name: "Maíz 🌽", minTemp: 15, maxTemp: 32, minHum: 50, maxHum: 70 },
+                        { name: "Lechugas 🥬", minTemp: 15, maxTemp: 22, minHum: 70, maxHum: 90 },
+                        { name: "Patatas 🥔", minTemp: 15, maxTemp: 20, minHum: 50, maxHum: 70 }
+                    ];
+
+                    const perfectMatches = crops.filter(crop => 
+                        currentTemp >= crop.minTemp && currentTemp <= crop.maxTemp &&
+                        currentHum >= crop.minHum && currentHum <= crop.maxHum
+                    );
+
+                    let msg = `💡 Tu temperatura actual (<strong>${currentTemp}°C</strong>) y humedad (<strong>${currentHum}%</strong>) `;
+                    
+                    if (perfectMatches.length > 0) {
+                        const cropNames = perfectMatches.map(c => c.name).join(" y ");
+                        msg += `son <span class="text-teal-600 font-bold uppercase">ideales</span> para cultivar ${cropNames}.`;
+                    } else {
+                        // Encontrar el cultivo más cercano por temperatura
+                        let closestCrop = crops[0];
+                        let minDiff = 999;
+                        crops.forEach(crop => {
+                            let diff = 0;
+                            if (currentTemp < crop.minTemp) diff = crop.minTemp - currentTemp;
+                            else if (currentTemp > crop.maxTemp) diff = currentTemp - crop.maxTemp;
+                            
+                            if (diff < minDiff) { minDiff = diff; closestCrop = crop; }
+                        });
+                        msg += `no son perfectas ahora mismo, pero estás muy cerca de poder cultivar <strong>${closestCrop.name}</strong>. Intenta ${currentTemp < closestCrop.minTemp ? "subir" : "bajar"} un poco la temperatura y revisar la humedad.`;
+                    }
+                    
+                    if (magicCropText) magicCropText.innerHTML = msg;
+                };
+
+                const openModal = () => {
+                    analyzeCurrentConditions(); // Disparar la magia al abrir
+                    cropGuideModal.classList.remove("hidden");
+                    // Timeout para la transición de opacidad (Tailwind)
+                    setTimeout(() => {
+                        cropGuideModal.classList.remove("opacity-0");
+                        cropGuideModal.children[0].classList.remove("scale-95");
+                        cropGuideModal.children[0].classList.add("scale-100");
+                    }, 10);
+                };
+
+                const closeModal = () => {
+                    cropGuideModal.classList.add("opacity-0");
+                    cropGuideModal.children[0].classList.remove("scale-100");
+                    cropGuideModal.children[0].classList.add("scale-95");
+                    setTimeout(() => {
+                        cropGuideModal.classList.add("hidden");
+                    }, 300);
+                };
+
+                cropGuideBtn.addEventListener("click", openModal);
+                closeCropGuideBtn.addEventListener("click", closeModal);
+                
+                // Cerrar al clickear fuera
+                cropGuideModal.addEventListener("click", (e) => {
+                    if(e.target === cropGuideModal) closeModal();
+                });
+            }
         });
 
         // ==================== ACTUALIZACIÓN AUTOMÁTICA ====================
         let refreshInterval;
-
-        function startAutoRefresh() {
-            // Actualizar cada 30 segundos (como se especifica)
-            refreshInterval = setInterval(simulateGoogleSheetsData, 30000);
-            console.log("Actualización automática iniciada (cada 30 segundos)");
-
-            // Actualizar estado de conexión
-            document.getElementById("connection-status").textContent = "Conectado";
-            document.querySelector("#connection-status").previousElementSibling.classList.remove("status-disconnected");
-            document.querySelector("#connection-status").previousElementSibling.classList.add("status-connected");
+        let currentRefreshRate = 30000;
+        
+        const intervalSelect = document.getElementById("refresh-interval-select");
+        if (intervalSelect) {
+            intervalSelect.addEventListener("change", function(e) {
+                currentRefreshRate = parseInt(e.target.value, 10);
+                
+                // Si el usuario está actualmente en el Dashboard, aplicamos de inmediato
+                if (document.getElementById("dashboard-screen").classList.contains("active")) {
+                    stopAutoRefresh(false); // Detiene el intervalo anterior sin cambiar UI de Desconectado si va a reiniciar
+                    
+                    if (currentRefreshRate > 0) {
+                        startAutoRefresh();
+                    } else {
+                        // Pausado manual
+                        const statusEl = document.getElementById("connection-status");
+                        if (statusEl) {
+                            statusEl.textContent = "Pausado";
+                            statusEl.previousElementSibling.classList.remove("status-connected");
+                            statusEl.previousElementSibling.classList.add("status-disconnected");
+                        }
+                    }
+                }
+            });
         }
 
-        function stopAutoRefresh() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-                console.log("Actualización automática detenida");
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            
+            if (currentRefreshRate > 0) {
+                refreshInterval = setInterval(simulateGoogleSheetsData, currentRefreshRate);
+                console.log(`Actualización iniciada cada ${currentRefreshRate/1000}s`);
 
-                // Actualizar estado de conexión
-                document.getElementById("connection-status").textContent = "Desconectado";
-                document.querySelector("#connection-status").previousElementSibling.classList.remove("status-connected");
-                document.querySelector("#connection-status").previousElementSibling.classList.add("status-disconnected");
+                const statusEl = document.getElementById("connection-status");
+                if (statusEl) {
+                    statusEl.textContent = "Conectado";
+                    statusEl.previousElementSibling.classList.remove("status-disconnected");
+                    statusEl.previousElementSibling.classList.add("status-connected");
+                }
+            }
+        }
+
+        function stopAutoRefresh(forceUiDisconnect = true) {
+            if (refreshInterval) clearInterval(refreshInterval);
+            
+            if (forceUiDisconnect) {
+                const statusEl = document.getElementById("connection-status");
+                if (statusEl) {
+                    statusEl.textContent = "Desconectado";
+                    statusEl.previousElementSibling.classList.remove("status-connected");
+                    statusEl.previousElementSibling.classList.add("status-disconnected");
+                }
             }
         }
 
@@ -1390,6 +1736,7 @@
         setTimeout(() => {
             if (document.getElementById("dashboard-screen").classList.contains("active")) {
                 simulateGoogleSheetsData();
+                if (currentRefreshRate > 0) startAutoRefresh();
             }
         }, 1000);
     </script>
