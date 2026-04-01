@@ -806,19 +806,9 @@
                                     <div class="p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
                                         <h4 class="text-xs font-semibold text-gray-500 uppercase mb-2">Zonas de cultivo
                                         </h4>
-                                        <ul class="text-sm text-gray-600 space-y-2">
-                                            <li><span
-                                                    class="inline-block w-2 h-2 mr-2 rounded-full bg-red-500"></span>Sector
-                                                A: Tomate</li>
-                                            <li><span
-                                                    class="inline-block w-2 h-2 mr-2 rounded-full bg-yellow-500"></span>Sector
-                                                B: Maíz</li>
-                                            <li><span
-                                                    class="inline-block w-2 h-2 mr-2 rounded-full bg-green-500"></span>Sector
-                                                C: Lechuga</li>
-                                            <li><span
-                                                    class="inline-block w-2 h-2 mr-2 rounded-full bg-blue-500"></span>Sector
-                                                D: Pimiento</li>
+                                        <ul id="legend-zonas-list" class="text-sm text-gray-600 space-y-2">
+                                            <!-- Se rellena dinamicamente en crearZonasCultivo() -->
+                                            <li class="italic text-gray-400">Cargando zonas...</li>
                                         </ul>
                                     </div>
                                     <div class="p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
@@ -2167,6 +2157,7 @@
                         if (sectionId === 'section-parcela' || targetId === '#parcela' || targetId === '#mapas') {
                             if (typeof init3DMap === 'function') {
                                 init3DMap();
+                                setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
                             }
                         }
 
@@ -2235,12 +2226,12 @@
                 return;
             }
 
-            container.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500">Iniciando motor 3D...</div>';
-
             if (map3DInitialized) {
                 console.log('Mapa 3D ya inicializado.');
                 return;
             }
+
+            container.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500">Iniciando motor 3D...</div>';
 
             if (typeof THREE === 'undefined' || !THREE.WebGLRenderer) {
                 container.innerHTML = '<div class="w-full h-full p-4 text-center text-red-500">WebGL no está disponible o Three.js no se cargó.</div>';
@@ -2309,6 +2300,17 @@
 
             // Marcar inicializado después de creación exitosa de la escena 3D.
             map3DInitialized = true;
+
+            window.addEventListener('resize', () => {
+                if (!container || container.offsetParent === null) return; // oculto
+                const w = container.clientWidth;
+                const h = container.clientHeight || 500;
+                if (w === 0 || h === 0) return;
+                
+                camera3D.aspect = w / h;
+                camera3D.updateProjectionMatrix();
+                renderer3D.setSize(w, h);
+            });
 
             // Crear zonas de cultivo visualmente en la parcela
             crearZonasCultivo();
@@ -2605,6 +2607,10 @@
 
             limpiarEtiquetasHTML();
 
+            const legendList = document.getElementById('legend-zonas-list');
+            if (legendList) legendList.innerHTML = '';
+            let sectorCharCode = 65; // 'A'
+
             parcelasCultivo.forEach(zone => {
                 const plane = new THREE.Mesh(
                     new THREE.PlaneGeometry(zone.ancho, zone.alto),
@@ -2620,7 +2626,16 @@
                     emj = found ? found.emoji : '🌱';
                 }
 
-                crearEtiquetaHTML(zone.nombre, emj, zone.x, zone.z);
+                // Generar la etiqueta identificando el sector
+                const sectorName = `Sector ${String.fromCharCode(sectorCharCode)}: ${zone.nombre}`;
+                crearEtiquetaHTML(sectorName, emj, zone.x, zone.z);
+
+                if (legendList) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="inline-block w-2 h-2 mr-2 rounded-full" style="background-color: #${zone.color.toString(16).padStart(6, '0')}"></span><b>Sector ${String.fromCharCode(sectorCharCode)}</b>: ${zone.nombre}`;
+                    legendList.appendChild(li);
+                }
+                sectorCharCode++;
             });
         }
 
