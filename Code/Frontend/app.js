@@ -4,7 +4,7 @@
  */
 
 // --- 1. NUEVA CONFIGURACIÓN SOCKET.IO ---
-const socket = io('http://158.158.108.187:3000');
+const socket = io('http://158.158.108.187:3001');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Referencias al DOM originales

@@ -581,7 +581,9 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="crop-type">Tipo de Cultivo</label>
-                                        <input type="text" id="crop-type" placeholder="Ej: Tomate Cherry" required>
+                                        <select id="crop-type" required class="w-full text-sm p-3 border border-gray-200 rounded-xl outline-none focus:border-primary transition-colors bg-gray-50 text-gray-700">
+                                            <!-- Rellenado por JS -->
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="metric-type">Métrica a Medir</label>
@@ -1197,8 +1199,13 @@
             { nombre: "Cacao", tempMin: 18, tempMax: 32, humMin: 70, humMax: 90, phMin: 5.0, phMax: 6.5, icono: "fas fa-tree", emoji: "🍫", cicloVida: "Perenne", especie: "Frutal", metodo: "Intensivo", uso: "Industrial" },
             { nombre: "Trigo", tempMin: 15, tempMax: 25, humMin: 50, humMax: 70, phMin: 6.0, phMax: 7.5, icono: "fas fa-seedling", emoji: "🌾", cicloVida: "Anual", especie: "Cereal", metodo: "Secano", uso: "Alimentario" },
             { nombre: "Algodón", tempMin: 20, tempMax: 30, humMin: 60, humMax: 80, phMin: 5.5, phMax: 6.5, icono: "fas fa-seedling", emoji: "☁️", cicloVida: "Anual", especie: "Industrial", metodo: "Regadío", uso: "Industrial" },
-            { nombre: "Alfalfa", tempMin: 10, tempMax: 25, humMin: 60, humMax: 80, phMin: 6.2, phMax: 7.5, icono: "fas fa-leaf", emoji: "🌱", cicloVida: "Perenne", especie: "Forrajero", metodo: "Regadío", uso: "Forrajero" }
-        ];
+            { nombre: "Alfalfa", tempMin: 10, tempMax: 25, humMin: 60, humMax: 80, phMin: 6.2, phMax: 7.5, icono: "fas fa-leaf", emoji: "🌱", cicloVida: "Perenne", especie: "Forrajero", metodo: "Regadío", uso: "Forrajero" },
+            { nombre: "Girasol", tempMin: 20, tempMax: 30, humMin: 50, humMax: 70, phMin: 6.0, phMax: 7.5, icono: "fas fa-seedling", emoji: "🌻", cicloVida: "Anual", especie: "Oleaginosa", metodo: "Extensivo", uso: "Industrial" },
+            { nombre: "Menta", tempMin: 15, tempMax: 25, humMin: 70, humMax: 90, phMin: 6.0, phMax: 7.0, icono: "fas fa-leaf", emoji: "🌿", cicloVida: "Perenne", especie: "Aromática", metodo: "Regadío", uso: "Alimentario" },
+            { nombre: "Cebada", tempMin: 10, tempMax: 22, humMin: 50, humMax: 70, phMin: 6.0, phMax: 7.5, icono: "fas fa-wheat", emoji: "🌾", cicloVida: "Anual", especie: "Cereal", metodo: "Secano", uso: "Industrial" },
+            { nombre: "Limonero", tempMin: 18, tempMax: 30, humMin: 50, humMax: 70, phMin: 5.5, phMax: 6.5, icono: "fas fa-lemon", emoji: "🍋", cicloVida: "Perenne", especie: "Frutal", metodo: "Regadío", uso: "Alimentario" },
+            { nombre: "Naranjo", tempMin: 15, tempMax: 30, humMin: 50, humMax: 70, phMin: 5.5, phMax: 6.5, icono: "fas fa-lemon", emoji: "🍊", cicloVida: "Perenne", especie: "Frutal", metodo: "Regadío", uso: "Alimentario" }
+        ].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
 
         const historyData = [
             { time: "10:30 AM", sensor: "Humedad", value: "64%", change: "+1%" },
@@ -1695,6 +1702,13 @@
             const idealValueInput = document.getElementById("ideal-value");
             const contenedorSensores = document.getElementById("contenedorSensores");
 
+            // Rellenar select de cultivos en Dashboard
+            if (cropTypeInput && cropTypeInput.tagName === 'SELECT') {
+                cropTypeInput.innerHTML = baseDatosCultivos.map(c => 
+                    `<option value="${c.nombre}">${c.emoji} ${c.nombre}</option>`
+                ).join('');
+            }
+
             if (sensorForm && contenedorSensores) {
                 const renderizarSensores = () => {
                     contenedorSensores.innerHTML = "";
@@ -1942,6 +1956,35 @@
             // ==================== BUSCADOR DINÁMICO DE CULTIVOS ====================
             // const baseDatosCultivos = [...] moved to global scope
 
+            // Navegación global para plantar
+            window.plantarDesdeBuscador = function(nombreCultivo) {
+                // Cerrar modal
+                const modal = document.getElementById("crop-guide-modal");
+                if (modal) modal.classList.add("hidden");
+                
+                // Asegurar que abrimos el dashboard
+                const menuLink = document.querySelector('.sidebar-link[href="#dashboard"]');
+                if (menuLink && !menuLink.classList.contains('active')) {
+                    menuLink.click();
+                } else if (typeof switchScreen === 'function') {
+                    switchScreen('dashboard');
+                }
+                
+                // Rellenar option
+                const selectCrop = document.getElementById('crop-type');
+                if (selectCrop) selectCrop.value = nombreCultivo;
+                
+                // Resaltar formulario
+                const form = document.getElementById('sensor-form');
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    form.classList.add('ring-4', 'ring-emerald-300', 'rounded-xl', 'transition-all', 'duration-500');
+                    setTimeout(() => {
+                        form.classList.remove('ring-4', 'ring-emerald-300');
+                    }, 1500);
+                }
+            };
+
             // Normalizar texto (ignora mayúsculas y tildes)
             function normalizar(texto) {
                 return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -1954,7 +1997,7 @@
 
                 // Si se solicita mostrar todos, forzamos list completo cuando no hay búsqueda
                 if (!esBusquedaActiva && lista.length === 0) {
-                    lista = baseDatosCultivos.slice(0, 12); // favoritos/inicial
+                    lista = baseDatosCultivos; // favoritos/inicial - ahora mostramos todos
                 }
 
                 // Sin resultados y con filtros activos
@@ -2017,6 +2060,12 @@
                                 <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[0.6rem] font-bold rounded-md uppercase tracking-wider shadow-sm">${c.especie}</span>
                                 <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[0.6rem] font-bold rounded-md uppercase tracking-wider shadow-sm">${c.metodo}</span>
                                 <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[0.6rem] font-bold rounded-md uppercase tracking-wider shadow-sm">${c.uso}</span>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <button onclick="plantarDesdeBuscador('${c.nombre}')" class="w-full py-2.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
+                                    <i class="fas fa-seedling"></i> Plantar
+                                </button>
                             </div>
                         </div>
                     `;
