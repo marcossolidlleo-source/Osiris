@@ -1,5 +1,7 @@
 Funcionamiento (Mirarse solo el login)
- 1. Acceso al Sistema (Login)
+
+
+1. Acceso al Sistema (Login)
 La plataforma cuenta con dos niveles de acceso diseñados para proteger la integridad de las configuraciones de los sensores:
 Abre el archivo index.html en cualquier navegador web moderno (Chrome, Edge, Safari, Firefox).
 Verás la pantalla de bienvenida con el logotipo de AgriSync.
