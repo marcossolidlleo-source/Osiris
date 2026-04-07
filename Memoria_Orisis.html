@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memoria del Proyecto: AgriSync - Tecnología Agrícola Inteligente</title>
+    <title>Memoria del Proyecto: Orisis - Tecnología Agrícola Inteligente</title>
     <style>
         * {
             margin: 0;
@@ -169,13 +169,13 @@
 </head>
 <body>
     <h1>Memoria del Proyecto: Trabajo Final de Sistemas de Información</h1>
-    <p class="subtitle"><strong>AgriSync - Tecnología Agrícola Inteligente</strong></p>
+    <p class="subtitle"><strong>Orisis - Tecnología Agrícola Inteligente</strong></p>
     
     <hr>
     
     <div class="section">
         <h2>1. Introducción</h2>
-        <p>En la actualidad, la agricultura se enfrenta al reto de maximizar su eficiencia y sostenibilidad bajo condiciones climáticas cada vez más impredecibles. <strong>AgriSync</strong> surge como una respuesta tecnológica orientada a la monitorización agrícola inteligente. Esta aplicación ha sido desarrollada para facilitar a los agricultores y gestores de fincas el seguimiento en tiempo real de los parámetros críticos de sus cultivos, mejorando la toma de decisiones y previniendo pérdidas. La relevancia de este proyecto radica en la integración de diferentes tecnologías (IoT, visualización 3D y web moderna) para crear un panel de control intuitivo y profesional que centraliza datos vitales del entorno agrícola.</p>
+        <p>En la actualidad, la agricultura se enfrenta al reto de maximizar su eficiencia y sostenibilidad bajo condiciones climáticas cada vez más impredecibles. <strong>Orisis</strong> surge como una respuesta tecnológica orientada a la monitorización agrícola inteligente. Esta aplicación ha sido desarrollada para facilitar a los agricultores y gestores de fincas el seguimiento en tiempo real de los parámetros críticos de sus cultivos, mejorando la toma de decisiones y previniendo pérdidas. La relevancia de este proyecto radica en la integración de diferentes tecnologías (IoT, visualización 3D y web moderna) para crear un panel de control intuitivo y profesional que centraliza datos vitales del entorno agrícola.</p>
     </div>
     
     <div class="section">
@@ -188,13 +188,13 @@
             <li>Integración con maquinaria agrícola pesada.</li>
         </ul>
         
-        <h3>Desventajas respecto a AgriSync:</h3>
+        <h3>Desventajas respecto a Orisis:</h3>
         <ul>
             <li>Suelen tener costes de licenciamiento y hardware muy elevados, innaccesibles para medianos y pequeños agricultores.</li>
             <li>Curvas de aprendizaje pronunciadas debido a interfaces excesivamente complejas.</li>
         </ul>
         
-        <p><strong>AgriSync</strong> propone una alternativa ligera, con una interfaz web responsiva y amigable, que no depende estrictamente de ecosistemas cerrados y se integra mediante protocolos estándar de comunicación web, como Socket.io, ofreciendo alertas críticas automáticas y visualización 3D.</p>
+        <p><strong>Orisis</strong> propone una alternativa ligera, con una interfaz web responsiva y amigable, que no depende estrictamente de ecosistemas cerrados y se integra mediante protocolos estándar de comunicación web, como Socket.io, ofreciendo alertas críticas automáticas y visualización 3D.</p>
     </div>
     
     <div class="section">
@@ -258,7 +258,7 @@
         
         <h3>Detalles de lógica relevantes:</h3>
         <ul>
-            <li>El acceso se simula en el cliente mediante un objeto diccionario que empareja contraseñas con roles (ej. <code>adminAgri2026</code> para Admin).</li>
+            <li>El acceso se simula en el cliente mediante un objeto diccionario que empareja contraseñas con roles (ej. <code>adminOrisis2026</code> para Admin).</li>
             <li>El sistema intercala datos reales provenientes de <code>socket.on('respuesta_clima')</code> y un generador local en <code>updateSensorsData()</code> para complementar los indicadores en caso de que los sensores físicos carezcan de alguna lectura.</li>
         </ul>
     </div>
@@ -319,7 +319,7 @@ function sendEmailAlert(data) {
         method: "POST",
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-            _subject: "🚨 ALERTA CRÍTICA - AgriSync",
+            _subject: "🚨 ALERTA CRÍTICA - Orisis",
             // ...
             Humedad: data.humedad + "%",
         })
@@ -331,7 +331,7 @@ function sendEmailAlert(data) {
     <hr>
     
     <p style="text-align: center; margin-top: 50px; color: #7f8c8d; font-size: 0.9em;">
-        <strong>Documento generado automáticamente</strong> | <em>AgriSync Project Documentation</em><br>
+        <strong>Documento generado automáticamente</strong> | <em>Orisis Project Documentation</em><br>
         Presione <code>Ctrl+P</code> para imprimir/guardar como PDF
     </p>
 </body>
