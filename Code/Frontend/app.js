@@ -379,6 +379,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const cropType = document.getElementById('crop-type').value;
             const metricType = document.getElementById('metric-type').value;
             const idealValue = document.getElementById('ideal-value').value;
+            const locationMode = document.getElementById('sensor-location-mode')?.value || 'todo';
+
+            // Calcula posición con la fórmula matemática
+            const farm = fincas.find(f => f.id === farmId) || { hectareas: 5, cultivo: '' };
+            const baseWidth = Math.sqrt(farm.hectareas) * 20;
+            const baseDepth = baseWidth * 0.75;
+            
+            let finalMode = locationMode;
+            if (locationMode === 'zona' && farm.cultivo !== cropType) {
+                finalMode = 'todo';
+                console.log("Recalculando posición con la fórmula matemática ya que no coincide la zona de cultivo.");
+            }
+            
+            // Fórmula matemática para posicionamiento
+            const factor = finalMode === 'zona' ? 0.3 : 0.8;
+            const posX = (Math.random() - 0.5) * baseWidth * factor;
+            const posZ = (Math.random() - 0.5) * baseDepth * factor;
 
             const newSensor = {
                 id: Date.now(),
@@ -387,14 +404,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 cultivo: cropType,
                 metrica: metricType,
                 ideal: idealValue,
-                valorActual: (Math.random() * 100).toFixed(1) // Simulación
+                valorActual: (Math.random() * 100).toFixed(1), // Simulación
+                locationMode: finalMode,
+                x: posX,
+                z: posZ
             };
 
             sensoresPersonalizados.push(newSensor);
             saveSensores();
             sensorForm.reset();
             renderCustomSensors();
-            alert(`Sensor "${plotName}" añadido con éxito.`);
+
+            // Refrescar el mapa si está inicializado para ver el nuevo sensor
+            if (map3DInitialized && scene3D) {
+                crearSensor3D(posX, posZ, true);
+                const totalMap = document.getElementById('total-sensores-mapa');
+                if (totalMap) totalMap.innerText = sensores3D.length;
+            }
+
+            let alertMsg = `Sensor "${plotName}" añadido con éxito.`;
+            if (locationMode === 'zona' && finalMode === 'todo') {
+                alertMsg += `\nLa zona "${cropType}" no existía en esta finca. Se ha asignado a todo el cultivo usando la fórmula matemática.`;
+            }
+            alert(alertMsg);
         });
     }
 
@@ -601,13 +633,18 @@ function init3DMap(reset = false) {
     }
 }
 
-function crearSensor3D(x, z) {
+function crearSensor3D(x, z, isCustom = false) {
     if (!scene3D) return;
     const geometry = new THREE.CylinderGeometry(1.2, 1.2, 4, 16);
-    const sensorMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x1a5d1a, metalness: 0.3, roughness: 0.6 }));
+    
+    const color = isCustom ? 0x2563eb : 0x1a5d1a; 
+    const topColor = isCustom ? 0x3b82f6 : 0x22c55e;
+    const emissiveColor = isCustom ? 0x1d4ed8 : 0x0d7e25;
+
+    const sensorMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: color, metalness: 0.3, roughness: 0.6 }));
     sensorMesh.position.set(x, 2, z);
 
-    const sensorTop = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x0d7e25, emissiveIntensity: 0.3 }));
+    const sensorTop = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), new THREE.MeshStandardMaterial({ color: topColor, emissive: emissiveColor, emissiveIntensity: 0.3 }));
     sensorTop.position.set(0, 2.2, 0);
     sensorMesh.add(sensorTop);
 
@@ -624,15 +661,25 @@ function optimizarColocacionIA() {
     const baseWidth = Math.sqrt(farm.hectareas) * 20;
     const baseDepth = baseWidth * 0.75;
 
-    // Distribuir sensores según hectáreas
-    const spacing = 20;
-    const padding = 5;
+    // Distribuir exactamente 12 sensores según fórmula (4 columnas x 3 filas) para un espaciado adecuado
+    const numCols = 4;
+    const numRows = 3;
+    const spacingX = baseWidth / numCols;
+    const spacingZ = baseDepth / numRows;
 
-    for (let x = -(baseWidth / 2) + padding; x <= (baseWidth / 2) - padding; x += spacing) {
-        for (let z = -(baseDepth / 2) + padding; z <= (baseDepth / 2) - padding; z += spacing) {
-            crearSensor3D(x, z);
+    for (let c = 0; c < numCols; c++) {
+        for (let r = 0; r < numRows; r++) {
+            let x = -(baseWidth / 2) + (spacingX / 2) + c * spacingX;
+            let z = -(baseDepth / 2) + (spacingZ / 2) + r * spacingZ;
+            crearSensor3D(x, z, false);
         }
     }
+
+    // Colocar también los sensores personalizados
+    const filteredSensores = sensoresPersonalizados.filter(s => s.farmId === selectedFarmId);
+    filteredSensores.forEach(s => {
+        crearSensor3D(s.x || 0, s.z || 0, true);
+    });
 
     // Actualizar contadores en UI si existen
     const totalMap = document.getElementById('total-sensores-mapa');
