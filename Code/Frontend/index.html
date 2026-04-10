@@ -1969,14 +1969,39 @@
                     const locationModeSelect = document.getElementById("sensor-location-mode");
                     const locationMode = locationModeSelect ? locationModeSelect.value : 'todo';
                     
-                    // Comprobar si la granja seleccionada coincide con el cultivo para locationMode === 'zona'
-                    let finalMode = locationMode;
+                    const normalizeStr = str => str.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     const cropInputValue = cropTypeInput.value.trim();
-                    const assumedFarmCrop = localStorage.getItem("nombreFincaCultivo") || ''; // Simulación
+                    const targetNorm = normalizeStr(cropInputValue);
                     
-                    // Si el usuario quiere 'zona' pero no hay zona en la finca con ese cultivo:
-                    if (locationMode === 'zona' && assumedFarmCrop !== cropInputValue) {
-                        finalMode = 'todo';
+                    // Permitir también buscar inteligentemente por el nombre asignado al sector si el usuario lo escribe
+                    const sensorPlotName = plotNameInput ? plotNameInput.value.trim() : "";
+                    const targetPlotNorm = normalizeStr(sensorPlotName);
+
+                    // Validar explícitamente si estamos en modo 'zona' para evitar inconsistencias
+                    if (locationMode === 'zona') {
+                        let sectorEncontrado = false;
+                        
+                        // Verificar contra los sectores reales cargados en memoria
+                        if (typeof parcelasCultivo !== 'undefined' && parcelasCultivo.length > 0) {
+                            sectorEncontrado = parcelasCultivo.some(p => 
+                                normalizeStr(p.nombre) === targetNorm || 
+                                (p.sectorId && normalizeStr(p.sectorId) === targetPlotNorm)
+                            );
+                        } else {
+                            // Si no, verificamos contra localStorage de finca
+                            const assumedFarmCrop = localStorage.getItem("nombreFincaCultivo") || '';
+                            sectorEncontrado = (normalizeStr(assumedFarmCrop) === targetNorm);
+                        }
+
+                        if (!sectorEncontrado) {
+                            // Mostrar valores en crudo para depuración
+                            const availablePlots = typeof parcelasCultivo !== 'undefined' ? 
+                                parcelasCultivo.map(p => `${p.nombre} (${p.sectorId||''})`).join(', ') : 'Ninguna (Aún no cargadas)';
+                                
+                            alert(`Error de Validación:\nLa zona de cultivo o nombre de sector no corresponde al mapa actual.\n\nComparando:\n- Cultivo: "${cropInputValue}"\n- Sector/Nombre: "${sensorPlotName}"\n\nSectores Mapeados:\n[${availablePlots}]\n\nOperación cancelada. Revise los campos.`);
+                            console.warn("Validación fallida: Buscando=", targetNorm, "o", targetPlotNorm, "Sectores Disp=", availablePlots);
+                            return; // Prevenir guardado silencioso
+                        }
                     }
 
                     const arrayDeSensores = JSON.parse(localStorage.getItem("misParcelas")) || [];
@@ -1986,7 +2011,7 @@
                         tipoCultivo: cropInputValue,
                         tipoMetrica: metricTypeInput.value,
                         valorIdeal: idealValueInput.value.trim(),
-                        locationMode: finalMode
+                        locationMode: locationMode // Se respeta estrictamente, no interfiere más finalMode
                     };
                     arrayDeSensores.push(nuevoSensor);
                     localStorage.setItem("misParcelas", JSON.stringify(arrayDeSensores));
@@ -1998,11 +2023,7 @@
                         window.optimizarColocacionIA();
                     }
 
-                    let alertMsg = `Sensor "${nuevoSensor.nombreParcela}" añadido con éxito.`;
-                    if (locationMode === 'zona' && finalMode === 'todo') {
-                        alertMsg += `\nLa zona de cultivo no correspondía a esta parcela. Se ha asignado a todo el cultivo y se recalcula su posición con la fórmula matemática predefinida.`;
-                    }
-                    alert(alertMsg);
+                    alert(`Sensor "${nuevoSensor.nombreParcela}" añadido con éxito.`);
                 });
 
                 // Eliminar sensor delegando el evento en el contenedor padre
@@ -2377,10 +2398,10 @@
         let zonas3D = [];
         let zoneGroup = null;
         const parcelasCultivo = [
-            { nombre: 'Tomate', color: 0xff6347, x: -20, z: -10, ancho: 24, alto: 18 },
-            { nombre: 'Maíz', color: 0xffd700, x: 20, z: -10, ancho: 24, alto: 18 },
-            { nombre: 'Lechuga', color: 0x32cd32, x: -20, z: 10, ancho: 24, alto: 18 },
-            { nombre: 'Pimiento', color: 0x1e90ff, x: 20, z: 10, ancho: 24, alto: 18 }
+            { sectorId: 'Sector A', nombre: 'Tomate', color: 0xff6347, x: -20, z: -10, ancho: 24, alto: 18 },
+            { sectorId: 'Sector B', nombre: 'Maíz', color: 0xffd700, x: 20, z: -10, ancho: 24, alto: 18 },
+            { sectorId: 'Sector C', nombre: 'Lechuga', color: 0x32cd32, x: -20, z: 10, ancho: 24, alto: 18 },
+            { sectorId: 'Sector D', nombre: 'Pimiento', color: 0x1e90ff, x: 20, z: 10, ancho: 24, alto: 18 }
         ];
         let zoomIntensity = 1;
         const domLabels = [];
@@ -2412,6 +2433,12 @@
                         ${optionsHtml}
                     </select>
                 `;
+                
+                col.querySelector('select').addEventListener('change', () => {
+                    const btnApply = document.getElementById('btn-apply-plots');
+                    if (btnApply) btnApply.click();
+                });
+                
                 container.appendChild(col);
             }
         }
@@ -2664,25 +2691,28 @@
                         const cropName = sel.value;
                         const cropInfo = baseDatosCultivos.find(c => c.nombre === cropName) || baseDatosCultivos[0];
 
-                        // random color matching
-                        const cssColor = cropName === 'Tomate' ? 0xff6347 :
-                            cropName === 'Maíz' ? 0xffd700 :
-                                cropName === 'Lechuga' ? 0x32cd32 : 0x1e90ff;
+                        // random color matching replaced by specific 8 palette mapping req
+                        const sectorPalette = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF9A3C','#00C9A7','#F72585'];
+                        const hexColorString = sectorPalette[i % sectorPalette.length].replace('#', '0x');
+                        const cssColor = parseInt(hexColorString, 16);
 
                         const rowId = Math.floor(i / cols);
                         const colId = i % cols;
 
                         const px = (colId * anchoCell) - (widthTot / 2) + (anchoCell / 2);
                         const pz = (rowId * altoCell) - (heightTot / 2) + (altoCell / 2);
+                        
+                        const letterId = String.fromCharCode(65 + i); // Convierte 0 en 'A', 1 en 'B', etc.
 
                         parcelasCultivo.push({
+                            sectorId: 'Sector ' + letterId,
                             nombre: cropName,
                             emoji: cropInfo.emoji,
                             color: cssColor,
                             x: px,
                             z: pz,
-                            ancho: anchoCell - 2, // -2 para margen
-                            alto: altoCell - 2
+                            ancho: anchoCell,
+                            alto: altoCell
                         });
                     });
 
@@ -2698,7 +2728,11 @@
             }
 
             // Init panel
-            document.getElementById('plot-divisions-count')?.addEventListener('change', renderPlotConfigUI);
+            document.getElementById('plot-divisions-count')?.addEventListener('change', () => {
+                renderPlotConfigUI();
+                const btnApply = document.getElementById('btn-apply-plots');
+                if (btnApply) btnApply.click();
+            });
             renderPlotConfigUI();
 
             optimizarColocacionIA();
@@ -2803,7 +2837,9 @@
             if (!scene3D) return;
 
             if (zoneGroup) {
-                zoneGroup.children.forEach(child => zoneGroup.remove(child));
+                while (zoneGroup.children.length > 0) {
+                    zoneGroup.remove(zoneGroup.children[0]);
+                }
             } else {
                 zoneGroup = new THREE.Group();
                 if (sceneRoot) sceneRoot.add(zoneGroup);
@@ -2817,10 +2853,19 @@
             let sectorCharCode = 65; // 'A'
 
             parcelasCultivo.forEach(zone => {
-                const plane = new THREE.Mesh(
-                    new THREE.PlaneGeometry(zone.ancho, zone.alto),
-                    new THREE.MeshPhongMaterial({ color: zone.color, opacity: 0.25, transparent: true, side: THREE.DoubleSide })
+                const planeGeom = new THREE.PlaneGeometry(zone.ancho, zone.alto);
+                const planeMat = new THREE.MeshPhongMaterial({ color: zone.color, opacity: 0.55, transparent: true, side: THREE.DoubleSide });
+                const plane = new THREE.Mesh(planeGeom, planeMat);
+                
+                // Generar borde de 3px ensombrecido (~ darkened 0.3)
+                const edges = new THREE.EdgesGeometry(planeGeom);
+                const darkerColor = new THREE.Color(zone.color).multiplyScalar(0.7); // Darken via scalar ~ -0.3
+                const outline = new THREE.LineSegments(
+                    edges,
+                    new THREE.LineBasicMaterial({ color: darkerColor, linewidth: 3 })
                 );
+                plane.add(outline);
+
                 plane.rotation.x = -Math.PI / 2;
                 plane.position.set(zone.x, 0.05, zone.z);
                 zoneGroup.add(plane);
@@ -2887,9 +2932,24 @@
             // Aplicar la misma la fórmula a los sensores reales del usuario iterando por sectores
             const arrayDeSensores = JSON.parse(localStorage.getItem("misParcelas")) || [];
             const sectoresInfo = {};
+            
+            const normalizeStr = str => str.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
             arrayDeSensores.forEach(s => {
-                let sectorKey = s.locationMode === 'zona' ? (s.tipoCultivo || 'TODO') : 'TODO';
+                let rawKey = s.locationMode === 'zona' ? (s.tipoCultivo || 'TODO') : 'TODO';
+                let rawPlot = s.nombreParcela || '';
+                
+                // Si el cultivation type falla, intentamos usar el plotName (sensorId) como fallback para emparejamiento 
+                let sectorKey = 'TODO';
+                if (rawKey !== 'TODO') {
+                    sectorKey = normalizeStr(rawKey);
+                    // Agregamos comprobación para asociarlos via "SESCTOR D" si se falló la capital
+                    const potentialMatch = parcelasCultivo.find(p => p.sectorId && normalizeStr(p.sectorId) === normalizeStr(rawPlot));
+                    if(potentialMatch && !parcelasCultivo.find(p => normalizeStr(p.nombre) === sectorKey)) {
+                        sectorKey = normalizeStr(potentialMatch.nombre); // Reenrutar a la propiedad física principal
+                    }
+                }
+
                 if (!sectoresInfo[sectorKey]) sectoresInfo[sectorKey] = [];
                 sectoresInfo[sectorKey].push(s);
             });
@@ -2905,7 +2965,7 @@
                     x_min = -36; x_max = 36;
                     z_min = -24; z_max = 24;
                 } else {
-                    const pca = parcelasCultivo.find(p => p.nombre === sectorKey);
+                    const pca = parcelasCultivo.find(p => normalizeStr(p.nombre) === sectorKey);
                     if (pca) {
                         // Bounding Box del rectángulo de cultivo local
                         x_min = pca.x - (pca.ancho / 2);
@@ -2921,19 +2981,76 @@
                 const columnas = Math.ceil(Math.sqrt(N));
                 const filas = Math.ceil(N / columnas);
 
-                const espaciado_x = (x_max - x_min) / (columnas + 1);
-                const espaciado_z = (z_max - z_min) / (filas + 1);
+                const width = x_max - x_min;
+                const height = z_max - z_min;
+
+                const margen = 0.15; // 15% inner bounding
+                const anchoUtil = width * (1 - margen * 2);
+                const altoUtil = height * (1 - margen * 2);
+
+                const stepX = columnas > 1 ? anchoUtil / (columnas - 1) : 0;
+                const stepZ = filas > 1 ? altoUtil / (filas - 1) : 0;
+
+                const posBuffer = [];
 
                 for (let i = 0; i < N; i++) {
-                    const col_i = (i % columnas) + 1;
-                    const fila_i = Math.floor(i / columnas) + 1;
-                    
-                    const finalX = x_min + (col_i) * espaciado_x;
-                    const finalZ = z_min + (fila_i) * espaciado_z;
-                    
-                    const sensorData = sensoresDelSector[i];
-                    crearSensor3D(finalX, finalZ, sensorData.tipoMetrica || tiposSensores[0].tipo, true);
+                    let finalX, finalZ;
+
+                    if (N === 1) {
+                        // N=1 -> Medio exacto
+                        finalX = x_min + width / 2;
+                        finalZ = z_min + height / 2;
+                    } else if (N === 2) {
+                        // N=2 -> 1/3 izq, 2/3 der
+                        if (i === 0) {
+                            finalX = x_min + width * 0.33;
+                        } else {
+                            finalX = x_min + width * 0.66;
+                        }
+                        finalZ = z_min + height / 2;
+                    } else {
+                        // N >= 3 -> Cuadrícula dispersa con margen
+                        const col_i = i % columnas;
+                        const fila_i = Math.floor(i / columnas);
+
+                        finalX = x_min + width * margen + col_i * stepX;
+                        finalZ = z_min + height * margen + fila_i * stepZ;
+                    }
+
+                    posBuffer.push({ x: finalX, z: finalZ, sensorData: sensoresDelSector[i] });
                 }
+
+                // Relajación forzada de solapamientos antes de pintar pines en el DOM 3D
+                const objRad = 4.0; // Distancia límite física segura para conos de 2.6
+                for (let pasadas = 0; pasadas < 3; pasadas++) {
+                    for (let i = 0; i < posBuffer.length; i++) {
+                        for (let j = i + 1; j < posBuffer.length; j++) {
+                            const dx = posBuffer[j].x - posBuffer[i].x;
+                            const dz = posBuffer[j].z - posBuffer[i].z;
+                            let dist = Math.sqrt(dx * dx + dz * dz);
+                            
+                            // Prevención si colisionan en 0 perfecto
+                            if (dist < 0.001) {
+                                posBuffer[j].x += 0.5;
+                                posBuffer[j].z += 0.5;
+                                dist = 0.707;
+                            }
+                            
+                            if (dist < objRad) {
+                                const factor = (objRad - dist) / dist / 2;
+                                posBuffer[i].x -= dx * factor;
+                                posBuffer[i].z -= dz * factor;
+                                posBuffer[j].x += dx * factor;
+                                posBuffer[j].z += dz * factor;
+                            }
+                        }
+                    }
+                }
+
+                // Volcado iterativo re-espaciado y seguro al canvas 3D   
+                posBuffer.forEach(pos => {
+                    crearSensor3D(pos.x, pos.z, pos.sensorData.tipoMetrica || tiposSensores[0].tipo, true);
+                });
             }
 
             actualizarEstadisticasParcela();
