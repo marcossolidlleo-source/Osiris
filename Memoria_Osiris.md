@@ -52,7 +52,10 @@ El análisis del proyecto revela una arquitectura distribuida orientada a micros
 ```
 
 ### 5. Implementación
-El desarrollo detectado se compone de los siguientes elementos:
+El desarrollo detectado se compone de los siguientes elementos (Actualizado con últimas mejoras):
+
+- **Optimización y Modelo 3D**: Se ha corregido la fórmula matemática de espaciado en la vista 3D asegurando una distribución fija de 12 sensores base sin solapamientos (4 columnas x 3 filas). Además, cualquier nuevo sensor añadido desde el Dashboard General se representa instantáneamente en el modelo 3D.
+- **Lógica de Ubicación Dinámica**: Ahora al dar de alta un sensor se puede elegir entre mantenerlo en la "zona asignada" (si coincide con el cultivo de la finca) o distribuirlo por "todo el cultivo", recalculando dinámicamente sus coordenadas 3D mediante una nueva fórmula matemática pseudo-aleatoria. Si se elige zona y no coincide el cultivo, automáticamente recalcula posicionalmente por toda la extensión.
 
 - **Lenguajes:** HTML5, CSS3, JavaScript (ES6+).
 - **Frameworks y Librerías:** 
@@ -88,37 +91,3 @@ Se ha logrado construir un prototipo funcional robusto para el lado del cliente 
 - *Tailwind CSS Framework*. Obtenido de https://tailwindcss.com/docs
 - *FormSubmit Service*. Obtenido de https://formsubmit.co/
 
-### 8. Anexos
-**Anexo A: Fragmento - Generación del Entorno 3D**
-```javascript
-// app.js (Fragmento de la lógica THREE.js)
-scene3D = new THREE.Scene();
-scene3D.background = new THREE.Color(0xf2f7f9);
-camera3D = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-camera3D.position.set(0, 80, 120);
-
-// Suelo del campo
-const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(80, 60),
-    new THREE.MeshPhongMaterial({ color: 0x8cc56d, opacity: 0.35, transparent: true })
-);
-ground.rotation.x = -Math.PI / 2;
-scene3D.add(ground);
-```
-
-**Anexo B: Fragmento - Envío de Alertas Críticas**
-```javascript
-// app.js (Fragmento de la API Fetch FormSubmit)
-function sendEmailAlert(data) {
-    fetch("https://formsubmit.co/ajax/agrisyncsif@gmail.com", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-            _subject: "🚨 ALERTA CRÍTICA - Osiris",
-            // ...
-            Humedad: data.humedad + "%",
-        })
-    })
-    // ...
-}
-```
