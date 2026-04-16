@@ -328,32 +328,28 @@
         <!-- Pantalla de Bienvenida (Login) -->
         <div id="login-screen" class="screen active p-6 pt-safe-top pb-safe-bottom min-h-screen flex flex-col">
             <header class="text-center mb-12 mt-8">
-                <div class="relative mx-auto mb-4 w-32 h-32 flex items-center justify-center">
+                <div class="relative mx-auto mb-2 w-32 h-32 flex items-center justify-center">
                     <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
-                        class="drop-shadow-lg">
+                        class="drop-shadow-sm hover:scale-105 transition-transform duration-500">
+                        <path d="M 40 60 Q 100 35 160 60 Q 100 43 40 60 Z" fill="#1b6139" />
+                        <path d="M 100 70 C 88 95, 92 115, 100 125 C 108 115, 112 95, 100 70 Z" fill="#1b6139" />
+                        <path d="M 95 120 C 75 105, 65 90, 70 80 C 85 90, 95 105, 95 120 Z" fill="#1b6139" />
+                        <path d="M 105 120 C 125 105, 135 90, 130 80 C 115 90, 105 105, 105 120 Z" fill="#1b6139" />
+                        <path d="M 95 130 C 70 130, 55 125, 50 135 C 70 145, 85 140, 95 130 Z" fill="#1b6139" />
+                        <path d="M 105 130 C 130 130, 145 125, 150 135 C 130 145, 115 140, 105 130 Z" fill="#1b6139" />
                         <path
-                            d="M100 40 C120 40, 140 60, 140 90 C140 120, 120 150, 100 160 C80 150, 60 120, 60 90 C60 60, 80 40, 100 40 Z"
-                            fill="#22c55e" opacity="0.9" />
-                        <path d="M100 40 L100 160" stroke="#16a34a" stroke-width="2" stroke-linecap="round" />
-                        <path d="M75 90 C75 78, 85 70, 95 70" stroke="#374151" stroke-width="3"
-                            stroke-linecap="round" />
-                        <path d="M95 70 L90 65 M95 70 L90 75" stroke="#374151" stroke-width="3"
-                            stroke-linecap="round" />
-                        <path d="M125 90 C125 102, 115 110, 105 110" stroke="#374151" stroke-width="3"
-                            stroke-linecap="round" />
-                        <path d="M105 110 L110 115 M105 110 L110 105" stroke="#374151" stroke-width="3"
-                            stroke-linecap="round" />
-                        <circle cx="85" cy="100" r="3" fill="#374151" />
-                        <circle cx="100" cy="95" r="3" fill="#374151" />
-                        <circle cx="115" cy="100" r="3" fill="#374151" />
+                            d="M 98 125 C 80 155, 85 185, 105 185 C 120 185, 125 160, 110 145 C 100 135, 98 125, 98 125 Z"
+                            fill="#1b6139" />
+                        <circle cx="108" cy="165" r="5" fill="#f8fafc" />
                     </svg>
                 </div>
                 <div class="flex flex-col items-center gap-1 mb-2">
-                    <h1 class="text-4xl font-bold tracking-tight">
-                        <span class="text-[#22c55e]">Os</span><span class="text-[#374151]">iris</span>
+                    <h1 class="text-5xl tracking-widest text-[#1b6139] uppercase drop-shadow-sm font-serif"
+                        style="font-family: 'Times New Roman', Times, serif;">
+                        OSIRIS
                     </h1>
                     <p class="text-gray-600 text-sm tracking-wide">
-                        Tecnología Agrícola Inteligente
+                        Osiris: Control IoT en tiempo real
                     </p>
                 </div>
             </header>
@@ -389,7 +385,7 @@
             </main>
 
             <footer class="text-center mt-12 pt-6 border-t border-gray-200">
-                <p class="text-xs text-text-light">© 2024 Osiris. Todos los derechos reservados.</p>
+                <p class="text-xs text-text-light">© 2026 Osiris. Todos los derechos reservados.</p>
                 <p class="text-xs text-text-light mt-1">v1.0.0</p>
             </footer>
         </div>
@@ -406,12 +402,28 @@
                 class="bg-[#2D5A27] text-[#F4F7F6] w-[260px] shrink-0 fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 flex flex-col shadow-2xl md:shadow-none border-r border-[#1e4219]">
                 <div class="p-6 flex items-center justify-between border-b border-white/10">
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-inner">
-                            <i class="fas fa-seedling text-[#FFC107] text-xl"></i>
+                        <div class="w-12 h-12 flex items-center justify-center">
+                            <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 40 60 Q 100 35 160 60 Q 100 43 40 60 Z" fill="#ffffff" />
+                                <path d="M 100 70 C 88 95, 92 115, 100 125 C 108 115, 112 95, 100 70 Z"
+                                    fill="#ffffff" />
+                                <path d="M 95 120 C 75 105, 65 90, 70 80 C 85 90, 95 105, 95 120 Z" fill="#ffffff" />
+                                <path d="M 105 120 C 125 105, 135 90, 130 80 C 115 90, 105 105, 105 120 Z"
+                                    fill="#ffffff" />
+                                <path d="M 95 130 C 70 130, 55 125, 50 135 C 70 145, 85 140, 95 130 Z" fill="#ffffff" />
+                                <path d="M 105 130 C 130 130, 145 125, 150 135 C 130 145, 115 140, 105 130 Z"
+                                    fill="#ffffff" />
+                                <path
+                                    d="M 98 125 C 80 155, 85 185, 105 185 C 120 185, 125 160, 110 145 C 100 135, 98 125, 98 125 Z"
+                                    fill="#ffffff" />
+                                <circle cx="108" cy="165" r="5" fill="#2D5A27" />
+                            </svg>
                         </div>
-                        <h2 class="text-2xl font-black tracking-tight text-white mb-0 mt-0">Os<span
-                                class="text-[#FFC107]">iris</span></h2>
+                        <h2 class="text-[1.3rem] tracking-widest text-[#f8fafc] mb-0 mt-0 uppercase pl-1 font-serif"
+                            style="font-family: 'Times New Roman', Times, serif; text-shadow: 0px 2px 4px rgba(0,0,0,0.2);">
+                            OSIRIS
+                        </h2>
                     </div>
                     <button
                         class="md:hidden text-white/70 hover:text-[#FFC107] transition-colors p-2 rounded-lg hover:bg-white/10"
@@ -442,6 +454,11 @@
                         class="sidebar-link flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 text-white/80 hover:bg-white/10 hover:text-white">
                         <i class="fas fa-thermometer-half w-5 text-center text-lg drop-shadow-sm"></i>
                         <span class="font-medium text-[0.95rem]">Sensores Clima</span>
+                    </a>
+                    <a href="#sobre-nosotros"
+                        class="sidebar-link flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 text-white/80 hover:bg-white/10 hover:text-white mt-1">
+                        <i class="fas fa-users w-5 text-center text-lg drop-shadow-sm"></i>
+                        <span class="font-medium text-[0.95rem]">Sobre Nosotros</span>
                     </a>
                     <a href="#configuracion"
                         class="sidebar-link flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 text-white/80 hover:bg-white/10 hover:text-white mt-6">
@@ -512,6 +529,16 @@
                                 class="hidden p-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-xl text-xs font-bold transition-colors">
                                 <i class="fas fa-bell mr-1"></i> Probar Alerta
                             </button>
+                            <div class="flex items-center">
+                                <select id="refresh-interval-select"
+                                    class="text-xs font-bold bg-white border border-gray-200 rounded-xl px-3 py-2 outline-none focus:border-emerald-500 shadow-sm cursor-pointer mr-2 transition-all">
+                                    <option value="10000">10s</option>
+                                    <option value="30000" selected>30s</option>
+                                    <option value="60000">1 min</option>
+                                    <option value="300000">5 min</option>
+                                    <option value="0">Manual</option>
+                                </select>
+                            </div>
                             <button id="refresh-data"
                                 class="w-10 h-10 flex items-center justify-center text-primary bg-white hover:bg-gray-50 border border-gray-200 rounded-xl shadow-sm transition-colors"
                                 title="Sincronizar Datos">
@@ -989,6 +1016,89 @@
 
                     </main>
 
+                    <div id="section-sobre-nosotros" class="content-section">
+                        <div class="card bg-card p-8 md:p-10 mb-8 border border-gray-100 shadow-sm rounded-3xl w-full">
+                            <header class="mb-8 text-center md:text-left">
+                                <h2 class="text-3xl font-black text-primary mb-2">Sobre Nosotros</h2>
+                                <p class="text-gray-500 font-medium text-lg">Digitalizando granjas. Llevando el campo a
+                                    la Agricultura 4.0</p>
+                            </header>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-10">
+                                <div class="h-full flex flex-col justify-center items-center">
+                                    <iframe
+                                        class="w-full aspect-video rounded-2xl shadow-lg border border-gray-100 mb-4"
+                                        src="https://www.youtube.com/embed/3InE7DpFEyk?si=ZcK8Ey5wjO95jOTk"
+                                        title="YouTube video player" frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen></iframe>
+                                    <a href="https://youtu.be/3InE7DpFEyk" target="_blank" rel="noopener noreferrer"
+                                        class="self-start inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-5 rounded-xl shadow-md transition-all duration-200 hover:-translate-y-0.5 w-full justify-center sm:w-auto">
+                                        <i class="fab fa-youtube text-lg"></i> Abrir vídeo en pestaña nueva
+                                    </a>
+                                </div>
+                                <div class="flex flex-col justify-center">
+                                    <h3 class="text-xl font-bold text-gray-800 mb-3"><i
+                                            class="fas fa-bullseye text-emerald-500 mr-2"></i>Nuestra Misión</h3>
+                                    <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                        Acabamos con los <span class="font-bold text-gray-800">silos de
+                                            información</span>. Osiris centraliza datos, clima y sensores IoT en tiempo
+                                        real para tomar mejores decisiones.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="bg-emerald-50/50 rounded-2xl p-6 md:p-8 border border-emerald-100/60 shadow-inner">
+                                <h3 class="text-lg font-black text-gray-800 mb-6 text-center"><i
+                                        class="fas fa-users text-emerald-500 mr-2"></i>Nuestro Equipo</h3>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-5 gap-x-2">
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Óscar Marín</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Carlos Moya</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Ana Olmedo</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Pablo Rubio</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Jaime Sarsa</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Álvaro Sosa</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Jose Javier Ripado</span>
+                                    </div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Alejandro Muñoz</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Teresa Saenz</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Manuel Montilla</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Juan Antonio Polonio</span>
+                                    </div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Marcos Olid</span></div>
+                                    <div class="flex items-center justify-center gap-2"><i
+                                            class="fas fa-user-graduate text-emerald-600/70 text-lg drop-shadow-sm"></i><span
+                                            class="text-[0.75rem] font-bold text-gray-700">Javi Pozo</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <footer class="mt-8 pt-6 border-t border-gray-200 pb-6">
                         <div class="text-center flex flex-col items-center">
                             <p class="text-sm text-text-light mb-2">
@@ -997,18 +1107,10 @@
                             </p>
                             <div
                                 class="flex items-center justify-center gap-3 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm mt-1">
-                                <label for="refresh-interval-select" class="text-xs font-medium text-text-light">
-                                    <i class="fas fa-sync-alt mr-1"></i> Actualización:
-                                </label>
-                                <select id="refresh-interval-select"
-                                    class="text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-primary outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 cursor-pointer transition-all">
-                                    <option value="5000">Cada 5 segundos</option>
-                                    <option value="15000">Cada 15 segundos</option>
-                                    <option value="30000" selected>Cada 30 segundos</option>
-                                    <option value="60000">Cada minuto</option>
-                                    <option value="0">Pausada (Manual)</option>
-                                </select>
-                            </div><!-- end of flex container missing closure -->
+                                <span class="text-xs font-bold text-gray-500" id="footer-sync-status"><i
+                                        class="fas fa-satellite-dish mr-1 text-emerald-500"></i> Actualizando cada
+                                    30s</span>
+                            </div><!-- end of flex container -->
                         </div>
                     </footer>
                 </div><!-- end max-w-7xl wrapper -->
@@ -1155,6 +1257,12 @@
         </div>
     </div>
 
+    <!-- Botón Flotante de Instagram -->
+    <a href="https://www.instagram.com/osirisoficcial" target="_blank"
+        class="fixed bottom-6 left-6 z-[60] w-14 h-14 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 rounded-full flex justify-center items-center text-white text-3xl shadow-lg hover:scale-110 hover:shadow-2xl transition-all duration-300">
+        <i class="fab fa-instagram"></i>
+    </a>
+
     <script>
         // Sidebar Toggle Logic
         function toggleSidebar() {
@@ -1201,6 +1309,9 @@
     </script>
 
     <script>
+        // ==================== CONFIGURACIÓN GLOBAL ====================
+        const SLACK_WEBHOOK = 'https://hooks.slack.com/services/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';
+
         // ==================== VARIABLES DE ESTADO ====================
         let currentUserRole = "";
         let fincas = JSON.parse(localStorage.getItem('agrisync_fincas'));
@@ -1316,7 +1427,8 @@
             { nombre: "Menta", tempMin: 15, tempMax: 25, humMin: 70, humMax: 90, phMin: 6.0, phMax: 7.0, icono: "fas fa-leaf", emoji: "🌿", cicloVida: "Perenne", especie: "Aromática", metodo: "Regadío", uso: "Alimentario" },
             { nombre: "Cebada", tempMin: 10, tempMax: 22, humMin: 50, humMax: 70, phMin: 6.0, phMax: 7.5, icono: "fas fa-wheat", emoji: "🌾", cicloVida: "Anual", especie: "Cereal", metodo: "Secano", uso: "Industrial" },
             { nombre: "Limonero", tempMin: 18, tempMax: 30, humMin: 50, humMax: 70, phMin: 5.5, phMax: 6.5, icono: "fas fa-lemon", emoji: "🍋", cicloVida: "Perenne", especie: "Frutal", metodo: "Regadío", uso: "Alimentario" },
-            { nombre: "Naranjo", tempMin: 15, tempMax: 30, humMin: 50, humMax: 70, phMin: 5.5, phMax: 6.5, icono: "fas fa-lemon", emoji: "🍊", cicloVida: "Perenne", especie: "Frutal", metodo: "Regadío", uso: "Alimentario" }
+            { nombre: "Naranjo", tempMin: 15, tempMax: 30, humMin: 50, humMax: 70, phMin: 5.5, phMax: 6.5, icono: "fas fa-lemon", emoji: "🍊", cicloVida: "Perenne", especie: "Frutal", metodo: "Regadío", uso: "Alimentario" },
+            { nombre: "Aguacate", tempMin: 15, tempMax: 30, humMin: 60, humMax: 80, phMin: 5.5, phMax: 7.0, icono: "fas fa-tree", emoji: "🥑", cicloVida: "Perenne", especie: "Frutal", metodo: "Regadío", uso: "Alimentario" }
         ].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
 
         const historyData = [
@@ -1489,13 +1601,11 @@
                     sensor.statusText = sensor.status === "normal" ? "Óptimo" : "Revisar";
 
                     if (currentUserRole === "Administrador" && sensor.value < 30) {
-                        const SLACK_WEBHOOK = 'https://hooks.slack.com/services/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';
                         fetch(SLACK_WEBHOOK, {
                             method: 'POST',
                             mode: 'no-cors',
-                            body: JSON.stringify({
-                                "text": "🚨 *ALERTA SIMULADA*: La humedad en el Sector A-1 ha bajado a niveles críticos."
-                            })
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ "text": "🚨 ALERTA OSIRIS: El sistema ha detectado una anomalía o se ha realizado una prueba manual." })
                         }).catch(e => console.error(e));
                     }
                 } else if (sensor.id === "air-temperature") {
@@ -1669,7 +1779,7 @@
                         }
                     }
                 } else {
-                    alert("Contraseña incorrecta. Usa adminAgri2026 o userSync123.");
+                    alert("Acceso denegado. Las credenciales introducidas no son correctas.");
                 }
             });
 
@@ -1701,8 +1811,6 @@
             }
 
             document.getElementById("test-slack-btn").addEventListener("click", function () {
-                const SLACK_WEBHOOK = 'https://hooks.slack.com/services/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';
-
                 const icon = this.querySelector("i");
                 icon.classList.remove("fa-bell");
                 icon.classList.add("fa-spinner", "fa-spin");
@@ -1710,9 +1818,8 @@
                 fetch(SLACK_WEBHOOK, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: JSON.stringify({
-                        "text": "🚨 *ALERTA MANUAL*: Funcionalidad probada por el Administrador. Funciona correctamente."
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "text": "🚨 ALERTA OSIRIS: El sistema ha detectado una anomalía o se ha realizado una prueba manual." })
                 }).then(() => {
                     setTimeout(() => {
                         icon.classList.remove("fa-spinner", "fa-spin");
@@ -1911,54 +2018,42 @@
                         }
 
                         const cardElement = document.createElement("div");
-                        cardElement.className = "relative bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 transform hover:-translate-y-1 group";
+                        cardElement.className = "card bg-card p-5 relative group overflow-hidden border border-gray-100 rounded-2xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1";
 
                         cardElement.innerHTML = `
-                            <!-- Decoración de fondo suave -->
-                            <i class="${iconMetrica} absolute -right-6 -bottom-6 text-9xl ${textAccent} opacity-[0.03] rotate-12 transition-transform group-hover:scale-110 duration-500 pointer-events-none"></i>
-                            
-                            <div class="relative z-10 flex justify-between items-start mb-6">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${bgAccent} flex items-center justify-center ${textAccent} shadow-inner">
-                                        <i class="${iconMetrica} text-2xl drop-shadow-sm"></i>
+                            <div class="flex items-start justify-between mb-4 relative z-10">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br ${badgeGradient} flex items-center justify-center mr-4 shadow-md aspect-square">
+                                        <i class="fa-solid ${iconMetrica.replace('fas ', '')} text-white text-xl"></i>
                                     </div>
-                                    <div>
-                                        <p class="text-[0.65rem] font-bold tracking-widest ${textAccent} uppercase mb-1 opacity-80">Sector Activo</p>
-                                        <h4 class="font-extrabold text-xl text-gray-800 tracking-tight leading-none">${sensor.nombreParcela}</h4>
+                                    <div class="flex flex-col justify-center">
+                                        <h3 class="font-bold text-lg text-primary leading-tight">${sensor.nombreParcela}</h3>
+                                        <p class="text-xs text-text-light mt-0.5"><i class="fas fa-seedling mr-1 opacity-70"></i>${sensor.tipoCultivo}</p>
                                     </div>
                                 </div>
-                                <button type="button" class="delete-sensor-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm" data-index="${index}" title="Eliminar sensor">
-                                    <i class="fas fa-trash-alt text-sm"></i>
+                                <button type="button" class="delete-sensor-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors shadow-sm" data-index="${index}" title="Eliminar sensor">
+                                    <i class="fas fa-trash-alt text-xs"></i>
                                 </button>
                             </div>
-
-                            <div class="relative z-10 grid grid-cols-2 gap-3">
-                                <div class="bg-gray-50/80 rounded-2xl p-4 border border-gray-100 hover:bg-white hover:shadow-md transition-all duration-300 group/item">
-                                    <div class="flex items-center gap-2 mb-2 text-gray-400 group-hover/item:text-gray-600 transition-colors">
-                                        <i class="fas fa-seedling ${textAccent}"></i>
-                                        <span class="text-[0.65rem] font-bold uppercase tracking-widest">Cultivo</span>
-                                    </div>
-                                    <p class="font-bold text-gray-800 truncate text-sm">${sensor.tipoCultivo}</p>
+                            
+                            <div class="mb-4 relative z-10">
+                                <div class="sensor-value text-primary font-black text-3xl">
+                                    ${sensor.valorIdeal}<span class="unit text-base ml-1 text-gray-500">${unit}</span>
                                 </div>
-                                
-                                <div class="bg-gradient-to-br ${badgeGradient} rounded-2xl p-4 shadow-lg ${shadowAccent} hover:-translate-y-0.5 transition-transform duration-300 text-white relative overflow-hidden">
-                                     <!-- Brillo reflectante interno -->
-                                    <div class="absolute top-0 right-0 w-16 h-16 bg-white opacity-10 rounded-full blur-xl -mr-4 -mt-4"></div>
-                                    
-                                    <div class="flex items-center gap-2 mb-2 text-white/80">
-                                        <i class="fas fa-bullseye"></i>
-                                        <span class="text-[0.65rem] font-bold uppercase tracking-widest truncate">Meta ${sensor.tipoMetrica}</span>
-                                    </div>
-                                    <div class="flex items-end gap-1">
-                                        <p class="font-black text-2xl leading-none tracking-tight">${sensor.valorIdeal}</p>
-                                        <span class="text-xs font-semibold text-white/80 mb-0.5">${unit}</span>
-                                    </div>
+                                <div class="flex justify-between text-xs text-text-light mt-1 w-full bg-gray-50 py-1.5 px-2 rounded font-medium">
+                                    <span>Métrica: ${sensor.tipoMetrica}</span>
+                                    <span class="uppercase tracking-wide text-[0.65rem] text-emerald-600 bg-emerald-100 px-1.5 rounded">Activo</span>
                                 </div>
                             </div>
                             
-                            <!-- Barra de progreso decorativa inferior -->
-                            <div class="absolute bottom-0 left-0 w-full h-1.5 bg-gray-50">
-                                <div class="h-full bg-gradient-to-r ${badgeGradient} w-full opacity-60"></div>
+                            <div class="flex items-center justify-between text-xs mt-3 relative z-10 border-t border-gray-100 pt-3">
+                                <span class="text-text-light flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
+                                    En línea
+                                </span>
+                                <button class="text-primary hover:underline font-bold transition-all hover:text-emerald-700">
+                                    <i class="fas fa-chart-line mr-1"></i>Detalles
+                                </button>
                             </div>
                         `;
                         contenedorSensores.appendChild(cardElement);
@@ -3068,6 +3163,22 @@
         if (intervalSelect) {
             intervalSelect.addEventListener("change", function (e) {
                 currentRefreshRate = parseInt(e.target.value, 10);
+
+                // Actualizar texto del footer
+                const footerStatus = document.getElementById("footer-sync-status");
+                if (footerStatus) {
+                    let statusText = "Pausada (Manual)";
+                    if (currentRefreshRate === 10000) statusText = "Actualizando cada 10s";
+                    else if (currentRefreshRate === 30000) statusText = "Actualizando cada 30s";
+                    else if (currentRefreshRate === 60000) statusText = "Actualizando cada 1 min";
+                    else if (currentRefreshRate === 300000) statusText = "Actualizando cada 5 min";
+
+                    if (currentRefreshRate > 0) {
+                        footerStatus.innerHTML = `<i class="fas fa-satellite-dish mr-1 text-emerald-500"></i> ${statusText}`;
+                    } else {
+                        footerStatus.innerHTML = `<i class="fas fa-pause-circle mr-1 text-gray-400"></i> ${statusText}`;
+                    }
+                }
 
                 // Si el usuario está actualmente en el Dashboard, aplicamos de inmediato
                 if (document.getElementById("dashboard-screen").classList.contains("active")) {
