@@ -70,29 +70,76 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* --- 4. NUEVA FUNCIÓN GLOBAL PARA PEDIR CLIMA (GPS) --- */
-    window.pedirClima = function () {
-        if (statusMsg) statusMsg.innerText = "⏳ Localizando parcela...";
+    /* --- 4. NUEVA FUNCIÓN GLOBAL PARA PEDIR CLIMA (GPS) --- */
+    const actualizarGpsBtn = document.getElementById('actualizarGpsBtn');
+    if (actualizarGpsBtn) {
+        actualizarGpsBtn.addEventListener('click', () => {
+            const originalContent = actualizarGpsBtn.innerHTML;
+            actualizarGpsBtn.innerHTML = 'Buscando...';
+            actualizarGpsBtn.disabled = true;
 
-        if (!navigator.geolocation) {
-            alert("Tu navegador no soporta geolocalización");
-            return;
-        }
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const lat = pos.coords.latitude;
+                        const lon = pos.coords.longitude;
+                        console.log("Coordenadas obtenidas:", lat, lon);
+                        
+                        // Enviar coordenadas al servidor (socket original)
+                        const coords = { lat: lat, lon: lon };
+                        socket.emit('solicitar_clima', coords);
+                        
+                        // Actualizar widget de clima dinámicamente
+                        const weatherContainer = document.getElementById('weather-widget-container');
+                        if (weatherContainer) {
+                            let latStr = Math.abs(lat).toFixed(2).replace('.', 'd');
+                            let lonStr = Math.abs(lon).toFixed(2).replace('.', 'd');
+                            let combinedStr = latStr + (lon >= 0 ? 'p' : 'n') + lonStr; 
+                            
+                            weatherContainer.innerHTML = '';
+                            const newWidget = document.createElement('a');
+                            newWidget.className = 'weatherwidget-io';
+                            newWidget.href = `https://forecast7.com/es/${combinedStr}/ubicacion-actual/`;
+                            newWidget.dataset.label_1 = 'SU UBICACIÓN';
+                            newWidget.dataset.label_2 = 'CLIMA';
+                            newWidget.dataset.font = 'Roboto Slab';
+                            newWidget.dataset.icons = 'Climacons';
+                            newWidget.dataset.theme = 'pure';
+                            newWidget.dataset.basecolor = '#2d5a20';
+                            newWidget.dataset.textcolor = '#ffffff';
+                            newWidget.innerText = 'SU UBICACIÓN WEATHER';
+                            
+                            weatherContainer.appendChild(newWidget);
+                            if (window.__weatherwidget_init) {
+                                window.__weatherwidget_init();
+                            } else {
+                                const script = document.createElement('script');
+                                script.src = 'https://weatherwidget.io/js/widget.min.js';
+                                weatherContainer.appendChild(script);
+                            }
+                        }
 
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                socket.emit('solicitar_clima', coords);
-                if (statusMsg) statusMsg.innerText = "🚀 Petición enviada al ESP32...";
-            },
-            (err) => {
-                console.error("Error GPS:", err);
-                let msg = "Error de ubicación";
-                if (err.code === 1) msg = "Debes permitir el acceso al GPS";
-                if (statusMsg) statusMsg.innerText = msg;
-            },
-            { enableHighAccuracy: true, timeout: 10000 } // Configuración extra
-        );
-    };
+                        // Restaurar botón
+                        actualizarGpsBtn.innerHTML = originalContent;
+                        actualizarGpsBtn.disabled = false;
+                        
+                        alert('Ubicación actualizada');
+                    },
+                    (error) => {
+                        console.error('Error GPS:', error);
+                        alert('Error: Activa el GPS de tu navegador');
+                        actualizarGpsBtn.innerHTML = originalContent;
+                        actualizarGpsBtn.disabled = false;
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                alert('La geolocalización no es compatible con este navegador.');
+                actualizarGpsBtn.innerHTML = originalContent;
+                actualizarGpsBtn.disabled = false;
+            }
+        });
+    }
 
     /* --- GESTIÓN DE INICIO DE SESIÓN (LOGIN) --- Manteniendo tu lógica intacta */
 

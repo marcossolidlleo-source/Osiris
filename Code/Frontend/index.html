@@ -961,23 +961,22 @@
                         <div id="section-sensores" class="content-section">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div
-                                    class="card bg-card p-8 flex flex-col items-center justify-center min-h-[300px] text-center border-t-4 border-primary">
-                                    <div
-                                        class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
-                                        <i class="fas fa-cloud-sun text-3xl text-primary"></i>
-                                    </div>
-                                    <h2 class="text-2xl font-bold text-gray-800">Clima Local</h2>
+                                    class="card bg-card p-6 md:p-8 flex flex-col items-center justify-between min-h-[300px] text-center border-t-4 border-primary">
+                                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Clima Local</h2>
                                     <p class="text-sm text-text-light mb-6">Datos obtenidos desde el sensor ESP32</p>
 
-                                    <div class="mb-6">
-                                        <span id="temp" class="text-64xl font-bold text-primary sensor-value">--</span>
-                                        <span class="text-2xl text-gray-400 font-medium">°C</span>
+                                    <!-- Widget de Clima de Córdoba -->
+                                    <div id="weather-widget-container" class="w-full mb-8 relative z-10 mx-auto max-w-sm rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                                        <a class="weatherwidget-io" href="https://forecast7.com/es/37d89n4d78/cordoba/" data-label_1="CÓRDOBA" data-label_2="WEATHER" data-font="Roboto Slab" data-icons="Climacons" data-theme="pure" data-basecolor="#2d5a20" data-textcolor="#ffffff" >CÓRDOBA WEATHER</a>
+                                        <script>
+                                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+                                        </script>
                                     </div>
 
-                                    <button onclick="pedirClima()"
-                                        class="btn-primary px-8 py-3 text-white font-bold flex items-center gap-2 shadow-lg">
+                                    <button id="actualizarGpsBtn"
+                                        class="btn-primary w-full max-w-xs py-3 text-white font-bold flex justify-center items-center gap-2 shadow-lg transition-transform hover:scale-105 mt-auto">
                                         <i class="fas fa-map-marker-alt"></i>
-                                        Actualizar con GPS
+                                        <span>Actualizar con GPS</span>
                                     </button>
 
                                     <p id="status-msg" class="mt-4 text-xs text-gray-400 italic">Haz clic para
