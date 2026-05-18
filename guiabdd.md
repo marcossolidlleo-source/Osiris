@@ -128,11 +128,10 @@ const nuevoUsuarioId = await odooExecute(uid, password,
 
 // Registrar una alerta
 const nuevaAlertaId = await odooExecute(uid, password,
-    "x_alerta_agricola", "create",
+    "x_osiris_alertas", "create",
     [{
         x_finca_id: 1,
         x_sensor_id: 3,
-        x_tipo: "sequia",
         x_mensaje: "La humedad ha bajado al 18%, riesgo de sequía",
         x_valor: 18.0,
         x_fecha: "2026-04-26 18:30:00",
@@ -152,7 +151,7 @@ await odooExecute(uid, password,
 
 // Marcar una alerta como enviada
 await odooExecute(uid, password,
-    "x_alerta_agricola", "write",
+    "x_osiris_alertas", "write",
     [[alertaId], { x_enviada: true }]
 );
 ```
@@ -184,7 +183,7 @@ Los filtros en `search_read` utilizan la siguiente sintaxis: `["campo", "operado
 | Operador | Significado | Ejemplo |
 
 | `=` | Igual a | `["x_rol", "=", "admin"]` |
-| `!=` | Distinto de | `["x_tipo", "!=", "sequia"]` |
+| `!=` | Distinto de | `["x_metrica", "!=", "temperatura"]` |
 | `>` | Mayor que | `["x_valor", ">", 30]` |
 | `<` | Menor que | `["x_valor", "<", 10]` |
 | `>=` | Mayor o igual | `["x_fecha", ">=", "2026-01-01"]` |
@@ -258,14 +257,13 @@ Esta es la tabla con mayor volumen de datos, ya que almacena cada lectura indivi
 | `x_valor` | Número flotante | Sí | Valor registrado |
 | `x_fecha` | Fecha y hora | Sí | Fecha y hora de la lectura |
 
-**5. Tabla de Alertas (`x_alerta_agricola`):**
+**5. Tabla de Alertas (`x_osiris_alertas`):**
 Registra las alertas que se generan cuando los valores de los sensores superan umbrales críticos (por ejemplo, humedad por debajo del 30%). Se incluyó una referencia al sensor que originó la alerta para poder detectar patrones, como un sensor defectuoso que genera alertas repetidamente.
 
 | Campo | Tipo | Requerido | Descripción |
 
 | `x_finca_id` | Many2one → Finca | Sí | Finca afectada |
 | `x_sensor_id` | Many2one → Sensor | Sí | Sensor que originó la alerta |
-| `x_tipo` | Selección | Sí | Tipo: sequía, temperatura o pH |
 | `x_mensaje` | Texto | Sí | Descripción de la alerta |
 | `x_valor` | Número flotante | Sí | Valor registrado en el momento |
 | `x_fecha` | Fecha y hora | Sí | Fecha y hora de la alerta |
@@ -287,7 +285,7 @@ x_osiris_finca
        │                  ▼
        │           x_osiris_lectura
        │
-       └── 1:N ──▶ x_alerta_agricola 
+       └── 1:N ──▶ x_osiris_alertas
 
 ---
 
