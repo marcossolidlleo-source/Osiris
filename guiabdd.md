@@ -86,7 +86,7 @@ const fincas = await odooExecute(uid, password,
 const sensores = await odooExecute(uid, password,
     "x_osiris_sensor", "search_read",
     [[["x_finca_id", "=", fincaId]]],
-    { fields: ["x_name", "x_metrica", "x_valor_actual"] }
+    { fields: ["x_name", "x_metrica", "x_valor_ideal"] }
 );
 
 // Obtener lecturas de un sensor entre dos fechas
@@ -144,10 +144,10 @@ const nuevaAlertaId = await odooExecute(uid, password,
 **Actualizar registros (equivalente a UPDATE):**
 
 ```javascript
-// Actualizar el valor actual de un sensor
+// Actualizar el valor ideal de un sensor
 await odooExecute(uid, password,
     "x_osiris_sensor", "write",
-    [[sensorId], { x_valor_actual: 26.7 }]
+    [[sensorId], { x_valor_ideal: 26.7 }]
 );
 
 // Marcar una alerta como enviada
@@ -245,7 +245,6 @@ Cada sensor está vinculado a una finca (relación Many2one). Un sensor mide una
 | `x_cultivo` | Carácter | Sí | Cultivo que monitoriza |
 | `x_metrica` | Selección | Sí | Tipo de medición: temperatura, humedad, pH o iluminación |
 | `x_valor_ideal` | Número flotante | No | Valor ideal de referencia |
-| `x_valor_actual` | Número flotante | No | Última lectura registrada |
 | `x_pos_x` | Número flotante | No | Posición X en el mapa 3D |
 | `x_pos_y` | Número flotante | No | Posición Y en el mapa 3D |
 
