@@ -115,9 +115,9 @@ const nuevaLecturaId = await odooExecute(uid, password,
     }]
 );
 
-// Registrar un nuevo usuario
+// Registrar un nuevo usuario (admin o usuario)
 const nuevoUsuarioId = await odooExecute(uid, password,
-    "x_osiris_usuario", "create",
+    "x_osiris_usuarios", "create",
     [{
         x_name: "Juan García",
         x_email: "juan@ejemplo.com",
@@ -211,7 +211,7 @@ Para resolver estas limitaciones, se ha diseñado e implementado una **base de d
 
 El diseño de la base de datos sigue el principio de **normalización**, evitando la duplicación de datos y estableciendo relaciones claras entre las entidades:
 
-**1. Tabla de Usuarios (`x_osiris_usuario`):**
+**1. Tabla de Usuarios (`x_osiris_usuarios`):**
 Se decidió crear una tabla independiente para los usuarios de Osiris, separada de los usuarios internos de Odoo. De esta forma, los agricultores que utilizan el software no necesitan tener acceso al panel de administración de Odoo. La tabla almacena las credenciales de forma centralizada, sustituyendo el sistema hardcodeado en `app.js`.
 
 | Campo | Tipo | Requerido | Descripción |
@@ -273,19 +273,19 @@ Registra las alertas que se generan cuando los valores de los sensores superan u
 #### Diagrama relacional (texto)
 
 
-x_osiris_usuario
-       │
-       │ 1:N  
-       ▼
-x_osiris_finca
-       │
-       ├── 1:N ──▶ x_osiris_sensor
-       │                  │
-       │                  │ 1:N
-       │                  ▼
-       │           x_osiris_lectura
-       │
-       └── 1:N ──▶ x_osiris_alertas
+    x_osiris_usuarios
+           │
+           │ 1:N  
+           ▼
+    x_osiris_finca
+           │
+           ├── 1:N ──▶ x_osiris_sensor
+           │                  │
+           │                  │ 1:N
+           │                  ▼
+           │           x_osiris_lectura
+           │
+           └── 1:N ──▶ x_osiris_alertas
 
 ---
 
