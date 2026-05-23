@@ -19,20 +19,24 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '24.x'
 
-      # Hemos simplificado esto para que no busque archivos que no existen
-      - name: Prepare static files
+      # Nos movemos a la carpeta Code, instalamos dependencias y compilamos el proyecto
+      # Esto creará la carpeta /Code/dist con tu app web lista
+      - name: Install dependencies and build
         run: |
-          echo "Preparando archivos para el despliegue..."
+          cd Code
+          npm ci
+          npm run build
 
+      # Subimos como artefacto únicamente el resultado de la compilación (la carpeta dist)
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./Code/dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,10 +46,15 @@ jobs:
       contents: read
 
     steps:
+      # Al descargar el artefacto, los archivos de 'dist' se colocarán en la raíz del entorno de ejecución
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
+      
+      # Verificamos qué archivos se descargaron para asegurar que todo va bien
+      - name: List files
+        run: ls -R
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -54,10 +63,12 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_08F1357CC63D4A0CB50061B1AB460D76 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2841341B3ABF4D0C81A543052994E8A5 }}
 
+      # Como el artefacto 'node-app' descargó el contenido de 'dist' directamente en la raíz, 
+      # el paquete a desplegar ahora es la raíz misma ( . )
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'osirisproyect'
           slot-name: 'Production'
-          package: ./Code/Frontend
+          package: .
