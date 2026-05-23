@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { signIn, signUp, createUserProfile } from '../services/supabase';
+
+// ⚠️ REEMPLAZA ESTAS URLS CON LAS QUE TE DA N8N (Production o Test URL)
+const N8N_LOGIN_URL = 'https://n8ntfp.duckdns.org/webhook-test/login';
+const N8N_REGISTER_URL = 'https://n8ntfp.duckdns.org/webhook-test/register';
 
 interface Props {
   onLoginSuccess: (userId: string, email: string) => void;
@@ -15,26 +18,45 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  // 🔐 MANEJO DEL LOGIN CON N8N
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    signIn(email, password).then(({ data, error: loginError }) => {
-      if (loginError) {
-        setError(loginError.message || 'Error en login');
+    try {
+      const response = await fetch(N8N_LOGIN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setError(data.error || 'Error al iniciar sesión');
         setLoading(false);
         return;
       }
 
-      if (data?.user) {
-        onLoginSuccess(data.user.id, email);
+      // Guardamos el token de sesión devuelto por n8n por si lo necesitas
+      if (data.token) {
+        localStorage.setItem('osiris_token', data.token);
       }
+
+      // Informamos a la App que el login fue exitoso enviando el ID de Supabase
+      if (data.userId) {
+        onLoginSuccess(data.userId, email);
+      }
+    } catch (err) {
+      setError('No se pudo conectar con el servidor de autenticación');
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  // 📝 MANEJO DEL REGISTRO CON N8N
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
@@ -46,33 +68,39 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
       return;
     }
 
-    signUp(email, password, fullName).then(({ data, error: signupError }) => {
-      if (signupError) {
-        setError(signupError.message || 'Error en registro');
+    try {
+      const response = await fetch(N8N_REGISTER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: fullName,
+          email,
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setError(data.error || 'Error al registrar el usuario');
         setLoading(false);
         return;
       }
 
-      if (data?.user) {
-        createUserProfile(data.user.id, email, fullName).then(({ error: profileError }) => {
-          if (profileError) {
-            setError('Error al crear perfil');
-            setLoading(false);
-            return;
-          }
+      setSuccessMessage('Registro exitoso. Por favor inicia sesión.');
+      setTimeout(() => {
+        setIsRegistering(false);
+        setEmail('');
+        setPassword('');
+        setFullName('');
+        setSuccessMessage('');
+      }, 2000);
 
-          setSuccessMessage('Registro exitoso. Por favor inicia sesión.');
-          setTimeout(() => {
-            setIsRegistering(false);
-            setEmail('');
-            setPassword('');
-            setFullName('');
-            setSuccessMessage('');
-          }, 2000);
-          setLoading(false);
-        });
-      }
-    });
+    } catch (err) {
+      setError('Error de red al intentar registrar el usuario');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (isRegistering) {
@@ -138,7 +166,7 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
                     className="input-field w-full px-4 py-3"
                     placeholder="Mínimo 6 caracteres"
                     required
-                  />
+                />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
