@@ -31,15 +31,17 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
         body: JSON.stringify({ email, password })
       });
 
+      // Leemos el cuerpo de la respuesta de n8n
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
+      // Si el servidor nos dice que success es false (como el 404 de "Usuario no encontrado")
+      if (data.success === false || !response.ok) {
         setError(data.error || 'Error al iniciar sesión');
         setLoading(false);
         return;
       }
 
-      // Guardamos el token de sesión devuelto por n8n por si lo necesitas
+      // Guardamos el token de sesión devuelto por n8n en el almacenamiento local
       if (data.token) {
         localStorage.setItem('osiris_token', data.token);
       }
@@ -49,7 +51,7 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
         onLoginSuccess(data.userId, email);
       }
     } catch (err) {
-      setError('No se pudo conectar con el servidor de autenticación');
+      setError('No se pudo conectar con el servidor de autenticación o la respuesta fue inválida');
     } finally {
       setLoading(false);
     }
@@ -81,7 +83,7 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
+      if (!response.ok || data.success === false) {
         setError(data.error || 'Error al registrar el usuario');
         setLoading(false);
         return;
@@ -166,7 +168,7 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
                     className="input-field w-full px-4 py-3"
                     placeholder="Mínimo 6 caracteres"
                     required
-                />
+                  />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -266,7 +268,7 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
               disabled={loading}
               className="btn-primary w-full py-3 text-white font-semibold text-lg disabled:opacity-60"
             >
-              {loading ? 'Iniciando sesión...' : 'Ingresar al Sistema'}
+              {loading ? 'Iniciating sesión...' : 'Ingresar al Sistema'}
             </button>
           </form>
         </div>
