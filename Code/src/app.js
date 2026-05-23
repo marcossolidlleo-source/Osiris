@@ -6,13 +6,6 @@
 // --- 1. NUEVA CONFIGURACIÓN SOCKET.IO ---
 const socket = io();
 
-// ============================================================
-// AGRISYNC - CONFIGURACIÓN API n8n
-// ============================================================
-const API_BASE = 'https://n8ntfp.duckdns.org/webhook';
-let agriSyncToken = null;
-let agriSyncUser  = null;
-
 document.addEventListener('DOMContentLoaded', () => {
     // Referencias al DOM originales (Sincronizadas con index.html)
     const loginScreen = document.getElementById('login-screen');
@@ -81,43 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* --- GESTIÓN DE INICIO DE SESIÓN (LOGIN) --- Manteniendo tu lógica intacta */
 
-    loginForm.addEventListener('submit', async (e) => {
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const emailInput = document.getElementById('email') || document.getElementById('username');
-        const email = emailInput ? emailInput.value.trim() : '';
-        const pwd   = passwordInput.value.trim();
+        const pwd = passwordInput.value.trim();
+        const role = CREDENTIALS[pwd];
 
-        if (!email || !pwd) {
-            if (loginError) { loginError.innerText = 'Email y contraseña requeridos.'; loginError.classList.remove('hidden'); }
-            return;
-        }
-
-        // Indicador visual de carga
-        const btnLogin = loginForm.querySelector('button[type="submit"]') || loginForm.querySelector('button');
-        const textoOriginal = btnLogin ? btnLogin.innerHTML : '';
-        if (btnLogin) { btnLogin.disabled = true; btnLogin.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Verificando...'; }
-
-        try {
-            const res  = await fetch(`${API_BASE}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password: pwd })
-            });
-            const data = await res.json();
-
-            if (data.success) {
-                agriSyncToken = data.token;
-                agriSyncUser  = data.user;
-                login(agriSyncUser.role || 'Usuario', agriSyncUser);
+        if (role) {
+            login(role);
+        } else {
+            passwordInput.classList.add('border-red-500');
+            // CAMBIO AQUÍ:
+            if (loginError) {
+                loginError.innerText = "Credenciales incorrectas";
+                loginError.classList.remove('hidden');
             } else {
-                passwordInput.classList.add('border-red-500');
-                if (loginError) { loginError.innerText = data.message || 'Credenciales incorrectas.'; loginError.classList.remove('hidden'); }
+                alert("Credenciales incorrectas"); // Fallback si no hay div de error
             }
-        } catch (err) {
-            if (loginError) { loginError.innerText = 'Error de conexión con el servidor.'; loginError.classList.remove('hidden'); }
-            console.error('Login error:', err);
-        } finally {
-            if (btnLogin) { btnLogin.disabled = false; btnLogin.innerHTML = textoOriginal; }
         }
     });
 
@@ -129,17 +101,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     logoutBtn.addEventListener('click', logout);
 
-    function login(role, userData = {}) {   // <-- añadir ", userData = {}"
+    function login(role) {
         currentUserRole = role;
         if (loginError) loginError.classList.add('hidden');
-            passwordInput.value = '';
+        passwordInput.value = '';
 
-        if (userRoleBadge) userRoleBadge.textContent = role;
+        if (userRoleBadge) {
+            userRoleBadge.textContent = role;
+        }
 
-        // AÑADIR ESTAS LÍNEAS para mostrar nombre real de Odoo:
-        const userNameDisplay = document.getElementById('user-name-display') || document.getElementById('user-name-side');
-        if (userNameDisplay && userData.name) userNameDisplay.textContent = userData.name;
-
+        // Si tuvieras controles de administrador específicos:
         if (adminControls) {
             role === 'Admin' ? adminControls.classList.remove('hidden') : adminControls.classList.add('hidden');
         }
@@ -147,15 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
         loginScreen.classList.add('hidden');
         dashboardScreen.classList.remove('hidden');
 
+        // Seleccionar la primera finca del usuario por defecto
         const userFarms = fincas.filter(f => f.propietario === currentUserRole);
-        if (userFarms.length > 0) selectedFarmId = userFarms[0].id;
+        if (userFarms.length > 0) {
+            selectedFarmId = userFarms[0].id;
+        }
 
         initDashboard();
     }
 
     function logout() {
-        agriSyncToken = null;
-        agriSyncUser  = null;
         currentUserRole = null;
         selectedFarmId = null;
         if (sensorInterval) clearInterval(sensorInterval);
@@ -1033,27 +1005,7 @@ function handleDataInput(sensorData) {
 
     updateChartsUI();
     
-    // Reemplaza el comentario FUTURE-PROOF por esto:
-    if (agriSyncToken && agriSyncUser) {
-        const farm = fincas.find(f => f.id === selectedFarmId);
-        fetch(`${API_BASE}/save-agri-data`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-agrisync-token': agriSyncToken
-            },
-            body: JSON.stringify({
-                user_id:               agriSyncUser.id,
-                humedad_suelo:         sensorData.humedad,
-                temperatura_ambiente:  parseFloat(sensorData.temperatura),
-                nivel_ph:              parseFloat(sensorData.ph),
-                intensidad_luminica:   sensorData.iluminacion,
-                fecha:                 new Date().toISOString().split('T')[0],
-                finca:                 farm ? farm.nombre : 'Sin asignar',
-                sensores:              { raw: sensorData }
-            })
-        }).catch(err => console.warn('Sync Odoo error:', err));
-    }
+    // FUTURE-PROOF: Aquí se integrará la llamada a la DB real (fetch/axios)
     // console.log("Data ready for DB Sync:", sensorData);
 }
 

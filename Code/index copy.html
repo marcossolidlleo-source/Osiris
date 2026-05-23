@@ -362,9 +362,6 @@
                             <label for="password"
                                 class="block text-sm font-medium text-text-light mb-2">Contraseña</label>
                             <div class="relative">
-                                <input type="email" id="email" class="input-field w-full px-4 py-3 text-sm"
-                                    placeholder="Email" required>
-                                <p id="loginError" class="hidden text-sm text-red-600 font-medium mt-1"></p>
                                 <input type="password" id="password" class="input-field w-full px-4 py-3 text-lg"
                                     placeholder="Ingresa tu contraseña" required>
                                 <button type="button" id="toggle-password"
@@ -2029,6 +2026,173 @@
         document.addEventListener("DOMContentLoaded", function () {
             // Renderizar contenido inicial
             updateDashboard();
+
+            // Configurar evento de login
+            document.getElementById("login-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const password = document.getElementById("password").value;
+
+                let role = "";
+                if (password === "adminAgri2026") {
+                    role = "Administrador";
+                } else if (password === "userSync123") {
+                    role = "Usuario";
+                }
+
+                if (role !== "") {
+                    currentUserRole = role;
+                    document.getElementById("user-role-display").textContent = role;
+
+                    // Carga inmediatamente la vista del Dashboard
+                    switchScreen("dashboard");
+                    document.getElementById("password").value = "";
+
+                    populateFarmDropdowns(); // Populate farms after login
+                    actualizarClimaFincaActiva(); // Cargar clima de la finca activa
+
+                    // Iniciar actualización automática
+                    startAutoRefresh();
+
+                    // Chat AgroBot con n8n
+                    if (role === "Usuario") {
+                        document.getElementById("test-slack-btn").classList.add("hidden");
+                        if (!document.getElementById("osiris-chat-container")) {
+                            const N8N_WEBHOOK = "https://n8ntfp.duckdns.org/webhook-test/chat-bot";
+
+                            // --- Estilos del chat ---
+                            const style = document.createElement("style");
+                            style.textContent = `
+                                #osiris-chat-container { position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; align-items:flex-end; font-family:'Inter','Segoe UI',sans-serif; }
+                                #osiris-chat-window { width:360px; max-width:calc(100vw - 40px); height:480px; background:#fff; border-radius:20px; box-shadow:0 12px 40px rgba(0,0,0,0.18); display:none; flex-direction:column; overflow:hidden; margin-bottom:14px; border:1px solid #e5e7eb; animation:slideUp 0.25s ease; }
+                                @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+                                #osiris-chat-header { background:linear-gradient(135deg,#1a5d1a,#2e7d32); padding:16px 18px; display:flex; align-items:center; gap:12px; }
+                                #osiris-chat-header .bot-avatar { width:38px; height:38px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+                                #osiris-chat-header .bot-info h4 { color:#fff; font-size:14px; font-weight:700; margin:0; }
+                                #osiris-chat-header .bot-info p { color:rgba(255,255,255,0.75); font-size:11px; margin:0; }
+                                #osiris-chat-header .close-chat { margin-left:auto; background:rgba(255,255,255,0.15); border:none; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff; transition:background 0.2s; }
+                                #osiris-chat-header .close-chat:hover { background:rgba(255,255,255,0.3); }
+                                #osiris-chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; background:#f9fafb; }
+                                #osiris-chat-messages::-webkit-scrollbar { width:4px; }
+                                #osiris-chat-messages::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:4px; }
+                                .chat-msg { max-width:82%; padding:10px 14px; border-radius:16px; font-size:13px; line-height:1.5; word-break:break-word; }
+                                .chat-msg.bot { background:#fff; color:#1f2937; border-bottom-left-radius:4px; box-shadow:0 1px 4px rgba(0,0,0,0.08); align-self:flex-start; }
+                                .chat-msg.user { background:linear-gradient(135deg,#1a5d1a,#2e7d32); color:#fff; border-bottom-right-radius:4px; align-self:flex-end; }
+                                .chat-msg.typing { background:#fff; color:#9ca3af; font-style:italic; align-self:flex-start; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+                                #osiris-chat-footer { padding:12px 14px; background:#fff; border-top:1px solid #f3f4f6; display:flex; gap:8px; align-items:center; }
+                                #osiris-chat-input { flex:1; border:1.5px solid #e5e7eb; border-radius:12px; padding:9px 14px; font-size:13px; outline:none; transition:border 0.2s; color:#1f2937; background:#f9fafb; }
+                                #osiris-chat-input:focus { border-color:#2e7d32; background:#fff; }
+                                #osiris-chat-send { background:linear-gradient(135deg,#1a5d1a,#2e7d32); border:none; border-radius:10px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 0.15s,opacity 0.15s; color:#fff; flex-shrink:0; }
+                                #osiris-chat-send:hover { transform:scale(1.07); }
+                                #osiris-chat-send:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+                                #osiris-chat-bubble { width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg,#1a5d1a,#2e7d32); box-shadow:0 4px 16px rgba(26,93,26,0.45); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; position:relative; }
+                                #osiris-chat-bubble:hover { transform:scale(1.07); box-shadow:0 6px 20px rgba(26,93,26,0.55); }
+                                #osiris-chat-badge { position:absolute; top:-2px; right:-2px; background:#ef4444; color:#fff; font-size:10px; font-weight:700; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; }
+                            `;
+                            document.head.appendChild(style);
+
+                            // --- HTML del chat ---
+                            const container = document.createElement("div");
+                            container.id = "osiris-chat-container";
+                            container.innerHTML = `
+                                <div id="osiris-chat-window">
+                                    <div id="osiris-chat-header">
+                                        <div class="bot-avatar"><i class="fas fa-seedling" style="color:#fff;font-size:16px;"></i></div>
+                                        <div class="bot-info">
+                                            <h4>AgroBot · Osiris</h4>
+                                            <p>Asistente de navegación</p>
+                                        </div>
+                                        <button class="close-chat" id="osiris-chat-close"><i class="fas fa-times" style="font-size:13px;"></i></button>
+                                    </div>
+                                    <div id="osiris-chat-messages">
+                                        <div class="chat-msg bot">👋 ¡Hola! Soy AgroBot, tu asistente en Osiris. ¿En qué puedo ayudarte hoy?</div>
+                                    </div>
+                                    <div id="osiris-chat-footer">
+                                        <input id="osiris-chat-input" type="text" placeholder="Escribe tu pregunta..." autocomplete="off" />
+                                        <button id="osiris-chat-send"><i class="fas fa-paper-plane" style="font-size:13px;"></i></button>
+                                    </div>
+                                </div>
+                                <button id="osiris-chat-bubble">
+                                    <i class="fas fa-comment-dots" style="color:#fff;font-size:22px;"></i>
+                                    <span id="osiris-chat-badge" style="display:none;">1</span>
+                                </button>
+                            `;
+                            document.body.appendChild(container);
+
+                            // --- Lógica del chat ---
+                            const chatWindow = document.getElementById("osiris-chat-window");
+                            const chatBubble = document.getElementById("osiris-chat-bubble");
+                            const chatClose = document.getElementById("osiris-chat-close");
+                            const chatInput = document.getElementById("osiris-chat-input");
+                            const chatSend = document.getElementById("osiris-chat-send");
+                            const chatMsgs = document.getElementById("osiris-chat-messages");
+                            const chatBadge = document.getElementById("osiris-chat-badge");
+                            let chatOpen = false;
+
+                            function toggleChat() {
+                                chatOpen = !chatOpen;
+                                chatWindow.style.display = chatOpen ? "flex" : "none";
+                                chatBadge.style.display = "none";
+                                if (chatOpen) chatInput.focus();
+                            }
+
+                            chatBubble.addEventListener("click", toggleChat);
+                            chatClose.addEventListener("click", toggleChat);
+
+                            function addMessage(text, type) {
+                                const msg = document.createElement("div");
+                                msg.className = `chat-msg ${type}`;
+                                msg.textContent = text;
+                                chatMsgs.appendChild(msg);
+                                chatMsgs.scrollTop = chatMsgs.scrollHeight;
+                                return msg;
+                            }
+
+                            async function sendMessage() {
+                                const text = chatInput.value.trim();
+                                if (!text) return;
+                                chatInput.value = "";
+                                chatSend.disabled = true;
+                                addMessage(text, "user");
+                                const typing = addMessage("AgroBot está escribiendo...", "typing");
+                                try {
+                                    const res = await fetch(N8N_WEBHOOK, {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ message: text })
+                                    });
+                                    const data = await res.json();
+                                    typing.remove();
+                                    const reply = data.output || data.text || data.message || data.response || "No he podido procesar tu consulta.";
+                                    addMessage(reply, "bot");
+                                    if (!chatOpen) {
+                                        chatBadge.style.display = "flex";
+                                    }
+                                } catch (e) {
+                                    typing.remove();
+                                    addMessage("⚠️ Error al conectar con el asistente. Inténtalo de nuevo.", "bot");
+                                    console.error("Chat error:", e);
+                                } finally {
+                                    chatSend.disabled = false;
+                                    chatInput.focus();
+                                }
+                            }
+
+                            chatSend.addEventListener("click", sendMessage);
+                            chatInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+
+                        } else {
+                            document.getElementById("osiris-chat-container").style.display = "flex";
+                        }
+                    } else if (role === "Administrador") {
+                        document.getElementById("test-slack-btn").classList.remove("hidden");
+                        if (document.getElementById("osiris-chat-container")) {
+                            document.getElementById("osiris-chat-container").style.display = "none";
+                        }
+                    }
+                } else {
+                    alert("Acceso denegado. Las credenciales introducidas no son correctas.");
+                }
+            });
 
             // Evento para probar alerta de Slack
             const addFarmForm = document.getElementById('add-farm-form');
