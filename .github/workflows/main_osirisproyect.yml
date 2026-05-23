@@ -26,6 +26,9 @@ jobs:
       # Nos movemos a la carpeta Code, instalamos dependencias y compilamos el proyecto
       # Esto creará la carpeta /Code/dist con tu app web lista
       - name: Install dependencies and build
+        env:
+          VITE_SUPABASE_URL: "https://qubwcwrzpxeygdogadkt.supabase.co"
+          VITE_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1Yndjd3J6cHhleWdkb2dhZGt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTAzNDMsImV4cCI6MjA5NDg2NjM0M30.2Gu39d_3pjzziwrSW1j84K1u9SK-l645P-8SYHCxs24"
         run: |
           cd Code
           npm ci
