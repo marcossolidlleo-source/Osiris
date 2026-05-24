@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 // ⚠️ REEMPLAZA ESTAS URLS CON LAS QUE TE DA N8N (Production o Test URL)
 const N8N_LOGIN_URL = 'https://n8ntfp.duckdns.org/webhook/login';
-const N8N_REGISTER_URL = 'https://n8ntfp.duckdns.org/webhook/register';
+const N8N_REGISTER_URL = 'https://n8ntfp.duckdns.org/webhook-test/register';
 
 interface Props {
   onLoginSuccess: (userId: string, email: string) => void;
