@@ -13,6 +13,8 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [apikeyCallmebot, setApikeyCallmebot] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -64,7 +66,7 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
     setSuccessMessage('');
     setLoading(true);
 
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !telefono || !apikeyCallmebot) {
       setError('Por favor completa todos los campos');
       setLoading(false);
       return;
@@ -77,7 +79,9 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
         body: JSON.stringify({
           nombre: fullName,
           email,
-          password
+          password,
+          telefono,
+          apikey_callmebot: apikeyCallmebot
         })
       });
 
@@ -95,6 +99,8 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
         setEmail('');
         setPassword('');
         setFullName('');
+        setTelefono('');
+        setApikeyCallmebot('');
         setSuccessMessage('');
       }, 2000);
 
@@ -177,6 +183,28 @@ export default function AuthScreen({ onLoginSuccess }: Props) {
                     <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} />
                   </button>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-500 mb-2">Teléfono</label>
+                <input
+                  type="tel"
+                  value={telefono}
+                  onChange={e => { setTelefono(e.target.value); setError(''); }}
+                  className="input-field w-full px-4 py-3"
+                  placeholder="Ej: +34 600 000 000"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-500 mb-2">API Key de CallMeBot</label>
+                <input
+                  type="text"
+                  value={apikeyCallmebot}
+                  onChange={e => { setApikeyCallmebot(e.target.value); setError(''); }}
+                  className="input-field w-full px-4 py-3"
+                  placeholder="Introduce tu API Key"
+                  required
+                />
               </div>
               {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
               <button
