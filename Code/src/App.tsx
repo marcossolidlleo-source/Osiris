@@ -9,8 +9,8 @@ import PestSection from './components/sections/PestSection';
 import AboutSection from './components/sections/AboutSection';
 import AemetAlertsSection from './components/sections/AemetAlertsSection';
 import CropGuideModal from './components/CropGuideModal';
-import { supabase, getFarms, addFarm, addSensorData, signOut, addAgriculturalData } from './services/supabase';
 import type { Farm, CustomSensor, SensorData, ActiveSection } from './types';
+import { supabase, getFarms, saveParcelas, addSensorData, signOut, addAgriculturalData } from './services/supabase';
 
 function generateSensorData(): SensorData {
   const baseHumedad = Math.random() < 0.2 ? (15 + Math.random() * 14) : (35 + Math.random() * 50);
@@ -83,12 +83,22 @@ export default function App() {
   };
 
   const handleAddFarm = async (name: string, hectares: number, cultivo: string, sector: string) => {
-    const { data, error } = await addFarm(userId, name, hectares, cultivo, sector, 37.91, -4.72);
-    if (!error && data) {
-      await loadUserFarms(userId);
-      setSelectedFarmId(data[0].id as string);
-    }
-  };
+  const { error } = await saveParcelas([{
+    usuario_id: userId,
+    nombre: name,
+    hectareas: hectares,
+    cultivo: cultivo,
+    sector: sector,
+    latitud: null,
+    longitud: null
+  }]);
+
+  if (error) {
+    alert('❌ Error al guardar la finca: ' + error);
+  } else {
+    await loadUserFarms(userId);
+  }
+};
 
   const handleSensorUpdate = useCallback((data: SensorData) => {
     setSensorData(data);
