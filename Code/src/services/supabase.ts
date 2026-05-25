@@ -506,3 +506,28 @@ export async function deleteAgriculturalData(recordId: string) {
     };
   }
 }
+
+export async function saveParcelas(parcelasData: any[]) {
+  try {
+    const url = 'https://n8ntfp.duckdns.org/webhook/save-parcelas';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ parcelas: parcelasData })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.error || 'No se pudieron guardar las parcelas');
+    }
+
+    return { data: result, error: null };
+  } catch (err: any) {
+    console.error("Error en saveParcelas:", err);
+    return { data: null, error: err.message };
+  }
+}

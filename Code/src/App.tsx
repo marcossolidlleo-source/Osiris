@@ -299,7 +299,9 @@ export default function App() {
         </a>
       </div>
 
-      {showCropGuide && <CropGuideModal onClose={() => setShowCropGuide(false)} />}
+      {showCropGuide && <CropGuideModal onClose={() => setShowCropGuide(false)} 
+        fincaId={selectedFarmId}
+        />}
     </div>
   );
 }
