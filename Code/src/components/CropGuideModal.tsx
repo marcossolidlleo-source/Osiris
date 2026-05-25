@@ -1,16 +1,18 @@
 import { useState, useMemo } from 'react';
 import { CROPS } from '../data/crops';
 import type { CropInfo } from '../types';
+import { addAgriculturalData } from '../services/supabase';
 
 interface Props {
   onClose: () => void;
+  fincaId: string;
 }
 
 function normalize(text: string): string {
   return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-export default function CropGuideModal({ onClose }: Props) {
+export default function CropGuideModal({ onClose, fincaId }: Props) {
   const [query, setQuery] = useState('');
   const [ciclo, setCiclo] = useState('Todos');
   const [especie, setEspecie] = useState('Todos');
@@ -28,6 +30,23 @@ export default function CropGuideModal({ onClose }: Props) {
       return matchText && matchCiclo && matchEsp && matchMet && matchUso;
     });
   }, [query, ciclo, especie, metodo, uso]);
+
+  const handleSave = async (fincaId: string, cropData: CropInfo) => {
+  // Aquí mapeamos los datos de la guía a la estructura que espera tu n8n
+  const dataToSave = {
+    finca_nombre: cropData.nombre,
+    variedad: cropData.nombre, 
+    // Puedes añadir aquí otros campos que necesites...
+  };
+
+  const { data, error } = await addAgriculturalData(fincaId, dataToSave);
+  
+  if (error) {
+    alert("Error al guardar: " + error);
+  } else {
+    alert("¡Datos del cultivo guardados correctamente!");
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
@@ -106,6 +125,27 @@ export default function CropGuideModal({ onClose }: Props) {
                       <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[0.6rem] font-bold rounded-md uppercase tracking-wider shadow-sm">{c.metodo}</span>
                       <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-[0.6rem] font-bold rounded-md uppercase tracking-wider shadow-sm">{c.uso}</span>
                     </div>
+                      <button 
+                      onClick={async () => {
+                        // Ejemplo de datos a guardar. Asegúrate de tener el fincaId disponible.
+                        const result = await addAgriculturalData(fincaId, {
+                          finca_nombre: c.nombre,
+                          variedad: c.nombre,
+                          humedad_suelo: c.humMin,
+                          temperatura_ambiente: c.tempMin,
+                          nivel_ph: c.phMin
+                        });
+                        
+                        if (result.error) {
+                          alert("Error: " + result.error);
+                        } else {
+                          alert("¡Cultivo guardado correctamente!");
+                        }
+                      }}
+                      className="mt-3 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition-colors flex items-center justify-center gap-2"
+                    >
+                      <i className="fas fa-save" /> Guardar parámetros
+                    </button>
                   </div>
                 </div>
               ))}
