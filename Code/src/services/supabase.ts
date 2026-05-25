@@ -19,7 +19,7 @@ export async function signUp(email: string, password: string, fullName: string, 
         nombre: fullName,
         email: email,
         password: password,
-        telefono: phone
+        telefono: phone,
         apikey_callmebot: 'TU_API_KEY_AQUÍ' 
       })
     });
