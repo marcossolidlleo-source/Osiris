@@ -63,26 +63,32 @@ export async function signUp(email: string, password: string, fullName: string, 
 
 export async function signIn(email: string, password: string) {
   try {
-    // Apuntamos al endpoint de producción de vuestro flujo de login
-    const url = 'https://n8ntfp.duckdns.org/webhook/login';
+    // Usamos el webhook de TEST para comprobarlo ahora mismo sin activar el flujo definitivo
+    const url = 'https://n8ntfp.duckdns.org/webhook-test/login';
+
+    console.log("🚀 [signIn] Iniciando petición a n8n...", { email, url });
 
     const response = await fetch(url, {
-      method: 'POST', // Tal y como está configurado en vuestro nodo "WH /login1"
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
 
-    const result = await response.json();
+    console.log("🛰️ [signIn] Respuesta de red recibida. Status:", response.status);
 
-    // Si n8n responde con códigos de error (400, 401, 403, 404) o success: false
-    if (!response.ok || result.success === false) {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Error en el servidor (Status ${response.status})`);
+    }
+
+    const result = await response.json();
+    console.log("📦 [signIn] JSON parseado desde n8n:", result);
+
+    if (result.success === false || result.isError) {
       throw new Error(result.error || 'Fallo en la autenticación');
     }
 
-    // Si todo va bien (200 OK), n8n devuelve success, userId, nombre, email, rol y token
-    // Guardamos el token en el localStorage para mantener la sesión si vuestra app lo requiere
+    // Guardar en almacenamiento local
     localStorage.setItem('osiris_token', result.token);
     localStorage.setItem('osiris_user', JSON.stringify({
       id: result.userId,
@@ -90,22 +96,20 @@ export async function signIn(email: string, password: string) {
       email: result.email,
       rol: result.rol
     }));
+    
+    console.log("💾 [signIn] LocalStorage actualizado correctamente.");
+    console.log("🔑 [signIn] Contenido actual de osiris_user:", localStorage.getItem('osiris_user'));
 
-    // Retornamos la estructura limpia para que el componente de Login no se rompa
     return {
       data: {
-        user: {
-          id: result.userId,
-          email: result.email,
-          user_metadata: { full_name: result.nombre }
-        },
+        user: { id: result.userId, email: result.email, user_metadata: { full_name: result.nombre } },
         session: { access_token: result.token }
       },
       error: null
     };
 
   } catch (err: any) {
-    console.error("Error en el login personalizado (n8n):", err);
+    console.error("❌ [signIn] Error cazado en la función:", err.message);
     return {
       data: { user: null, session: null },
       error: err.message || "Error al conectar con el servicio de autenticación"
