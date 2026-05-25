@@ -156,21 +156,35 @@ export async function createUserProfile(userId: string, email: string, fullName:
 }
 
 export async function addFarm(userId: string, nombre: string, hectareas: number, cultivo: string, sector: string, latitud?: number, longitud?: number) {
-  const { data, error } = await supabase
-    .from('fincas')
-    .insert([
-      {
-        usuario_id: userId,
-        nombre,
-        hectareas,
-        cultivo,
-        sector,
-        latitud,
-        longitud,
-      },
-    ])
-    .select();
-  return { data, error };
+  try {
+    const response = await fetch('https://n8ntfp.duckdns.org/webhook/save-parcelas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        parcelas: [{
+          usuario_id: userId,
+          nombre,
+          hectareas,
+          cultivo,
+          sector,
+          latitud: latitud ?? null,
+          longitud: longitud ?? null
+        }]
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'No se pudo guardar la finca');
+    }
+
+    return { data: [result], error: null };
+
+  } catch (err: any) {
+    console.error('Error en addFarm:', err);
+    return { data: null, error: err.message || 'Error desconocido' };
+  }
 }
 
 export async function getFarms(userId: string) {
