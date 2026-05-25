@@ -14,30 +14,27 @@ export default function LoginScreen({ onLogin }: Props) {
   const [showContact, setShowContact] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    try {
-      // Llamamos a tu función mágica con el email y password reales de la pantalla
-      const result = await signIn(email.trim(), password.trim());
-
-      if (result.error) {
-        setError(result.error);
-        return;
-      }
-
-      if (result.data?.user) {
-        setPassword('');
-        const userObj = JSON.parse(localStorage.getItem('osiris_user') || '{}');
-        const userRole = userObj.rol || 'usuario'; 
-
-        onLogin(userRole);
-      }
-
-    } catch (err) {
-      setError('Error inesperado al conectar con el servidor de Osiris');
+  try {
+    console.log("🚀 Intentando login con:", email); // Esto saldrá en la consola (F12)
+    
+    // Llamamos a tu servicio
+    const result = await signIn(email, password);
+    
+    if (result.error) {
+      setError(result.error);
+      return;
     }
-  };
+
+    if (result.data?.user) {
+      onLogin(result.data.user.user_metadata?.role || 'usuario');
+    }
+  } catch (err: any) {
+    setError('Error de conexión con el servidor');
+  }
+};
 
   return (
     <div className="min-h-screen bg-white flex flex-col p-6 pt-8 pb-8">
