@@ -170,30 +170,45 @@ export async function addFarm(userId: string, nombre: string, hectareas: number,
 
 export async function getFarms(userId: string) {
   try {
-    // Si por algún caso el frontend no pasa el userId, intentamos cogerlo del localStorage
-    const idParaFiltrar = userId || (() => {
+    // 1. Obtener ID de forma segura
+    let idParaFiltrar = userId;
+    
+    if (!idParaFiltrar) {
       const userString = localStorage.getItem('osiris_user');
-      return userString ? JSON.parse(userString).id : '';
-    })();
+      if (userString) {
+        const user = JSON.parse(userString);
+        idParaFiltrar = user.id;
+      }
+    }
 
-    // Construimos la URL apuntando a vuestro webhook con el usuario_id de filtro
+    if (!idParaFiltrar) {
+      console.warn("No se encontró userId para filtrar parcelas");
+      return { data: [], error: "ID de usuario no encontrado" };
+    }
+
+    // 2. Llamada al Webhook
     const url = `https://n8ntfp.duckdns.org/webhook/get-parcelas?usuario_id=${encodeURIComponent(idParaFiltrar)}`;
 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Accept': 'application/json', // Importante pedir JSON
       }
     });
 
-    const result = await response.json();
-
-    if (!response.ok || result.success === false) {
-      throw new Error(result.error || 'No se pudo obtener el listado de fincas');
+    // 3. Validar respuesta
+    if (!response.ok) {
+      throw new Error(`Error servidor: ${response.status}`);
     }
 
-    // Vuestro flujo de n8n devuelve el array limpio en la propiedad "parcelas"
-    // Adaptamos la respuesta al formato { data, error } para que React lo entienda perfectamente
+    const result = await response.json();
+    console.log("Datos recibidos de n8n:", result); // Debug para ver qué llega
+
+    // 4. Adaptar respuesta (n8n devuelve result.parcelas)
+    if (result.success === false) {
+      throw new Error(result.message || 'Error en el flujo de n8n');
+    }
+
     return {
       data: result.parcelas || [],
       error: null
@@ -203,7 +218,7 @@ export async function getFarms(userId: string) {
     console.error("Error al recuperar fincas desde n8n:", err);
     return {
       data: [],
-      error: err.message || "Error de comunicación con el servicio de fincas"
+      error: err.message || "Error de comunicación"
     };
   }
 }
