@@ -67,6 +67,17 @@ export default function LoginScreen({ onLogin }: Props) {
         <div className="card bg-white p-8 mb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-500 mb-2">Correo electrónico</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setError(''); }}
+                className="input-field w-full px-4 py-3 text-lg"
+                placeholder="tu@email.com"                  required
+              />
+            </div>
+            <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-500 mb-2">Contraseña</label>
               <div className="relative">
                 <input
