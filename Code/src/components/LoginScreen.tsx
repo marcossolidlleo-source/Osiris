@@ -1,47 +1,43 @@
 import { useState } from 'react';
 import { CREDENTIALS } from '../data/crops';
-import { signIn } from '../services';
+import { signIn } from '../services/supabase';
 
 interface Props {
   onLogin: (role: string) => void;
 }
 
 export default function LoginScreen({ onLogin }: Props) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [showContact, setShowContact] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("🎯 ¡EL BOTÓN VERDE SÍ LLAMA A N8N!");
-  setError(''); // Limpiamos el mensaje de error anterior si lo hubiera
+    e.preventDefault();
+    setError('');
 
-  try {
-    // 1. Llamamos a tu función que dispara hacia n8n
-    const result = await signIn(email.trim(), password.trim());
+    try {
+      // Llamamos a tu función mágica con el email y password reales de la pantalla
+      const result = await signIn(email.trim(), password.trim());
 
-    // 2. Si n8n o la función devuelven un error, lo pintamos en la pantalla
-    if (result.error) {
-      setError(result.error);
-      return;
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      if (result.data?.user) {
+        setPassword('');
+        const userObj = JSON.parse(localStorage.getItem('osiris_user') || '{}');
+        const userRole = userObj.rol || 'usuario'; 
+
+        onLogin(userRole);
+      }
+
+    } catch (err) {
+      setError('Error inesperado al conectar con el servidor de Osiris');
     }
-
-    // 3. Si todo va bien, recuperamos el rol para darle paso al sistema
-    if (result.data?.user) {
-      setPassword('');
-      
-      // Leemos el rol que guardamos en el localStorage en la función signIn
-      const userObj = JSON.parse(localStorage.getItem('osiris_user') || '{}');
-      const userRole = userObj.rol || 'usuario'; 
-
-      onLogin(userRole);
-    }
-
-  } catch (err) {
-    setError('Error inesperado al conectar con el servidor de Osiris');
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col p-6 pt-8 pb-8">
