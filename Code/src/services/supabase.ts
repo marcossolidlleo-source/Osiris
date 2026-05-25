@@ -507,27 +507,30 @@ export async function deleteAgriculturalData(recordId: string) {
   }
 }
 
+// src/services/supabase.ts
 export async function saveParcelas(parcelasData: any[]) {
-  try {
-    const url = 'https://n8ntfp.duckdns.org/webhook/save-parcelas';
+  const url = '[n8ntfp.duckdns.org](https://n8ntfp.duckdns.org/webhook/save-parcelas)';
 
+  try {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
+      // n8n espera el campo "parcelas" en el body
       body: JSON.stringify({ parcelas: parcelasData })
     });
 
     const result = await response.json();
 
-    if (!response.ok || result.success === false) {
+    // n8n devuelve success, message y statusCode
+    if (!response.ok || !result.success) {
       throw new Error(result.error || 'No se pudieron guardar las parcelas');
     }
 
     return { data: result, error: null };
   } catch (err: any) {
-    console.error("Error en saveParcelas:", err);
-    return { data: null, error: err.message };
+    console.error('Error en saveParcelas:', err);
+    return { data: null, error: err.message || 'Error desconocido' };
   }
 }
