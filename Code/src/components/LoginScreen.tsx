@@ -14,6 +14,7 @@ export default function LoginScreen({ onLogin }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
+  console.log("🎯 ¡EL BOTÓN VERDE SÍ LLAMA A N8N!");
   setError(''); // Limpiamos el mensaje de error anterior si lo hubiera
 
   try {
