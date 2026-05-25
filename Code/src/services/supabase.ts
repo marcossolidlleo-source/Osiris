@@ -509,7 +509,7 @@ export async function deleteAgriculturalData(recordId: string) {
 
 // src/services/supabase.ts
 export async function saveParcelas(parcelasData: any[]) {
-  const url = '[n8ntfp.duckdns.org](https://n8ntfp.duckdns.org/webhook/save-parcelas)';
+  const url = 'https://n8ntfp.duckdns.org/webhook/save-parcelas';
 
   try {
     const response = await fetch(url, {
