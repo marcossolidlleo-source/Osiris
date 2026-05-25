@@ -16,12 +16,14 @@ export default function FincaForm() {
     setLoading(true);
 
     const nuevaFinca = [{
+      id: crypto.randomUUID(),
+      usuario_id: null,
       nombre: nombre.trim(),
       sector: ubicacion.trim(),
-      hectareas: 10,
-      cultivo: 'Olivos',
-      latitud: 37.88,
-      longitud: -4.77
+      hectareas: null,
+      cultivo: null,
+      latitud: null,
+      longitud: null
     }];
 
     const { error } = await saveParcelas(nuevaFinca);
