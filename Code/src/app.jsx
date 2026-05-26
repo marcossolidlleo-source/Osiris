@@ -217,7 +217,7 @@ function init3DMap(reset = false) {
     scene3D.background = new THREE.Color(0x0d1f12);
 
     camera3D = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000);
-    camera3D.position.set(0, 8, 50);
+    camera3D.position.set(0, 2, 60);
     camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true });
