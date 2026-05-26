@@ -214,7 +214,7 @@ function init3DMap(reset = false) {
     const height = 600;
 
     camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera3D.position.set(0, 15, 60);
+    camera3D.position.set(0, 30, 70);
     camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -232,11 +232,9 @@ function init3DMap(reset = false) {
     container.innerHTML = '';
     container.appendChild(renderer3D.domElement);
 
-    renderer3D.domElement.style.position = 'absolute';
-    renderer3D.domElement.style.top = '0';
-    renderer3D.domElement.style.left = '0'; 
     renderer3D.domElement.style.width = '100%';
-    renderer3D.domElement.style.height = '100%';            
+    renderer3D.domElement.style.height = '100%';  
+    renderer3D.domElement.style.display = 'block';   
 
     scene3D.add(new THREE.AmbientLight(0xffffff, 0.2));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
