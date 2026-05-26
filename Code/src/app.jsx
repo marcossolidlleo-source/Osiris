@@ -278,7 +278,7 @@ scene3D.add(grid);
                 camera3D.aspect = w / h;
                 camera3D.updateProjectionMatrix();
                 renderer3D.setSize(w, h);
-                camera3D.lookAt(0, 0, 0);
+                camera3D.lookAt(0, 0, -20);
             }
         }
     });
