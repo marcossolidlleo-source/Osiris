@@ -791,27 +791,67 @@ function init3DMap(reset = false) {
     const baseDepth = baseWidth * 0.75;
 
     scene3D = new THREE.Scene();
-    scene3D.background = new THREE.Color(0xf2f7f9);
+    
+    // ✅ CAMBIO 1: Fondo oscuro "Modo Noche" para Osiris
+    scene3D.background = new THREE.Color(0x0d1f12); 
+
     camera3D = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera3D.position.set(0, baseWidth, baseWidth * 1.5);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer3D.setSize(container.clientWidth, container.clientHeight);
+    
+    // ✅ CAMBIO 2: Activar el mapeado de sombras en el renderizador
+    renderer3D.shadowMap.enabled = true;
+    renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; // Sombras más suaves y profesionales
+
     container.innerHTML = '';
     container.appendChild(renderer3D.domElement);
 
-    scene3D.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    // ==========================================
+    // ✅ CAMBIO 3: Esquema de 4 Luces (Cinemático)
+    // ==========================================
+    
+    // 1. Luz Ambiental (Luz tenue de fondo)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); 
+    scene3D.add(ambientLight);
+
+    // 2. Luz Direccional (La principal que genera sombras)
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(baseWidth, 120, 100);
+    directionalLight.castShadow = true; // Activar proyección de sombra
+    // Optimizar mapa de sombras para que no se vean pixeladas
+    directionalLight.shadow.mapSize.width = 2048;
+    directionalLight.shadow.mapSize.height = 2048;
     scene3D.add(directionalLight);
 
-    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x888888, 0xcccccc));
+    // 3. Luz de Relleno (Fill Light - Suaviza los contrastes oscuros)
+    const fillLight = new THREE.DirectionalLight(0x8bc34a, 0.3); // Tono verdoso suave
+    fillLight.position.set(-baseWidth, 50, -50);
+    scene3D.add(fillLight);
 
+    // 4. Luz de Contorno (Rim Light - Resalta siluetas desde atrás)
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    rimLight.position.set(0, -20, -baseWidth);
+    scene3D.add(rimLight);
+
+    // ==========================================
+
+    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222)); // Rejilla más oscura a juego
+
+    // ✅ CAMBIO 4: Suelo (ground3D) actualizado con tus nuevos parámetros
     ground3D = new THREE.Mesh(
         new THREE.PlaneGeometry(baseWidth, baseDepth),
-        new THREE.MeshPhongMaterial({ color: 0x8cc56d, opacity: 0.4, transparent: true, side: THREE.DoubleSide })
+        new THREE.MeshPhongMaterial({ 
+            color: 0x3a7d44,       // Tu nuevo verde
+            shininess: 20,         // Brillo metálico/plástico
+            opacity: 0.6,          // 60% opacidad
+            transparent: true,     // Requerido para opacidad
+            side: THREE.DoubleSide 
+        })
     );
     ground3D.rotation.x = -Math.PI / 2;
+    ground3D.receiveShadow = true; // ✅ Permitir que los sensores proyecten sombras aquí
     scene3D.add(ground3D);
 
     const animate = () => {
@@ -831,7 +871,11 @@ function init3DMap(reset = false) {
 
     const btnOptimizar = document.getElementById('btn-optimizar-ia');
     if (btnOptimizar) {
-        btnOptimizar.addEventListener('click', () => {
+        // Evitamos duplicar listeners limpiando el nodo si clonan, 
+        // pero con la estructura actual basta con asegurar que no se duplique:
+        const newBtn = btnOptimizar.cloneNode(true);
+        btnOptimizar.parentNode.replaceChild(newBtn, btnOptimizar);
+        newBtn.addEventListener('click', () => {
             optimizarColocacionIA();
             alert("Ubicación de sensores optimizada por IA para esta finca.");
         });
@@ -846,11 +890,20 @@ function crearSensor3D(x, z, isCustom = false) {
     const topColor = isCustom ? 0x3b82f6 : 0x22c55e;
     const emissiveColor = isCustom ? 0x1d4ed8 : 0x0d7e25;
 
+    // 1. Cuerpo cilíndrico del sensor
     const sensorMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: color, metalness: 0.3, roughness: 0.6 }));
     sensorMesh.position.set(x, 2, z);
+    
+    // 👇 CAMBIO 1: El cuerpo del sensor proyectará sombra
+    sensorMesh.castShadow = true; 
 
+    // 2. Cúpula esférica del sensor
     const sensorTop = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), new THREE.MeshStandardMaterial({ color: topColor, emissive: emissiveColor, emissiveIntensity: 0.3 }));
     sensorTop.position.set(0, 2.2, 0);
+    
+    // 👇 CAMBIO 2: La tapa esférica superior también proyectará sombra
+    sensorTop.castShadow = true; 
+    
     sensorMesh.add(sensorTop);
 
     scene3D.add(sensorMesh);
