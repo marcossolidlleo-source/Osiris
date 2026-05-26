@@ -900,6 +900,11 @@ function init3DMap(reset = false) {
         }
     }, 300); // 300ms es el tiempo perfecto para que React termine la animación de apertura
 }
+// ... código final de init3DMap (debajo del listener del botón optimizar) ...
+    
+    // 🌍 Exponer la función al navegador de forma global para que React la vea
+    window.init3DMap = init3DMap;
+
 };
     animate();
 
