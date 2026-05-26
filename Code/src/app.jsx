@@ -194,90 +194,69 @@ function init3DMap(reset = false) {
     }
 
     map3DInitialized = true;
-    
-    // Extractor ultra seguro de las fincas inyectadas por n8n o React
+
     let listaFincas = window.fincas || [];
     let currentFarmId = window.selectedFarmId || null;
-
-    // Buscamos la finca. Si selectedFarmId no se ha definido aún, evitamos el crash usando un objeto por defecto
     const farm = listaFincas.find(f => f && f.id === currentFarmId) || { hectareas: 5 };
     const hectareasSeguras = farm.hectareas || 5;
-    const baseWidth = Math.sqrt(hectareasSeguras) * 20; 
+    const baseWidth = Math.sqrt(hectareasSeguras) * 20;
     const baseDepth = baseWidth * 0.75;
 
-    console.log('🌱 farm:', farm, 'hectareas:', hectareasSeguras, 'baseWidth:', baseWidth);
-
-    scene3D = new THREE.Scene();
-    scene3D.background = new THREE.Color(0x0d1f12); 
-
-    const width = container.getBoundingClientRect().width || container.offsetWidth || 800;
-    const height = 600;
-
-    camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera3D.position.set(0, 30, 70);
-    camera3D.lookAt(0, 0, 0);
-
-    renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer3D.setSize(width, height);
-    renderer3D.shadowMap.enabled = true;
-    renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; 
-
-    container.innerHTML = '';
-    // Forzar tamaño al contenedor antes de añadir el canvas
+    // Forzar tamaño del contenedor ANTES de leer dimensiones
     container.style.width = '100%';
     container.style.height = '600px';
     container.style.display = 'block';
     container.style.position = 'relative';
-
     container.innerHTML = '';
+
+    const width = container.clientWidth || 800;
+    const height = 600;
+
+    scene3D = new THREE.Scene();
+    scene3D.background = new THREE.Color(0x0d1f12);
+
+    camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 2000);
+    camera3D.position.set(0, baseWidth * 0.6, baseWidth * 1.4);
+    camera3D.lookAt(0, 0, 0);
+
+    renderer3D = new THREE.WebGLRenderer({ antialias: true });
+    renderer3D.setSize(width, height);
+    renderer3D.shadowMap.enabled = true;
     container.appendChild(renderer3D.domElement);
 
-    renderer3D.domElement.style.width = '100%';
-    renderer3D.domElement.style.height = '100%';  
-    renderer3D.domElement.style.display = 'block';   
+    // SIN tocar el estilo del canvas — THREE lo gestiona
 
-    scene3D.add(new THREE.AmbientLight(0xffffff, 0.2));
+    scene3D.add(new THREE.AmbientLight(0xffffff, 0.4));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(baseWidth, 120, 100);
+    directionalLight.position.set(50, 100, 50);
     directionalLight.castShadow = true;
     scene3D.add(directionalLight);
 
-    const grid = new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222);
-grid.position.y = 0;
-scene3D.add(grid);
+    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222));
 
     ground3D = new THREE.Mesh(
         new THREE.PlaneGeometry(baseWidth, baseDepth),
         new THREE.MeshPhongMaterial({ color: 0x3a7d44, shininess: 20, opacity: 0.6, transparent: true, side: THREE.DoubleSide })
     );
     ground3D.rotation.x = -Math.PI / 2;
-    ground3D.receiveShadow = true; 
+    ground3D.receiveShadow = true;
     scene3D.add(ground3D);
 
     const animate = () => {
         requestAnimationFrame(animate);
-        const controls = window.controls3D;
-        if (controls) {
-            controls.target.set(0, 0, 0);
-            controls.update();
-        }
         if (renderer3D) renderer3D.render(scene3D, camera3D);
     };
     animate();
 
     optimizarColocacionIA();
 
-    // Redimensionado dinámico inteligente
-    const resizeObserver = new ResizeObserver((entries) => {
-        for (let entry of entries) {
-            const w = entry.contentRect.width;
-            const h = entry.contentRect.height || 600;  // 👈 fallback a 600
-            if (w > 0 && camera3D && renderer3D) {
-                camera3D.aspect = w / h;
-                camera3D.updateProjectionMatrix();
-                renderer3D.setSize(w, h);
-                camera3D.lookAt(0, 0, 0);
-            }
+    const resizeObserver = new ResizeObserver(() => {
+        const w = container.clientWidth;
+        const h = 600;
+        if (w > 0 && camera3D && renderer3D) {
+            camera3D.aspect = w / h;
+            camera3D.updateProjectionMatrix();
+            renderer3D.setSize(w, h);
         }
     });
     resizeObserver.observe(container);
