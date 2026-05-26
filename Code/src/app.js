@@ -4,7 +4,13 @@
  */
 
 // --- 1. NUEVA CONFIGURACIÓN SOCKET.IO ---
-const socket = io();
+// 🛠️ PARCHE ANTIBLOQUEO: Evitar que la web se quede en blanco si 'io' no está cargado todavía
+let socket;
+if (typeof io !== 'undefined') {
+    socket = io(); // o la URL que tuvieses puesta, por ejemplo: io('http://localhost:3000')
+} else {
+    console.warn("⚠️ Socket.IO (io) no está definido globalmente todavía. Esperando conexión...");
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     // Referencias al DOM originales (Sincronizadas con index.html)
