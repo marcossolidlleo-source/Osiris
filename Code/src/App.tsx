@@ -139,8 +139,21 @@ export default function App() {
   }, []);
 
   const simulate = useCallback(() => {
-    handleSensorUpdate(generateSensorData());
-  }, [handleSensorUpdate]);
+    const newSensorData = generateSensorData();
+    handleSensorUpdate(newSensorData);
+
+    // Guardar en BD al pulsar "Simular Datos"
+    if (selectedFarmId) {
+      const agData = {
+        ...generateAgriculturalData(),
+        humedad_suelo:        newSensorData.humedad,
+        temperatura_ambiente: parseFloat(newSensorData.temperatura),
+        nivel_ph:             parseFloat(newSensorData.ph),
+        intensidad_luminica:  newSensorData.iluminacion,
+      };
+      addAgriculturalData(selectedFarmId, agData).catch(console.error);
+    }
+  }, [handleSensorUpdate, selectedFarmId, generateAgriculturalData]);
 
   const simulateHourlyData = useCallback(() => {
     if (!selectedFarmId) return;
@@ -158,6 +171,19 @@ export default function App() {
       if (refreshIntervalRef.current) clearInterval(refreshIntervalRef.current);
     };
   }, [isLoggedIn, refreshRate, simulate]);
+
+  useEffect(() => {
+  if (!isLoggedIn || !selectedFarmId) return;
+
+  // Guardar datos agrícolas automáticamente cada 5 minutos
+  hourlyIntervalRef.current = setInterval(() => {
+    simulateHourlyData();
+  }, 5 * 60 * 1000);
+
+  return () => {
+    if (hourlyIntervalRef.current) clearInterval(hourlyIntervalRef.current);
+  };
+}, [isLoggedIn, selectedFarmId, simulateHourlyData]);
 
   if (!isLoggedIn) {
     return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
