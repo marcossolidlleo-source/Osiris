@@ -39,6 +39,7 @@ export default function App() {
   const [alertMessage, setAlertMessage] = useState('');
   const refreshIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hourlyIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [hasRealData, setHasRealData] = useState(false);
 
   useEffect(() => {
     checkAuthStatus();
@@ -81,6 +82,7 @@ export default function App() {
       ph: String(last.nivel_ph ?? 0),
       iluminacion: last.intensidad_luminica ?? 0,
     });
+     setHasRealData(true); // marcar que hay datos reales 
   }
 }, []);
 
@@ -161,7 +163,9 @@ export default function App() {
 
   const simulate = useCallback(() => {
     const newSensorData = generateSensorData();
-    handleSensorUpdate(newSensorData);
+    if (!hasRealData) {
+      handleSensorUpdate(newSensorData);
+  }
 
     // Guardar en BD al pulsar "Simular Datos"
     if (selectedFarmId) {
