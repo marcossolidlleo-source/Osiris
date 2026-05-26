@@ -798,12 +798,16 @@ function init3DMap(reset = false) {
     // ✅ CAMBIO 1: Fondo oscuro "Modo Noche" para Osiris
     scene3D.background = new THREE.Color(0x0d1f12); 
 
-    // 🛠️ PARCHE DE CÁMARA: Forzar medidas iniciales
+    // 🛠️ PARCHE DE CÁMARA: Forzar medidas del contenedor o usar respaldo de ventana si React no ha estirado el div
     const width = container.clientWidth || window.innerWidth * 0.6;
     const height = container.clientHeight || 500;
 
     camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    
+    // 🛠️ PARCHE DE POSICIÓN: Elevamos más la Y y la Z para alejar la toma y que entre toda la finca en el encuadre
     camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
+    
+    // 🎯 REGLA DE ORO: Forzar a la cámara a mirar fijamente al centro exacto de la escena (0,0,0)
     camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -811,7 +815,7 @@ function init3DMap(reset = false) {
     
     // ✅ CAMBIO 2: Activar el mapeado de sombras en el renderizador
     renderer3D.shadowMap.enabled = true;
-    renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; 
+    renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; // Sombras más suaves y profesionales
 
     container.innerHTML = '';
     container.appendChild(renderer3D.domElement);
@@ -819,46 +823,53 @@ function init3DMap(reset = false) {
     // ==========================================
     // ✅ CAMBIO 3: Esquema de 4 Luces (Cinemático)
     // ==========================================
+    
+    // 1. Luz Ambiental (Luz tenue de fondo)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); 
     scene3D.add(ambientLight);
 
+    // 2. Luz Direccional (La principal que genera sombras)
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(baseWidth, 120, 100);
-    directionalLight.castShadow = true; 
+    directionalLight.castShadow = true; // Activar proyección de sombra
     directionalLight.shadow.mapSize.width = 2048;
     directionalLight.shadow.mapSize.height = 2048;
     scene3D.add(directionalLight);
 
-    const fillLight = new THREE.DirectionalLight(0x8bc34a, 0.3); 
+    // 3. Luz de Relleno (Fill Light - Suaviza los contrastes oscuros)
+    const fillLight = new THREE.DirectionalLight(0x8bc34a, 0.3); // Tono verdoso suave
     fillLight.position.set(-baseWidth, 50, -50);
     scene3D.add(fillLight);
 
+    // 4. Luz de Contorno (Rim Light - Resalta siluetas desde atrás)
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
     rimLight.position.set(0, -20, -baseWidth);
     scene3D.add(rimLight);
+
     // ==========================================
 
-    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222)); 
+    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222)); // Rejilla más oscura a juego
 
-    // ✅ CAMBIO 4: Suelo (ground3D)
+    // ✅ CAMBIO 4: Suelo (ground3D) actualizado con tus nuevos parámetros
     ground3D = new THREE.Mesh(
         new THREE.PlaneGeometry(baseWidth, baseDepth),
         new THREE.MeshPhongMaterial({ 
-            color: 0x3a7d44,       
-            shininess: 20,         
-            opacity: 0.6,          
-            transparent: true,     
+            color: 0x3a7d44,       // Tu nuevo verde
+            shininess: 20,         // Brillo metálico/plástico
+            opacity: 0.6,          // 60% opacidad
+            transparent: true,     // Requerido para opacidad
             side: THREE.DoubleSide 
         })
     );
     ground3D.rotation.x = -Math.PI / 2;
-    ground3D.receiveShadow = true; 
+    ground3D.receiveShadow = true; // ✅ Permitir que los sensores proyecten sombras aquí
     scene3D.add(ground3D);
 
-    // 🔄 BUCLE DE ANIMACIÓN (Bien cerrado aquí)
+    // 🔄 BUCLE DE ANIMACIÓN COHERENTE
     const animate = () => {
         requestAnimationFrame(animate);
         
+        // Mantener el foco de los controles en el centro
         if (typeof controls3D !== 'undefined' && controls3D) {
             controls3D.target.set(0, 0, 0);
             controls3D.update();
@@ -867,6 +878,7 @@ function init3DMap(reset = false) {
             window.controls3D.update();
         }
 
+        // Forzar enfoque de cámara por frame
         if (camera3D) {
             camera3D.lookAt(0, 0, 0);
         }
@@ -895,7 +907,7 @@ function init3DMap(reset = false) {
         });
     }
 
-    // 🛠️ PARCHE MAESTRO (Fuera de animate, se ejecuta una sola vez a los 300ms)
+    // 🛠️ REAJUSTE TRAS RENDERIZADO DE REACT (Se ejecuta una sola vez a los 300ms)
     setTimeout(() => {
         const contenedorReal = document.getElementById('canvas-3d-container');
         if (contenedorReal && camera3D && renderer3D) {
@@ -913,7 +925,6 @@ function init3DMap(reset = false) {
 
     // 🌍 Exponer la función al objeto global window
     window.init3DMap = init3DMap;
-}
     animate();
 
     window.addEventListener('resize', () => {
@@ -925,17 +936,6 @@ function init3DMap(reset = false) {
         camera3D.lookAt(0, 0, 0);
     });
 
-    optimizarColocacionIA();
-
-    const btnOptimizar = document.getElementById('btn-optimizar-ia');
-    if (btnOptimizar) {
-        const newBtn = btnOptimizar.cloneNode(true);
-        btnOptimizar.parentNode.replaceChild(newBtn, btnOptimizar);
-        newBtn.addEventListener('click', () => {
-            optimizarColocacionIA();
-            alert("Ubicación de sensores optimizada por IA para esta finca.");
-        });
-    }
 }
 
 export function crearSensor3D(x, z, isCustom = false) {
