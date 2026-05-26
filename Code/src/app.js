@@ -795,16 +795,12 @@ function init3DMap(reset = false) {
     // ✅ CAMBIO 1: Fondo oscuro "Modo Noche" para Osiris
     scene3D.background = new THREE.Color(0x0d1f12); 
 
-    // 🛠️ PARCHE DE CÁMARA: Forzar medidas del contenedor o usar respaldo de ventana si React no ha estirado el div
+    // 🛠️ PARCHE DE CÁMARA: Forzar medidas iniciales
     const width = container.clientWidth || window.innerWidth * 0.6;
     const height = container.clientHeight || 500;
 
     camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    
-    // 🛠️ PARCHE DE POSICIÓN: Elevamos más la Y y la Z para alejar la toma y que entre toda la finca en el encuadre
     camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
-    
-    // 🎯 REGLA DE ORO NUEVA: Forzar a la cámara a mirar fijamente al centro exacto de la escena (0,0,0)
     camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -812,7 +808,7 @@ function init3DMap(reset = false) {
     
     // ✅ CAMBIO 2: Activar el mapeado de sombras en el renderizador
     renderer3D.shadowMap.enabled = true;
-    renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; // Sombras más suaves y profesionales
+    renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; 
 
     container.innerHTML = '';
     container.appendChild(renderer3D.domElement);
@@ -820,92 +816,101 @@ function init3DMap(reset = false) {
     // ==========================================
     // ✅ CAMBIO 3: Esquema de 4 Luces (Cinemático)
     // ==========================================
-    
-    // 1. Luz Ambiental (Luz tenue de fondo)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); 
     scene3D.add(ambientLight);
 
-    // 2. Luz Direccional (La principal que genera sombras)
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(baseWidth, 120, 100);
-    directionalLight.castShadow = true; // Activar proyección de sombra
-    // Optimizar mapa de sombras para que no se vean pixeladas
+    directionalLight.castShadow = true; 
     directionalLight.shadow.mapSize.width = 2048;
     directionalLight.shadow.mapSize.height = 2048;
     scene3D.add(directionalLight);
 
-    // 3. Luz de Relleno (Fill Light - Suaviza los contrastes oscuros)
-    const fillLight = new THREE.DirectionalLight(0x8bc34a, 0.3); // Tono verdoso suave
+    const fillLight = new THREE.DirectionalLight(0x8bc34a, 0.3); 
     fillLight.position.set(-baseWidth, 50, -50);
     scene3D.add(fillLight);
 
-    // 4. Luz de Contorno (Rim Light - Resalta siluetas desde atrás)
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
     rimLight.position.set(0, -20, -baseWidth);
     scene3D.add(rimLight);
-
     // ==========================================
 
-    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222)); // Rejilla más oscura a juego
+    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222)); 
 
-    // ✅ CAMBIO 4: Suelo (ground3D) actualizado con tus nuevos parámetros
+    // ✅ CAMBIO 4: Suelo (ground3D)
     ground3D = new THREE.Mesh(
         new THREE.PlaneGeometry(baseWidth, baseDepth),
         new THREE.MeshPhongMaterial({ 
-            color: 0x3a7d44,       // Tu nuevo verde
-            shininess: 20,         // Brillo metálico/plástico
-            opacity: 0.6,          // 60% opacidad
-            transparent: true,     // Requerido para opacidad
+            color: 0x3a7d44,       
+            shininess: 20,         
+            opacity: 0.6,          
+            transparent: true,     
             side: THREE.DoubleSide 
         })
     );
     ground3D.rotation.x = -Math.PI / 2;
-    ground3D.receiveShadow = true; // ✅ Permitir que los sensores proyecten sombras aquí
+    ground3D.receiveShadow = true; 
     scene3D.add(ground3D);
 
+    // 🔄 BUCLE DE ANIMACIÓN (Bien cerrado aquí)
     const animate = () => {
-    requestAnimationFrame(animate);
-    
-    // 🛠️ Si tu proyecto usa OrbitControls (controles para arrastrar el mapa con el ratón)
-    // tenemos que obligar a los controles a mirar al centro exacto
-    if (typeof controls3D !== 'undefined' && controls3D) {
-        controls3D.target.set(0, 0, 0);
-        controls3D.update();
-    } else if (window.controls3D) {
-        window.controls3D.target.set(0, 0, 0);
-        window.controls3D.update();
-    }
+        requestAnimationFrame(animate);
+        
+        if (typeof controls3D !== 'undefined' && controls3D) {
+            controls3D.target.set(0, 0, 0);
+            controls3D.update();
+        } else if (window.controls3D) {
+            window.controls3D.target.set(0, 0, 0);
+            window.controls3D.update();
+        }
 
-    // 🎯 Forzamos a la cámara a apuntar al centro en cada frame de renderizado
-    if (camera3D) {
+        if (camera3D) {
+            camera3D.lookAt(0, 0, 0);
+        }
+
+        if (renderer3D) renderer3D.render(scene3D, camera3D);
+    };
+    animate();
+
+    window.addEventListener('resize', () => {
+        if (!container || !camera3D || !renderer3D) return;
+        camera3D.aspect = container.clientWidth / container.clientHeight;
+        camera3D.updateProjectionMatrix();
+        renderer3D.setSize(container.clientWidth, container.clientHeight);
         camera3D.lookAt(0, 0, 0);
+    });
+
+    optimizarColocacionIA();
+
+    const btnOptimizar = document.getElementById('btn-optimizar-ia');
+    if (btnOptimizar) {
+        const newBtn = btnOptimizar.cloneNode(true);
+        btnOptimizar.parentNode.replaceChild(newBtn, btnOptimizar);
+        newBtn.addEventListener('click', () => {
+            optimizarColocacionIA();
+            alert("Ubicación de sensores optimizada por IA para esta finca.");
+        });
     }
 
-    if (renderer3D) renderer3D.render(scene3D, camera3D);
-
+    // 🛠️ PARCHE MAESTRO (Fuera de animate, se ejecuta una sola vez a los 300ms)
     setTimeout(() => {
         const contenedorReal = document.getElementById('canvas-3d-container');
         if (contenedorReal && camera3D && renderer3D) {
             const w = contenedorReal.clientWidth;
             const h = contenedorReal.clientHeight;
             
-            // Reajustamos el motor con las medidas reales
             camera3D.aspect = w / h;
             camera3D.updateProjectionMatrix();
             renderer3D.setSize(w, h);
             
-            // Colocamos la cámara y la obligamos a mirar al centro
             camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
             camera3D.lookAt(0, 0, 0);
         }
-    }, 300); // 300ms es el tiempo perfecto para que React termine la animación de apertura
-}
-// ... código final de init3DMap (debajo del listener del botón optimizar) ...
-    
-    // 🌍 Exponer la función al navegador de forma global para que React la vea
-    window.init3DMap = init3DMap;
+    }, 300); 
 
-};
+    // 🌍 Exponer la función al objeto global window
+    window.init3DMap = init3DMap;
+}
     animate();
 
     window.addEventListener('resize', () => {

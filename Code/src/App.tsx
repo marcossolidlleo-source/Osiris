@@ -309,40 +309,48 @@ export default function App() {
               />
             )}
             {activeSection === 'parcela' && (
-  <div className="flex flex-col gap-6 w-full">
-    {/* Tu sección original */}
-    <MapSection
-      selectedFarm={selectedFarm}
-      farms={farms}
-      onSelectFarm={setSelectedFarmId}
-      customSensors={customSensors}
-    />
-    
-    {/* Contenedor del mapa 3D corregido para producción */}
-    <div className="w-full bg-[#0d1f12] rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative p-1">
-      <div 
-        id="canvas-3d-container" 
-        className="w-full h-[500px] md:h-[600px] rounded-xl"
-        ref={() => {
-          // Esperamos un instante a que el div exista en el DOM
-          setTimeout(() => {
-            // Buscamos la función directamente en el ámbito global (window)
-            const globalInit = (window as any).init3DMap;
-            if (typeof globalInit === 'function') {
-              console.log("🚀 Inicializando mapa 3D desde React...");
-              globalInit(true);
-            } else {
-              console.warn("⚠️ init3DMap aún no está disponible en el objeto window.");
-            }
-          }, 200);
-        }}
-      />
-      <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 text-xs text-white/90 pointer-events-none font-sans">
-        <i className="fas fa-moon mr-1.5 text-emerald-400 animate-pulse" /> Osiris 3D Engine • Modo Noche Activo
-      </div>
-    </div>
-  </div>
-)}
+              <div className="flex flex-col gap-6 w-full">
+                  {/* Tu sección original */}
+                  <MapSection
+                    selectedFarm={selectedFarm}
+                    farms={farms}
+                    onSelectFarm={setSelectedFarmId}
+                    customSensors={customSensors}
+                  />
+                  
+                  {/* Contenedor del mapa 3D con reintento automático */}
+                  <div className="w-full bg-[#0d1f12] rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative p-1">
+                    <div 
+                      id="canvas-3d-container" 
+                      className="w-full h-[500px] md:h-[600px] rounded-xl"
+                      ref={() => {
+                        let intentos = 0;
+                        
+                        const cargarMapaConEstrategia = () => {
+                          const globalInit = (window as any).init3DMap;
+                          
+                          if (typeof globalInit === 'function') {
+                            console.log("🚀 ¡Conseguido! Inicializando mapa 3D en Osiris...");
+                            globalInit(true);
+                          } else if (intentos < 10) {
+                            // Si no está listo, se da un respiro de 200ms y lo vuelve a intentar
+                            intentos++;
+                            setTimeout(cargarMapaConEstrategia, 200);
+                          } else {
+                            console.error("❌ No se ha encontrado init3DMap en window tras varios intentos.");
+                          }
+                        };
+
+                        // Arrancamos la primera comprobación
+                        setTimeout(cargarMapaConEstrategia, 150);
+                      }}
+                    />
+                    <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 text-xs text-white/90 pointer-events-none font-sans">
+                      <i className="fas fa-moon mr-1.5 text-emerald-400 animate-pulse" /> Osiris 3D Engine • Modo Noche Activo
+                    </div>
+                  </div>
+                </div>
+              )}
             {activeSection === 'estadisticas' && (
               <AdvancedStatisticsSection
                 selectedFarm={selectedFarm}
