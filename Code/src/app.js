@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* --- 3. NUEVA LÓGICA DE ESCUCHA SOCKET.IO --- */
+    // 🛠️ PARCHE DE SEGURIDAD: Solo escuchar eventos si el socket se ha creado con éxito
+if (socket) {
     socket.on('connect', () => {
         console.log('✅ Conectado al servidor de la VM');
         if (pingDisplay) pingDisplay.innerText = "Conectado";
@@ -65,16 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('respuesta_clima', (data) => {
         console.log('☀️ Datos recibidos:', data);
         if (tempDisplay) {
-            // Si viene del ESP32 procesado será data.temperatura
-            // Si viene el JSON de OpenWeather será data.main.temp
             const valorTemp = data.temperatura || (data.main ? data.main.temp : '--');
-
-            tempDisplay.innerText = valorTemp + " °C"; // Añadimos la unidad
+            tempDisplay.innerText = valorTemp + " °C"; 
             tempDisplay.classList.add('animate-pulse');
             setTimeout(() => tempDisplay.classList.remove('animate-pulse'), 1000);
         }
         if (statusMsg) statusMsg.innerText = "Clima actualizado desde el sensor";
     });
+} else {
+    console.warn("⚠️ Los listeners del socket no se han acoplado porque 'socket' no está definido.");
+}
 
 
 
@@ -795,7 +797,9 @@ function init3DMap(reset = false) {
     }
 
     map3DInitialized = true;
-    const farm = fincas.find(f => f.id === selectedFarmId) || { hectareas: 5 };
+    // 🛠️ Salvavidas por si las fincas de n8n aún se están procesando en React
+    const listaFincas = (typeof fincas !== 'undefined' ? fincas : (window.fincas || []));
+    const farm = listaFincas.find(f => f.id === selectedFarmId) || { hectareas: 5 };
     const baseWidth = Math.sqrt(farm.hectareas) * 20; // Escala proporcional a hectáreas
     const baseDepth = baseWidth * 0.75;
 

@@ -64,6 +64,10 @@ export default function App() {
     console.log("🌿 Fincas cargadas:", data);
     if (!error && data) {
       setFarms(data as Farm[]);
+      
+      // 🛠️ PARCHE MAESTRO: Compartimos las fincas con app.js metiéndolas en window
+      (window as any).fincas = data;
+
       if (data.length > 0) {
         setSelectedFarmId(data[0].id as string);
       }
