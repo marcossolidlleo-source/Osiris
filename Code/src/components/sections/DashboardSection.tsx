@@ -84,30 +84,33 @@ export default function DashboardSection({
   if (!historyStart || !historyEnd) return;
 
   const filtered = agriculturalData.filter((r: any) => {
-    const fecha = r.created_at?.split('T')[0] ?? r.fecha_registro;
+    const fecha = (r.created_at?.split('T')[0] ?? r.fecha_registro ?? '').split(' ')[0];
     return fecha >= historyStart && fecha <= historyEnd;
   });
 
-  const sorted = filtered.sort((a: any, b: any) =>
-    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
+  const sorted = filtered
+    .filter((r: any) => r.temperatura_ambiente !== null && r.humedad_suelo !== null)
+    .sort((a: any, b: any) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
   setHistoryResults(sorted.map((r: any) => ({
-    fecha: r.created_at?.split('T')[0] ?? r.fecha_registro,
-    finca: selectedFarm?.nombre ?? 'Finca',
-    temperatura: String(r.temperatura_ambiente ?? 0),
-    humedad: Number(r.humedad_suelo ?? 0),
+    fecha: r.created_at?.replace('T', ' ').split('.')[0] ?? r.fecha_registro,
+    finca: selectedFarm?.nombre ?? farms[0]?.nombre ?? 'Finca',
+    temperatura: String(Number(r.temperatura_ambiente).toFixed(1)),
+    humedad: Number(r.humedad_suelo),
   })));
 
   setHistoryShown(true);
 
-  if (filtered.length > 0) {
-    const sT = filtered.reduce((s: number, r: any) => s + Number(r.temperatura_ambiente ?? 0), 0);
-    const sH = filtered.reduce((s: number, r: any) => s + Number(r.humedad_suelo ?? 0), 0);
-    setAvgTemp((sT / filtered.length).toFixed(1));
-    setAvgHum(String(Math.round(sH / filtered.length)));
+  if (sorted.length > 0) {
+    const sT = sorted.reduce((s: number, r: any) => s + Number(r.temperatura_ambiente), 0);
+    const sH = sorted.reduce((s: number, r: any) => s + Number(r.humedad_suelo), 0);
+    setAvgTemp((sT / sorted.length).toFixed(1));
+    setAvgHum(String(Math.round(sH / sorted.length)));
   }
 };
+
 
   const isLowHumidity = sensorData && sensorData.humedad < 30;
 
