@@ -98,6 +98,7 @@ export async function signIn(email: string, password: string) {
       rol: result.rol
     }));
     
+    
     console.log("💾 [signIn] LocalStorage actualizado correctamente.");
     console.log("🔑 [signIn] Contenido actual de osiris_user:", localStorage.getItem('osiris_user'));
 

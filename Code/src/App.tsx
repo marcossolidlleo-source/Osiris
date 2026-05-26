@@ -11,6 +11,7 @@ import AemetAlertsSection from './components/sections/AemetAlertsSection';
 import CropGuideModal from './components/CropGuideModal';
 import type { Farm, CustomSensor, SensorData, ActiveSection } from './types';
 import { supabase, getFarms, saveParcelas, addSensorData, signOut, addAgriculturalData } from './services/supabase';
+import { supabase, getFarms, saveParcelas, addSensorData, signOut, addAgriculturalData, getAgriculturalData } from './services/supabase';
 
 function generateSensorData(): SensorData {
   const baseHumedad = Math.random() < 0.2 ? (15 + Math.random() * 14) : (35 + Math.random() * 50);
@@ -64,6 +65,24 @@ export default function App() {
       }
     }
   };
+
+  const loadLastSensorData = useCallback(async (fincaId: string) => {
+  if (!fincaId) return;
+  const { data, error } = await getAgriculturalData(fincaId);
+  if (!error && data && data.length > 0) {
+    // Ordenar por fecha y coger el último
+    const sorted = [...data].sort((a: any, b: any) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    const last = sorted[0];
+    setSensorData({
+      temperatura: String(last.temperatura_ambiente ?? 0),
+      humedad: last.humedad_suelo ?? 0,
+      ph: String(last.nivel_ph ?? 0),
+      iluminacion: last.intensidad_luminica ?? 0,
+    });
+  }
+}, []);
 
   const handleLoginSuccess = async (uid: string, email: string) => {
     setUserId(uid);
@@ -186,6 +205,12 @@ export default function App() {
     if (hourlyIntervalRef.current) clearInterval(hourlyIntervalRef.current);
   };
 }, [isLoggedIn, selectedFarmId, simulateHourlyData]);
+
+  useEffect(() => {
+  if (selectedFarmId) {
+    loadLastSensorData(selectedFarmId);
+  }
+}, [selectedFarmId, loadLastSensorData]);
 
   if (!isLoggedIn) {
     return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
