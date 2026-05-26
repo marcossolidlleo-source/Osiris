@@ -775,6 +775,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================== MUNDO 3D PARA PARCELA (COMPLETO) ====================
 let scene3D = null, camera3D = null, renderer3D = null, sensores3D = [], ground3D = null, map3DInitialized = false;
 
+if (typeof window !== 'undefined') {
+    window.init3DMap = init3DMap;
+}
 function init3DMap(reset = false) {
     const container = document.getElementById('canvas-3d-container');
     if (!container) return;
