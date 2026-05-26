@@ -341,25 +341,65 @@ export async function getWorkOrders(fincaId: string) {
 
 export async function addAgriculturalData(fincaId: string, data: any) {
   try {
-    // Apuntamos al endpoint productivo de guardar datos del olivar en n8n
     const url = 'https://n8ntfp.duckdns.org/webhook/save-agri-data';
 
-    // Recuperamos el ID del usuario actual si está logueado, ya que n8n lo acepta como opcional
     const userString = localStorage.getItem('osiris_user');
     const userId = userString ? JSON.parse(userString).id : null;
 
-    // Fusionamos los identificadores clave con el resto del objeto que viene del formulario
+    // Mapeamos EXPLÍCITAMENTE cada campo al nombre que espera el nodo n8n
+    // y que coincide con las columnas de datos_agricolas en Supabase
     const payload = {
-      fincaId: fincaId,
+      // Claves relacionales
+      fincaId:   fincaId,
       usuarioId: userId,
-      ...data
+
+      // Identificación de parcela y zona
+      parcel_id:          data.parcel_id         ?? null,
+      zona_provincia:     data.zona_provincia     ?? null,
+      ubicacion:          data.ubicacion          ?? null,
+      superficie_ha:      data.superficie_ha      ?? null,
+
+      // Características del olivar
+      tipo_olivar:        data.tipo_olivar        ?? null,
+      riego:              data.riego              ?? null,
+      variedad:           data.variedad           ?? null,
+      estado_fenologico:  data.estado_fenologico  ?? null,
+
+      // Sensores en tiempo real
+      humedad_suelo:         data.humedad_suelo        ?? null,
+      temperatura_ambiente:  data.temperatura_ambiente ?? null,
+      nivel_ph:              data.nivel_ph             ?? null,
+      intensidad_luminica:   data.intensidad_luminica  ?? null,
+
+      // Suelo
+      tipo_suelo:            data.tipo_suelo           ?? null,
+      drenaje:               data.drenaje              ?? null,
+      profundidad_suelo_cm:  data.profundidad_suelo_cm ?? null,
+      materia_organica_pct:  data.materia_organica_pct ?? null,
+      pendiente_pct:         data.pendiente_pct        ?? null,
+
+      // Geografía y clima histórico
+      distancia_rio_m:    data.distancia_rio_m   ?? null,
+      altitud_m:          data.altitud_m         ?? null,
+      rain_72h_mm:        data.rain_72h_mm       ?? null, // ⚠️ Verifica que en Supabase no sea "rain:72h_mm"
+      rain_7d_mm:         data.rain_7d_mm        ?? null,
+      temp_media_7d:      data.temp_media_7d     ?? null,
+      humedad_suelo_pct:  data.humedad_suelo_pct ?? null,
+
+      // Economía y riesgo
+      rendimiento_esperado_kg_ha:  data.rendimiento_esperado_kg_ha  ?? null,
+      precio_mercado_eur_kg:       data.precio_mercado_eur_kg       ?? null,
+      coste_variable_ha:           data.coste_variable_ha           ?? null,
+      duracion_encharcamiento_dias: data.duracion_encharcamiento_dias ?? null,
+      pct_perdida:                 data.pct_perdida                 ?? null,
+
+      // JSONB extra opcional
+      datos_sensores: data.datos_sensores ?? null,
     };
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
 
@@ -369,9 +409,8 @@ export async function addAgriculturalData(fincaId: string, data: any) {
       throw new Error(result.error || 'No se pudieron almacenar los datos agronómicos');
     }
 
-    // Retornamos el formato habitual para el frontend de Osiris
     return {
-      data: result.datos_recibidos, // Contiene los datos procesados y guardados en la BD
+      data: result.datos_recibidos,
       error: null
     };
 
@@ -383,7 +422,6 @@ export async function addAgriculturalData(fincaId: string, data: any) {
     };
   }
 }
-
 export async function getAgriculturalData(fincaId: string, days = 30) {
   try {
     // Llamamos al webhook pasando el fincaId como parámetro de consulta (query string)
