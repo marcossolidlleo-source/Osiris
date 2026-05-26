@@ -197,7 +197,7 @@ function init3DMap(reset = false) {
     let currentFarmId = window.selectedFarmId || null;
 
     // Buscamos la finca. Si selectedFarmId no se ha definido aún, evitamos el crash usando un objeto por defecto
-    const farm = listaFincas.find(f => f && f.id === currentFarmId) || { hectares: 5 };
+    const farm = listaFincas.find(f => f && f.id === currentFarmId) || { hectareas: 5 };
     const hectareasSeguras = farm.hectareas || 5;
     const baseWidth = Math.sqrt(hectareasSeguras) * 20; 
     const baseDepth = baseWidth * 0.75;
@@ -266,7 +266,7 @@ function init3DMap(reset = false) {
     resizeObserver.observe(container);
 }
 
-export function crearSensor3D(x, z, isCustom = false) {
+function crearSensor3D(x, z, isCustom = false) {
     if (!scene3D) return;
     const geometry = new THREE.CylinderGeometry(1.2, 1.2, 4, 16);
     const color = isCustom ? 0x2563eb : 0x1a5d1a;
@@ -291,7 +291,7 @@ function optimizarColocacionIA() {
 
     const listaFincas = window.fincas || [];
     const currentFarmId = window.selectedFarmId || null;
-    const farm = listaFincas.find(f => f && f.id === currentFarmId) || { hectares: 5 };
+    const farm = listaFincas.find(f => f && f.id === currentFarmId) || { hectareas: 5 };
     const baseWidth = Math.sqrt(farm.hectareas) * 20;
     const baseDepth = baseWidth * 0.75;
 

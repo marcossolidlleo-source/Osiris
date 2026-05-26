@@ -69,7 +69,7 @@ export default function App() {
       (window as any).fincas = data;
 
       if (data.length > 0) {
-        setSelectedFarmId(data[0].id as string);
+        (window as any).selectedFarmId = data[0].id;
       }
     }
   };
@@ -226,6 +226,13 @@ export default function App() {
   }
 }, [selectedFarmId, loadLastSensorData]);
 
+// 👇 AÑADE ESTO AQUÍ
+useEffect(() => {
+  if (selectedFarmId) {
+    (window as any).selectedFarmId = selectedFarmId;
+  }
+}, [selectedFarmId]);
+
   if (!isLoggedIn) {
     return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
   }
@@ -325,10 +332,12 @@ export default function App() {
                   
                   {/* Contenedor del mapa 3D con reintento automático */}
                   <div className="w-full bg-[#0d1f12] rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative p-1">
-                    <div 
-                      id="canvas-3d-container" 
-                      className="w-full h-[500px] md:h-[600px] rounded-xl"
-                      ref={() => {
+                      <div 
+                        id="canvas-3d-container" 
+                        className="w-full rounded-xl"
+                        style={{ height: '600px' }}
+                        ref={(el) => {
+                          if (!el) return;
                         let intentos = 0;
                         
                         const cargarMapaConEstrategia = () => {
