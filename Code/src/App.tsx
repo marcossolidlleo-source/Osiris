@@ -335,7 +335,7 @@ useEffect(() => {
                       <div 
                         id="canvas-3d-container" 
                         className="w-full rounded-xl"
-                        style={{ height: '600px' }}
+                        style={{ height: '600px', minHeight: '600px', overflow: 'visible' }}
                         ref={(el) => {
                           if (!el) return;
                         let intentos = 0;
