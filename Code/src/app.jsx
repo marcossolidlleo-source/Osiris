@@ -1,6 +1,9 @@
 // ==========================================
 // CONTROL DE VARIABLES GLOBALES Y FALLBACKS
 // ==========================================
+
+import * as THREE from 'three';
+
 if (typeof window !== 'undefined') {
     // Aseguramos que existan contenedores para que no pinchen las funciones
     window.fincas = window.fincas || [];
