@@ -211,6 +211,7 @@ function init3DMap(reset = false) {
 
     const width = container.clientWidth || 800;
     const height = 600;
+    console.log('📐 width:', width, 'height:', height, 'baseWidth:', baseWidth);
 
     scene3D = new THREE.Scene();
     scene3D.background = new THREE.Color(0x0d1f12);
