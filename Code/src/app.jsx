@@ -227,15 +227,16 @@ function init3DMap(reset = false) {
     container.style.width = '100%';
     container.style.height = '600px';
     container.style.display = 'block';
+    container.style.position = 'relative';
 
     container.innerHTML = '';
     container.appendChild(renderer3D.domElement);
 
-    // Forzar que el canvas hijo ocupe todo el contenedor
+    renderer3D.domElement.style.position = 'absolute';
+    renderer3D.domElement.style.top = '0';
+    renderer3D.domElement.style.left = '0'; 
     renderer3D.domElement.style.width = '100%';
-    renderer3D.domElement.style.height = '100%';
-    renderer3D.domElement.style.display = 'block';
-    container.appendChild(renderer3D.domElement);
+    renderer3D.domElement.style.height = '100%';            
 
     scene3D.add(new THREE.AmbientLight(0xffffff, 0.2));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
