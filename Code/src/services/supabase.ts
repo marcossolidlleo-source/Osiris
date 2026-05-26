@@ -94,7 +94,7 @@ export async function signIn(email: string, password: string) {
     localStorage.setItem('osiris_user', JSON.stringify({
       id: result.userId,
       nombre: result.nombre,
-      email: result.email,
+      email: email,
       rol: result.rol
     }));
     
