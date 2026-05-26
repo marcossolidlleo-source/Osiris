@@ -214,8 +214,8 @@ function init3DMap(reset = false) {
     const height = 600;
 
     camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera3D.position.set(0, 60, 40);
-    camera3D.lookAt(0, 0, -20);
+    camera3D.position.set(0, 15, 60);
+    camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer3D.setSize(width, height);
