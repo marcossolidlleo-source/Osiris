@@ -208,8 +208,8 @@ function init3DMap(reset = false) {
     scene3D = new THREE.Scene();
     scene3D.background = new THREE.Color(0x0d1f12); 
 
-    const width = container.clientWidth || 600;
-    const height = container.clientHeight || 500;
+    const width = container.getBoundingClientRect().width || container.offsetWidth || 800;
+    const height = 600;
 
     camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
