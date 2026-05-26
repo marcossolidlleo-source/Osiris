@@ -795,11 +795,20 @@ function init3DMap(reset = false) {
     // ✅ CAMBIO 1: Fondo oscuro "Modo Noche" para Osiris
     scene3D.background = new THREE.Color(0x0d1f12); 
 
-    camera3D = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera3D.position.set(0, baseWidth, baseWidth * 1.5);
+    // 🛠️ PARCHE DE CÁMARA: Forzar medidas del contenedor o usar respaldo de ventana si React no ha estirado el div
+    const width = container.clientWidth || window.innerWidth * 0.6;
+    const height = container.clientHeight || 500;
+
+    camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    
+    // 🛠️ PARCHE DE POSICIÓN: Elevamos más la Y y la Z para alejar la toma y que entre toda la finca en el encuadre
+    camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
+    
+    // 🎯 REGLA DE ORO NUEVA: Forzar a la cámara a mirar fijamente al centro exacto de la escena (0,0,0)
+    camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer3D.setSize(container.clientWidth, container.clientHeight);
+    renderer3D.setSize(width, height);
     
     // ✅ CAMBIO 2: Activar el mapeado de sombras en el renderizador
     renderer3D.shadowMap.enabled = true;
@@ -865,14 +874,14 @@ function init3DMap(reset = false) {
         camera3D.aspect = container.clientWidth / container.clientHeight;
         camera3D.updateProjectionMatrix();
         renderer3D.setSize(container.clientWidth, container.clientHeight);
+        // Volvemos a asegurar el enfoque en el resize por si acaso
+        camera3D.lookAt(0, 0, 0);
     });
 
     optimizarColocacionIA();
 
     const btnOptimizar = document.getElementById('btn-optimizar-ia');
     if (btnOptimizar) {
-        // Evitamos duplicar listeners limpiando el nodo si clonan, 
-        // pero con la estructura actual basta con asegurar que no se duplique:
         const newBtn = btnOptimizar.cloneNode(true);
         btnOptimizar.parentNode.replaceChild(newBtn, btnOptimizar);
         newBtn.addEventListener('click', () => {
