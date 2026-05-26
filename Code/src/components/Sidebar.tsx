@@ -16,7 +16,6 @@ const navItems: { id: ActiveSection; label: string; icon: string }[] = [
   { id: 'sensores', label: 'Clima', icon: 'fas fa-thermometer-half' },
   { id: 'plagas', label: 'Control de Plagas', icon: 'fas fa-bug' },
   { id: 'sobre-nosotros', label: 'Sobre Nosotros', icon: 'fas fa-users' },
-  { id: 'configuracion', label: 'Ajustes', icon: 'fas fa-cog' },
 ];
 
 export default function Sidebar({ activeSection, onNavigate, userRole, onLogout, isOpen, onClose }: Props) {

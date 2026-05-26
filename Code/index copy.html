@@ -466,11 +466,6 @@
                         <i class="fas fa-users w-5 text-center text-lg drop-shadow-sm"></i>
                         <span class="font-medium text-[0.95rem]">Sobre Nosotros</span>
                     </a>
-                    <a href="#configuracion"
-                        class="sidebar-link flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 text-white/80 hover:bg-white/10 hover:text-white mt-6">
-                        <i class="fas fa-cog w-5 text-center text-lg drop-shadow-sm"></i>
-                        <span class="font-medium text-[0.95rem]">Ajustes</span>
-                    </a>
                 </nav>
 
                 <div class="relative m-4">
@@ -1041,15 +1036,7 @@
                                 </div>
                             </div>
                         </section>
-                        <div id="section-configuracion" class="content-section">
-                            <div
-                                class="card bg-card p-8 mb-8 text-center text-text-light flex flex-col items-center justify-center min-h-[400px]">
-                                <i class="fas fa-cog text-5xl mb-4 text-gray-300"></i>
-                                <h2 class="text-2xl font-semibold text-primary">Ajustes</h2>
-                                <p class="mt-2 text-gray-500">Esta sección aún no tiene contenido. Próximamente
-                                    disponible.</p>
-                            </div>
-                        </div>
+
 
                     </main>
 
@@ -1433,26 +1420,7 @@
         </div>
     </div>
 
-    <!-- Redes Sociales Flotantes -->
-    <div class="fixed bottom-6 left-6 z-[60] flex flex-col gap-4">
-        <!-- Botón Flotante de YouTube -->
-        <a href="https://www.youtube.com/@Osiris-11-zk3" target="_blank"
-            class="w-14 h-14 bg-[#FF0000] rounded-full flex justify-center items-center text-white text-3xl shadow-lg hover:scale-110 hover:shadow-2xl transition-all duration-300">
-            <i class="fab fa-youtube"></i>
-        </a>
 
-        <!-- Botón Flotante de TikTok -->
-        <a href="https://www.tiktok.com/@osiris_oficial_11" target="_blank"
-            class="w-14 h-14 bg-black rounded-full flex justify-center items-center text-white text-3xl shadow-lg hover:scale-110 hover:shadow-2xl transition-all duration-300">
-            <i class="fab fa-tiktok"></i>
-        </a>
-
-        <!-- Botón Flotante de Instagram -->
-        <a href="https://www.instagram.com/osirisoficcial" target="_blank"
-            class="w-14 h-14 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 rounded-full flex justify-center items-center text-white text-3xl shadow-lg hover:scale-110 hover:shadow-2xl transition-all duration-300">
-            <i class="fab fa-instagram"></i>
-        </a>
-    </div>
 
     <script>
         // Sidebar Toggle Logic
@@ -1484,90 +1452,90 @@
 
         // Active Link handling
         document.addEventListener('DOMContentLoaded', () => {
-    // ==========================================
-    // MÓDULO: DASHBOARD ANALÍTICO (GLOBAL)
-    // ==========================================
-    window.sessionHistory = [];
-    window.lineChartInstance = null;
-    window.radarChartInstance = null;
+            // ==========================================
+            // MÓDULO: DASHBOARD ANALÍTICO (GLOBAL)
+            // ==========================================
+            window.sessionHistory = [];
+            window.lineChartInstance = null;
+            window.radarChartInstance = null;
 
-    window.initAnalyticsCharts = function() {
-        console.log("Osiris: Inicializando gráficas...");
-        const ctxLine = document.getElementById('lineChart');
-        const ctxRadar = document.getElementById('radarChart');
+            window.initAnalyticsCharts = function () {
+                console.log("Osiris: Inicializando gráficas...");
+                const ctxLine = document.getElementById('lineChart');
+                const ctxRadar = document.getElementById('radarChart');
 
-        if (!ctxLine || !ctxRadar) return;
+                if (!ctxLine || !ctxRadar) return;
 
-        if (window.lineChartInstance) window.lineChartInstance.destroy();
-        if (window.radarChartInstance) window.radarChartInstance.destroy();
+                if (window.lineChartInstance) window.lineChartInstance.destroy();
+                if (window.radarChartInstance) window.radarChartInstance.destroy();
 
-        window.lineChartInstance = new Chart(ctxLine, {
-            type: 'line',
-            data: {
-                labels: ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                datasets: [
-                    {
-                        label: 'Humedad (%)',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#1a5d1a',
-                        backgroundColor: 'rgba(26, 93, 26, 0.1)',
-                        fill: true
+                window.lineChartInstance = new Chart(ctxLine, {
+                    type: 'line',
+                    data: {
+                        labels: ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+                        datasets: [
+                            {
+                                label: 'Humedad (%)',
+                                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                borderColor: '#1a5d1a',
+                                backgroundColor: 'rgba(26, 93, 26, 0.1)',
+                                fill: true
+                            },
+                            {
+                                label: 'Temp (°C)',
+                                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                borderColor: '#4caf50',
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                fill: true
+                            }
+                        ]
                     },
-                    {
-                        label: 'Temp (°C)',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#4caf50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                        fill: true
-                    }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
 
-        window.radarChartInstance = new Chart(ctxRadar, {
-            type: 'radar',
-            data: {
-                labels: ['Humedad', 'Temperatura', 'pH', 'Luz'],
-                datasets: [{
-                    label: 'Actual',
-                    data: [0, 0, 0, 0],
-                    borderColor: '#1a5d1a',
-                    backgroundColor: 'rgba(26, 93, 26, 0.4)'
-                }, {
-                    label: 'Ideal',
-                    data: [60, 24, 6.5, 80],
-                    borderColor: '#4caf50',
-                    borderDash: [5, 5]
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-        window.updateChartsUI = function() {
-            if (!window.lineChartInstance || !window.radarChartInstance || window.sessionHistory.length === 0) return;
+                window.radarChartInstance = new Chart(ctxRadar, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Humedad', 'Temperatura', 'pH', 'Luz'],
+                        datasets: [{
+                            label: 'Actual',
+                            data: [0, 0, 0, 0],
+                            borderColor: '#1a5d1a',
+                            backgroundColor: 'rgba(26, 93, 26, 0.4)'
+                        }, {
+                            label: 'Ideal',
+                            data: [60, 24, 6.5, 80],
+                            borderColor: '#4caf50',
+                            borderDash: [5, 5]
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+                window.updateChartsUI = function () {
+                    if (!window.lineChartInstance || !window.radarChartInstance || window.sessionHistory.length === 0) return;
 
-            const history = window.sessionHistory;
-            window.lineChartInstance.data.labels = history.map((_, i) => `T-${history.length - 1 - i}`);
-            window.lineChartInstance.data.datasets[0].data = history.map(d => d.humedad);
-            window.lineChartInstance.data.datasets[1].data = history.map(d => d.temperatura);
-            window.lineChartInstance.update('none');
+                    const history = window.sessionHistory;
+                    window.lineChartInstance.data.labels = history.map((_, i) => `T-${history.length - 1 - i}`);
+                    window.lineChartInstance.data.datasets[0].data = history.map(d => d.humedad);
+                    window.lineChartInstance.data.datasets[1].data = history.map(d => d.temperatura);
+                    window.lineChartInstance.update('none');
 
-            const last = history[history.length - 1];
-            window.radarChartInstance.data.datasets[0].data = [
-                last.humedad, 
-                last.temperatura, 
-                last.ph, 
-                last.luz / 10
-            ];
-            window.radarChartInstance.update('none');
-        };
+                    const last = history[history.length - 1];
+                    window.radarChartInstance.data.datasets[0].data = [
+                        last.humedad,
+                        last.temperatura,
+                        last.ph,
+                        last.luz / 10
+                    ];
+                    window.radarChartInstance.update('none');
+                };
 
-        window.handleDataInput = function(data) {
-            window.sessionHistory.push(data);
-            if (window.sessionHistory.length > 10) window.sessionHistory.shift();
-            window.updateChartsUI();
-        };
-    };
+                window.handleDataInput = function (data) {
+                    window.sessionHistory.push(data);
+                    if (window.sessionHistory.length > 10) window.sessionHistory.shift();
+                    window.updateChartsUI();
+                };
+            };
 
             const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
@@ -1583,7 +1551,7 @@
                         document.querySelectorAll('.content-section').forEach(sec => {
                             sec.id === sectionId ? sec.classList.add('active') : sec.classList.remove('active');
                         });
-                        
+
                         if (sectionId === 'section-estadisticas') {
                             setTimeout(() => {
                                 if (!window.lineChartInstance) window.initAnalyticsCharts();
@@ -1758,7 +1726,6 @@
         const navigationItems = [
             { id: "login", label: "Inicio", icon: "fas fa-home" },
             { id: "dashboard", label: "Dashboard", icon: "fas fa-chart-line" },
-            { id: "settings", label: "Ajustes", icon: "fas fa-cog" },
             { id: "reports", label: "Reportes", icon: "fas fa-file-alt" }
         ];
 
@@ -2053,7 +2020,7 @@
                     // Iniciar actualización automática
                     startAutoRefresh();
 
-                    // Chat AgroBot con n8n
+                    // Botón Slack según rol
                     if (role === "Usuario") {
                         document.getElementById("test-slack-btn").classList.add("hidden");
                         if (!document.getElementById("osiris-chat-container")) {

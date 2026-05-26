@@ -307,3 +307,19 @@ Para poder visualizar, crear, modificar o eliminar datos de forma manual directa
    - Ver todos los registros actuales con todas sus columnas configuradas.
    - Hacer clic en el botón morado **"Nuevo"** (arriba a la izquierda) para añadir datos a mano (por ejemplo, para generar datos de prueba).
    - Hacer clic sobre cualquier registro existente para abrir su "ficha" (vista de formulario) y editar sus valores o borrarlo.
+
+##### Conclusiones y Mejores Prácticas de Configuración UI en Odoo
+
+Durante la reconstrucción del entorno, se han establecido las siguientes mejores prácticas para configurar modelos personalizados en Odoo sin generar errores:
+
+1. **Orden óptimo de creación:**
+   Para evitar fallos de caché y menús invisibles, el orden recomendado es:
+   * **Crear Modelo y Campos.**
+   * **Dar Permisos de Acceso:** En la misma pantalla del modelo (pestaña inferior), añadir la línea de permisos marcando las 4 casillas (Leer, Escribir, Crear, Eliminar). Es **vital dejar la casilla "Grupo" en blanco** (o en su defecto usar "Tipos de usuario / Usuario interno") para que el acceso sea global y no bloquee las llamadas externas de la API.
+   * **Crear Acción de Ventana.**
+   * **Crear Elemento del Menú:** Se debe **dejar en blanco el "Menú padre"** para que la aplicación aparezca en la pantalla principal.
+
+2. **Edición de Vistas de Lista (XML):**
+   * Al modificar la vista de lista (Tree) mediante el modo desarrollador (icono 🐞 -> Editar Vista: Lista), si el formulario aparece vacío, es obligatorio rellenar el campo **"Modelo" / "Modelo de la vista"** en la cabecera seleccionando el nombre técnico exacto de la tabla (ej. `x_osiris_usuarios`).
+   * Si no se especifica el modelo en la cabecera, Odoo rechazará el código XML de la pestaña Arquitectura con el error `Modelo no encontrado: False`.
+   * Los nombres técnicos en la acción y en la vista deben coincidir estrictamente con el nombre del modelo (cuidado con los plurales como `x_osiris_usuarios` vs `x_osiris_usuario`).

@@ -58,5 +58,4 @@ export type ActiveSection =
   | 'estadisticas'
   | 'sensores'
   | 'plagas'
-  | 'sobre-nosotros'
-  | 'configuracion';
+  | 'sobre-nosotros';

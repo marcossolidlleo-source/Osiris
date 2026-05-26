@@ -332,13 +332,6 @@ export default function App() {
               />
             )}
             {activeSection === 'sobre-nosotros' && <AboutSection />}
-            {activeSection === 'configuracion' && (
-              <div className="card bg-white p-8 mb-8 text-center flex flex-col items-center justify-center min-h-[400px]">
-                <i className="fas fa-cog text-5xl mb-4 text-gray-300" />
-                <h2 className="text-2xl font-semibold text-green-800">Ajustes</h2>
-                <p className="mt-2 text-gray-500">Esta sección aún no tiene contenido. Próximamente disponible.</p>
-              </div>
-            )}
           </main>
 
           <footer className="mt-8 pt-6 border-t border-gray-200 pb-6">
@@ -356,21 +349,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Social buttons */}
-      <div className="fixed bottom-6 left-6 z-[60] flex flex-col gap-4">
-        <a href="https://www.youtube.com/@Osiris-11-zk3" target="_blank" rel="noopener noreferrer"
-          className="w-14 h-14 bg-[#FF0000] rounded-full flex justify-center items-center text-white text-3xl shadow-lg hover:scale-110 transition-all">
-          <i className="fab fa-youtube" />
-        </a>
-        <a href="https://www.tiktok.com/@osiris_oficial_11" target="_blank" rel="noopener noreferrer"
-          className="w-14 h-14 bg-black rounded-full flex justify-center items-center text-white text-3xl shadow-lg hover:scale-110 transition-all">
-          <i className="fab fa-tiktok" />
-        </a>
-        <a href="https://www.instagram.com/osirisoficcial" target="_blank" rel="noopener noreferrer"
-          className="w-14 h-14 bg-gradient-to-tr from-yellow-400 via-red-500 to-pink-500 rounded-full flex justify-center items-center text-white text-3xl shadow-lg hover:scale-110 transition-all">
-          <i className="fab fa-instagram" />
-        </a>
-      </div>
+
 
       {showCropGuide && <CropGuideModal onClose={() => setShowCropGuide(false)} 
         fincaId={selectedFarmId}
