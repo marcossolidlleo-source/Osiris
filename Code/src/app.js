@@ -864,9 +864,25 @@ function init3DMap(reset = false) {
     scene3D.add(ground3D);
 
     const animate = () => {
-        requestAnimationFrame(animate);
-        if (renderer3D) renderer3D.render(scene3D, camera3D);
-    };
+    requestAnimationFrame(animate);
+    
+    // 🛠️ Si tu proyecto usa OrbitControls (controles para arrastrar el mapa con el ratón)
+    // tenemos que obligar a los controles a mirar al centro exacto
+    if (typeof controls3D !== 'undefined' && controls3D) {
+        controls3D.target.set(0, 0, 0);
+        controls3D.update();
+    } else if (window.controls3D) {
+        window.controls3D.target.set(0, 0, 0);
+        window.controls3D.update();
+    }
+
+    // 🎯 Forzamos a la cámara a apuntar al centro en cada frame de renderizado
+    if (camera3D) {
+        camera3D.lookAt(0, 0, 0);
+    }
+
+    if (renderer3D) renderer3D.render(scene3D, camera3D);
+};
     animate();
 
     window.addEventListener('resize', () => {
