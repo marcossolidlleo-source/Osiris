@@ -9,8 +9,8 @@ import PestSection from './components/sections/PestSection';
 import AboutSection from './components/sections/AboutSection';
 import AemetAlertsSection from './components/sections/AemetAlertsSection';
 import CropGuideModal from './components/CropGuideModal';
+import Chatbot from './components/Chatbot';
 import type { Farm, CustomSensor, SensorData, ActiveSection } from './types';
-import { supabase, getFarms, saveParcelas, addSensorData, signOut, addAgriculturalData } from './services/supabase';
 import { supabase, getFarms, saveParcelas, addSensorData, signOut, addAgriculturalData, getAgriculturalData } from './services/supabase';
 
 function generateSensorData(): SensorData {
@@ -354,6 +354,7 @@ export default function App() {
       {showCropGuide && <CropGuideModal onClose={() => setShowCropGuide(false)} 
         fincaId={selectedFarmId}
         />}
+      <Chatbot />
     </div>
   );
 }
