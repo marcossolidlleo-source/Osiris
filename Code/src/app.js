@@ -882,6 +882,24 @@ function init3DMap(reset = false) {
     }
 
     if (renderer3D) renderer3D.render(scene3D, camera3D);
+
+    setTimeout(() => {
+        const contenedorReal = document.getElementById('canvas-3d-container');
+        if (contenedorReal && camera3D && renderer3D) {
+            const w = contenedorReal.clientWidth;
+            const h = contenedorReal.clientHeight;
+            
+            // Reajustamos el motor con las medidas reales
+            camera3D.aspect = w / h;
+            camera3D.updateProjectionMatrix();
+            renderer3D.setSize(w, h);
+            
+            // Colocamos la cámara y la obligamos a mirar al centro
+            camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
+            camera3D.lookAt(0, 0, 0);
+        }
+    }, 300); // 300ms es el tiempo perfecto para que React termine la animación de apertura
+}
 };
     animate();
 
