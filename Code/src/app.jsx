@@ -215,7 +215,7 @@ function init3DMap(reset = false) {
 
     camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     camera3D.position.set(0, 60, 40);
-    camera3D.lookAt(0, 0, 0);
+    camera3D.lookAt(0, 0, -20);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer3D.setSize(width, height);
@@ -278,7 +278,7 @@ scene3D.add(grid);
                 camera3D.aspect = w / h;
                 camera3D.updateProjectionMatrix();
                 renderer3D.setSize(w, h);
-                camera3D.lookAt(0, 0, -20);
+                camera3D.lookAt(0, 0, 0);
             }
         }
     });
