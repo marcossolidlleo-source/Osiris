@@ -222,6 +222,7 @@ function init3DMap(reset = false) {
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true });
     renderer3D.setSize(width, height);
+    console.log('🎨 canvas size:', renderer3D.domElement.width, 'x', renderer3D.domElement.height);
     renderer3D.shadowMap.enabled = true;
     container.appendChild(renderer3D.domElement);
 
