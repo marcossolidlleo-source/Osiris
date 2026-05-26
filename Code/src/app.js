@@ -56,26 +56,29 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('agrisync_fincas', JSON.stringify(fincas));
     }
 
-    /* --- 3. NUEVA LÓGICA DE ESCUCHA SOCKET.IO --- */
-    // 🛠️ PARCHE DE SEGURIDAD: Solo escuchar eventos si el socket se ha creado con éxito
-if (socket) {
-    socket.on('connect', () => {
+// 1. Buscamos el socket en local o en el objeto global
+const socketActivo = (typeof socket !== 'undefined' ? socket : window.socket);
+
+// 2. Si lo encuentra (en cualquiera de los dos sitios), engancha los listeners de forma segura
+if (socketActivo) {
+    socketActivo.on('connect', () => {
         console.log('✅ Conectado al servidor de la VM');
-        if (pingDisplay) pingDisplay.innerText = "Conectado";
+        if (typeof pingDisplay !== 'undefined' && pingDisplay) pingDisplay.innerText = "Conectado";
     });
 
-    socket.on('respuesta_clima', (data) => {
+    socketActivo.on('respuesta_clima', (data) => {
         console.log('☀️ Datos recibidos:', data);
-        if (tempDisplay) {
+        if (typeof tempDisplay !== 'undefined' && tempDisplay) {
             const valorTemp = data.temperatura || (data.main ? data.main.temp : '--');
-            tempDisplay.innerText = valorTemp + " °C"; 
+            tempDisplay.innerText = valorTemp + " °C";
             tempDisplay.classList.add('animate-pulse');
             setTimeout(() => tempDisplay.classList.remove('animate-pulse'), 1000);
         }
-        if (statusMsg) statusMsg.innerText = "Clima actualizado desde el sensor";
+        if (typeof statusMsg !== 'undefined' && statusMsg) statusMsg.innerText = "Clima actualizado desde el sensor";
     });
 } else {
-    console.warn("⚠️ Los listeners del socket no se han acoplado porque 'socket' no está definido.");
+    // 3. Si aún no se ha creado el socket, avisa en la consola pero NO rompe la pantalla en blanco
+    console.warn("⚠️ Los listeners del socket se han pausado porque la conexión aún no está lista.");
 }
 
 
@@ -797,10 +800,20 @@ function init3DMap(reset = false) {
     }
 
     map3DInitialized = true;
-    // 🛠️ Salvavidas por si las fincas de n8n aún se están procesando en React
-    const listaFincas = (typeof fincas !== 'undefined' ? fincas : (window.fincas || []));
+    
+    // 🛠️ PARCHE 1: Extractor ultra seguro para encontrar el array de fincas de n8n
+    let listaFincas = [];
+    if (typeof fincas !== 'undefined') {
+        listaFincas = fincas;
+    } else if (window.fincas) {
+        listaFincas = window.fincas;
+    }
+
     const farm = listaFincas.find(f => f.id === selectedFarmId) || { hectareas: 5 };
-    const baseWidth = Math.sqrt(farm.hectareas) * 20; // Escala proporcional a hectáreas
+    
+    // Forzamos un respaldo numérico estricto por si las hectáreas llegan vacías desde n8n
+    const hectareasSeguras = farm.hectareas || 5;
+    const baseWidth = Math.sqrt(hectareasSeguras) * 20; 
     const baseDepth = baseWidth * 0.75;
 
     scene3D = new THREE.Scene();
