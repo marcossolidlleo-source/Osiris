@@ -56,6 +56,7 @@ export default function App() {
 
   const loadUserFarms = async (uid: string) => {
     const { data, error } = await getFarms(uid);
+    console.log("🌿 Fincas cargadas:", data);
     if (!error && data) {
       setFarms(data as Farm[]);
       if (data.length > 0) {
