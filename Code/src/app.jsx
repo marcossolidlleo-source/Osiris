@@ -205,6 +205,8 @@ function init3DMap(reset = false) {
     const baseWidth = Math.sqrt(hectareasSeguras) * 20; 
     const baseDepth = baseWidth * 0.75;
 
+    console.log('🌱 farm:', farm, 'hectareas:', hectareasSeguras, 'baseWidth:', baseWidth);
+
     scene3D = new THREE.Scene();
     scene3D.background = new THREE.Color(0x0d1f12); 
 
