@@ -226,6 +226,7 @@ function init3DMap(reset = false) {
     renderer3D.setSize(width, height);
     console.log('🎨 canvas size:', renderer3D.domElement.width, 'x', renderer3D.domElement.height);
     renderer3D.shadowMap.enabled = true;
+    window.renderer3D = renderer3D; 
     container.appendChild(renderer3D.domElement);
 
     // SIN tocar el estilo del canvas — THREE lo gestiona
