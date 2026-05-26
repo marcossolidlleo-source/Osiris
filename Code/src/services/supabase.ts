@@ -403,14 +403,16 @@ export async function addAgriculturalData(fincaId: string, data: any) {
       body: JSON.stringify(payload)
     });
 
-    const result = await response.json();
+    // Parsear con seguridad por si n8n devuelve body vacío
+    const text = await response.text();
+    const result = text ? JSON.parse(text) : {};
 
     if (!response.ok || result.success === false) {
       throw new Error(result.error || 'No se pudieron almacenar los datos agronómicos');
     }
 
     return {
-      data: result.datos_recibidos,
+      data: result.datos_recibidos ?? result,
       error: null
     };
 

@@ -101,17 +101,17 @@ export default function App() {
 };
 
   const handleSensorUpdate = useCallback((data: SensorData) => {
-    setSensorData(data);
-    setSessionHistory(prev => {
-      const next = [...prev, data];
-      return next.length > 10 ? next.slice(-10) : next;
-    });
+  setSensorData(data);
+  setSessionHistory(prev => {
+    const next = [...prev, data];
+    return next.length > 10 ? next.slice(-10) : next;
+  });
 
-    // Simulate saving to Supabase (in production, use actual sensor IDs)
-    if (selectedFarmId) {
-      addSensorData(selectedFarmId, parseFloat(data.temperatura), data.humedad, parseFloat(data.ph), data.iluminacion).catch(console.error);
-    }
-  }, [selectedFarmId]);
+  // DESACTIVADO - tabla datos_sensores no existe en Supabase
+  // if (selectedFarmId) {
+  //   addSensorData(selectedFarmId, ...).catch(console.error);
+  // }
+}, [selectedFarmId]);
 
   const generateAgriculturalData = useCallback(() => {
     return {
