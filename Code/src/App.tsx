@@ -331,7 +331,7 @@ useEffect(() => {
                   />
                   
                   {/* Contenedor del mapa 3D con reintento automático */}
-                  <div className="w-full bg-[#0d1f12] rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative p-1">
+                  <div className="w-full bg-[#0d1f12] rounded-2xl shadow-lg border border-gray-200 relative p-1">
                       <div 
                         id="canvas-3d-container" 
                         className="w-full rounded-xl"
