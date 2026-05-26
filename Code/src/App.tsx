@@ -69,9 +69,9 @@ export default function App() {
 
   const loadLastSensorData = useCallback(async (fincaId: string) => {
   if (!fincaId) return;
+  setHasRealData(false); // resetear al cambiar finca
   const { data, error } = await getAgriculturalData(fincaId);
   if (!error && data && data.length > 0) {
-    // Ordenar por fecha y coger el último
     const sorted = [...data].sort((a: any, b: any) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
@@ -82,7 +82,7 @@ export default function App() {
       ph: String(last.nivel_ph ?? 0),
       iluminacion: last.intensidad_luminica ?? 0,
     });
-     setHasRealData(true); // marcar que hay datos reales 
+    setHasRealData(true);
   }
 }, []);
 
@@ -188,7 +188,9 @@ export default function App() {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    simulate();
+      if (!hasRealData) {
+      simulate();
+      }
     if (refreshRate > 0) {
       refreshIntervalRef.current = setInterval(simulate, refreshRate);
     }
