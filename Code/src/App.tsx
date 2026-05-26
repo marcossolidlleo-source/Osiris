@@ -13,6 +13,7 @@ import Chatbot from './components/Chatbot';
 import type { Farm, CustomSensor, SensorData, ActiveSection } from './types';
 import { supabase, getFarms, saveParcelas, addSensorData, signOut, addAgriculturalData, getAgriculturalData } from './services/supabase';
 import { init3DMap } from './app'; // O la ruta exacta a tu app.js
+import './app.js';
 
 function generateSensorData(): SensorData {
   const baseHumedad = Math.random() < 0.2 ? (15 + Math.random() * 14) : (35 + Math.random() * 50);
