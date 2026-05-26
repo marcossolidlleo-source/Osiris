@@ -221,6 +221,18 @@ function init3DMap(reset = false) {
     renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; 
 
     container.innerHTML = '';
+    // Forzar tamaño al contenedor antes de añadir el canvas
+    container.style.width = '100%';
+    container.style.height = '600px';
+    container.style.display = 'block';
+
+    container.innerHTML = '';
+    container.appendChild(renderer3D.domElement);
+
+    // Forzar que el canvas hijo ocupe todo el contenedor
+    renderer3D.domElement.style.width = '100%';
+    renderer3D.domElement.style.height = '100%';
+    renderer3D.domElement.style.display = 'block';
     container.appendChild(renderer3D.domElement);
 
     scene3D.add(new THREE.AmbientLight(0xffffff, 0.2));
@@ -257,8 +269,8 @@ function init3DMap(reset = false) {
     const resizeObserver = new ResizeObserver((entries) => {
         for (let entry of entries) {
             const w = entry.contentRect.width;
-            const h = entry.contentRect.height;
-            if (w > 0 && h > 0 && camera3D && renderer3D) {
+            const h = entry.contentRect.height || 600;  // 👈 fallback a 600
+            if (w > 0 && camera3D && renderer3D) {
                 camera3D.aspect = w / h;
                 camera3D.updateProjectionMatrix();
                 renderer3D.setSize(w, h);
