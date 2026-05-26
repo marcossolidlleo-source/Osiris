@@ -877,8 +877,8 @@
                                 </div>
                             </div>
 
-                            <div id="canvas-3d-container"
-                                class="w-full h-[500px] bg-gray-100 rounded-2xl overflow-hidden shadow-inner relative">
+                           <div id="canvas-3d-container"
+    class="w-full bg-gray-100 rounded-2xl overflow-hidden shadow-inner relative" style="height: 75vh; min-height: 520px;">
                             </div>
 
                             <!-- Panel interactivo Planificador de Secciones -->
@@ -2976,8 +2976,9 @@
                 renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
                 renderer3D.setPixelRatio(window.devicePixelRatio || 1);
                 renderer3D.setSize(width, height);
-                renderer3D.setClearColor(0x0f172a, 1);
-                container.style.backgroundColor = '#0f172a';
+                renderer3D.setClearColor(0x0d1f12, 1);
+                container.style.backgroundColor = '#0d1f12';
+                renderer3D.shadowMap.enabled = true;
                 container.style.position = 'relative';
                 container.innerHTML = '';
                 container.appendChild(renderer3D.domElement);
@@ -2990,12 +2991,21 @@
                 return;
             }
 
-            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+            const ambient = new THREE.AmbientLight(0xd4f5c4, 0.9);
             scene3D.add(ambient);
 
-            const directional = new THREE.DirectionalLight(0xffffff, 0.6);
+            const directional = new THREE.DirectionalLight(0xfffbe8, 1.4);
             directional.position.set(80, 120, 100);
+            directional.castShadow = true;
             scene3D.add(directional);
+
+            const fillLight = new THREE.DirectionalLight(0x88ccff, 0.5);
+            fillLight.position.set(-60, 40, -80);
+            scene3D.add(fillLight);
+
+            const rimLight = new THREE.PointLight(0x4cff88, 0.8, 200);
+            rimLight.position.set(0, 60, -50);
+            scene3D.add(rimLight);
 
             sceneRoot = new THREE.Group();
             scene3D.add(sceneRoot);
@@ -3008,7 +3018,7 @@
 
             const ground = new THREE.Mesh(
                 new THREE.PlaneGeometry(80, 60),
-                new THREE.MeshPhongMaterial({ color: 0x8cc56d, opacity: 0.35, transparent: true, side: THREE.DoubleSide })
+                new THREE.MeshPhongMaterial({ color: 0x3a7d44, opacity: 0.6, transparent: true, side: THREE.DoubleSide, shininess: 20 })
             );
             ground.rotation.x = -Math.PI / 2;
             sceneRoot.add(ground);
