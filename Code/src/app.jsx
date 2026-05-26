@@ -212,7 +212,7 @@ function init3DMap(reset = false) {
     const height = 600;
 
     camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera3D.position.set(0, baseWidth * 1.2, baseWidth * 1.0);
+    camera3D.position.set(0, baseWidth * 0.5, baseWidth * 1.2);
     camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -241,7 +241,9 @@ function init3DMap(reset = false) {
     directionalLight.castShadow = true;
     scene3D.add(directionalLight);
 
-    scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222)); 
+    const grid = new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222);
+grid.position.y = 0;
+scene3D.add(grid);
 
     ground3D = new THREE.Mesh(
         new THREE.PlaneGeometry(baseWidth, baseDepth),
