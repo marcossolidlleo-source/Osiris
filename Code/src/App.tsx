@@ -40,6 +40,7 @@ export default function App() {
   const refreshIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hourlyIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [hasRealData, setHasRealData] = useState(false);
+  const [agriculturalData, setAgriculturalData] = useState<any[]>([]);
 
   useEffect(() => {
     checkAuthStatus();
@@ -72,6 +73,7 @@ export default function App() {
   setHasRealData(false); // resetear al cambiar finca
   const { data, error } = await getAgriculturalData(fincaId);
   if (!error && data && data.length > 0) {
+    setAgriculturalData(data);
     const sorted = [...data].sort((a: any, b: any) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
@@ -302,6 +304,7 @@ export default function App() {
                 sensorData={sensorData}
                 onSimulate={simulate}
                 sessionHistory={sessionHistory}
+                agriculturalData={agriculturalData}
               />
             )}
             {activeSection === 'parcela' && (
