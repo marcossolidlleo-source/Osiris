@@ -44,14 +44,15 @@ export default function App() {
   }, []);
 
   const checkAuthStatus = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setUserId(user.id);
-      setUserEmail(user.email || '');
-      setIsLoggedIn(true);
-      loadUserFarms(user.id);
-    }
-  };
+  const userString = localStorage.getItem('osiris_user');
+  if (userString) {
+    const user = JSON.parse(userString);
+    setUserId(user.id);
+    setUserEmail(user.email);
+    setIsLoggedIn(true);
+    loadUserFarms(user.id);
+  }
+};
 
   const loadUserFarms = async (uid: string) => {
     const { data, error } = await getFarms(uid);
