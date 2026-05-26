@@ -882,7 +882,7 @@ function init3DMap(reset = false) {
     }
 }
 
-function crearSensor3D(x, z, isCustom = false) {
+export function crearSensor3D(x, z, isCustom = false) {
     if (!scene3D) return;
     const geometry = new THREE.CylinderGeometry(1.2, 1.2, 4, 16);
 

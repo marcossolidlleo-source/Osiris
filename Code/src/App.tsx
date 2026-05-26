@@ -12,6 +12,7 @@ import CropGuideModal from './components/CropGuideModal';
 import Chatbot from './components/Chatbot';
 import type { Farm, CustomSensor, SensorData, ActiveSection } from './types';
 import { supabase, getFarms, saveParcelas, addSensorData, signOut, addAgriculturalData, getAgriculturalData } from './services/supabase';
+import { init3DMap } from './app'; // O la ruta exacta a tu app.js
 
 function generateSensorData(): SensorData {
   const baseHumedad = Math.random() < 0.2 ? (15 + Math.random() * 14) : (35 + Math.random() * 50);
@@ -308,12 +309,43 @@ export default function App() {
               />
             )}
             {activeSection === 'parcela' && (
-              <MapSection
-                selectedFarm={selectedFarm}
-                farms={farms}
-                onSelectFarm={setSelectedFarmId}
-                customSensors={customSensors}
-              />
+              <div className="flex flex-col gap-6 w-full">
+                {/* 1. La sección original con tus selectores y datos */}
+                <MapSection
+                  selectedFarm={selectedFarm}
+                  farms={farms}
+                  onSelectFarm={setSelectedFarmId}
+                  customSensors={customSensors}
+                />
+                
+                {/* 2. El contenedor real donde init3DMap() va a pintar el mapa noche con sombras */}
+                <div className="w-full bg-slate-900 rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative p-1">
+                  <div 
+                    id="canvas-3d-container" 
+                    className="w-full h-[500px] md:h-[600px] rounded-xl"
+                    ref={() => {
+                      // Generamos un pequeño retraso para que a React le dé tiempo a dibujar este div en el DOM
+                      // y luego ejecutamos tu función de app.js pasándole 'true' para resetear escenas viejas
+                      setTimeout(() => {
+                        if (typeof (window as any).init3DMap === 'function') {
+                          (window as any).init3DMap(true);
+                        } else {
+                          // Por si acaso la importación global no ha entrado, la llamamos directamente
+                          try {
+                            const { init3DMap } = require('./app');
+                            init3DMap(true);
+                          } catch (e) {
+                            console.error("No se pudo cargar init3DMap desde app.js:", e);
+                          }
+                        }
+                      }, 150);
+                    }}
+                  />
+                  <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 text-xs text-white/90 pointer-events-none font-sans">
+                    <i className="fas fa-moon mr-1.5 text-emerald-400 animate-pulse" /> Osiris 3D Engine • Modo Noche Activo
+                  </div>
+                </div>
+              </div>
             )}
             {activeSection === 'estadisticas' && (
               <AdvancedStatisticsSection

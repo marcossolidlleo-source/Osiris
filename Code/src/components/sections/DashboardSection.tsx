@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { Farm, CustomSensor, SensorData, HistoricalRecord } from '../../types';
 import { CROPS } from '../../data/crops';
-
+import Map3DComponent from './Map3DComponent'; // Asegura la ruta correcta
 interface Props {
   userRole: string;
   farms: Farm[];
