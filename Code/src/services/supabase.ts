@@ -396,7 +396,7 @@ export async function addAgriculturalData(fincaId: string, data: any) {
       // JSONB extra opcional
       datos_sensores: data.datos_sensores ?? null,
     };
-
+    console.log("📤 Enviando a n8n:", JSON.stringify(payload, null, 2)); 
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -415,6 +415,7 @@ export async function addAgriculturalData(fincaId: string, data: any) {
       data: result.datos_recibidos ?? result,
       error: null
     };
+    console.log("📥 Respuesta de n8n:", result);
 
   } catch (err: any) {
     console.error("Error al registrar telemetría agrícola en n8n:", err);
