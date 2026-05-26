@@ -56,7 +56,7 @@ export default function DashboardSection({
   const [avgHum, setAvgHum] = useState('');
   const lastUpdateRef = useRef<string>('Actualizando...');
 
-  const userFarms = farms.filter(f => f.propietario === userRole);
+  const userFarms = farms;
   const selectedFarm = farms.find(f => f.id === selectedFarmId);
   const filteredSensors = customSensors.filter(s => s.farmId === selectedFarmId);
 
