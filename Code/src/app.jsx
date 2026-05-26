@@ -56,78 +56,84 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('agrisync_fincas', JSON.stringify(fincas));
     }
 
-// 1. Buscamos el socket en local o en el objeto global
-const socketActivo = (typeof socket !== 'undefined' ? socket : window.socket);
+    // 1. Buscamos el socket en local o en el objeto global
+    const socketActivo = (typeof socket !== 'undefined' ? socket : window.socket);
 
-// 2. Si lo encuentra (en cualquiera de los dos sitios), engancha los listeners de forma segura
-if (socketActivo) {
-    socketActivo.on('connect', () => {
-        console.log('✅ Conectado al servidor de la VM');
-        if (typeof pingDisplay !== 'undefined' && pingDisplay) pingDisplay.innerText = "Conectado";
-    });
+    // 2. Si lo encuentra (en cualquiera de los dos sitios), engancha los listeners de forma segura
+    if (socketActivo) {
+        socketActivo.on('connect', () => {
+            console.log('✅ Conectado al servidor de la VM');
+            if (typeof pingDisplay !== 'undefined' && pingDisplay) pingDisplay.innerText = "Conectado";
+        });
 
-    socketActivo.on('respuesta_clima', (data) => {
-        console.log('☀️ Datos recibidos:', data);
-        if (typeof tempDisplay !== 'undefined' && tempDisplay) {
-            const valorTemp = data.temperatura || (data.main ? data.main.temp : '--');
-            tempDisplay.innerText = valorTemp + " °C";
-            tempDisplay.classList.add('animate-pulse');
-            setTimeout(() => tempDisplay.classList.remove('animate-pulse'), 1000);
-        }
-        if (typeof statusMsg !== 'undefined' && statusMsg) statusMsg.innerText = "Clima actualizado desde el sensor";
-    });
-} else {
-    // 3. Si aún no se ha creado el socket, avisa en la consola pero NO rompe la pantalla en blanco
-    console.warn("⚠️ Los listeners del socket se han pausado porque la conexión aún no está lista.");
-}
-
-
-
-    /* --- GESTIÓN DE INICIO DE SESIÓN (LOGIN) --- Manteniendo tu lógica intacta */
-
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const pwd = passwordInput.value.trim();
-        const role = CREDENTIALS[pwd];
-
-        if (role) {
-            login(role);
-        } else {
-            passwordInput.classList.add('border-red-500');
-            // CAMBIO AQUÍ:
-            if (loginError) {
-                loginError.innerText = "Credenciales incorrectas";
-                loginError.classList.remove('hidden');
-            } else {
-                alert("Credenciales incorrectas"); // Fallback si no hay div de error
+        socketActivo.on('respuesta_clima', (data) => {
+            console.log('☀️ Datos recibidos:', data);
+            if (typeof tempDisplay !== 'undefined' && tempDisplay) {
+                const valorTemp = data.temperatura || (data.main ? data.main.temp : '--');
+                tempDisplay.innerText = valorTemp + " °C";
+                tempDisplay.classList.add('animate-pulse');
+                setTimeout(() => tempDisplay.classList.remove('animate-pulse'), 1000);
             }
-        }
-    });
+            if (typeof statusMsg !== 'undefined' && statusMsg) statusMsg.innerText = "Clima actualizado desde el sensor";
+        });
+    } else {
+        // 3. Si aún no se ha creado el socket, avisa en la consola pero NO rompe la pantalla en blanco
+        console.warn("⚠️ Los listeners del socket se han pausado porque la conexión aún no está lista.");
+    }
 
-    passwordInput.addEventListener('input', () => {
-        if (loginError) loginError.classList.add('hidden');
-        passwordInput.classList.remove('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-600');
-        passwordInput.classList.add('focus:ring-green-500/20', 'focus:border-green-600');
-    });
+    /* --- GESTIÓN DE INICIO DE SESIÓN (LOGIN) --- */
 
-    logoutBtn.addEventListener('click', logout);
+    // 🛠️ PARCHE DE SEGURIDAD: Evitar caídas si loginForm no existe en esta pantalla
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!passwordInput) return;
+            const pwd = passwordInput.value.trim();
+            const role = CREDENTIALS[pwd];
+
+            if (role) {
+                login(role);
+            } else {
+                passwordInput.classList.add('border-red-500');
+                if (loginError) {
+                    loginError.innerText = "Credenciales incorrectas";
+                    loginError.classList.remove('hidden');
+                } else {
+                    alert("Credenciales incorrectas");
+                }
+            }
+        });
+    }
+
+    // 🛠️ PARCHE DE SEGURIDAD: Comprobar input de contraseña de forma segura
+    if (passwordInput) {
+        passwordInput.addEventListener('input', () => {
+            if (loginError) loginError.classList.add('hidden');
+            passwordInput.classList.remove('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-600');
+            passwordInput.classList.add('focus:ring-green-500/20', 'focus:border-green-600');
+        });
+    }
+
+    // 🛠️ PARCHE DE SEGURIDAD: Comprobar botón de salir de forma segura
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 
     function login(role) {
         currentUserRole = role;
         if (loginError) loginError.classList.add('hidden');
-        passwordInput.value = '';
+        if (passwordInput) passwordInput.value = '';
 
         if (userRoleBadge) {
             userRoleBadge.textContent = role;
         }
 
-        // Si tuvieras controles de administrador específicos:
         if (adminControls) {
             role === 'Admin' ? adminControls.classList.remove('hidden') : adminControls.classList.add('hidden');
         }
 
-        loginScreen.classList.add('hidden');
-        dashboardScreen.classList.remove('hidden');
+        if (loginScreen) loginScreen.classList.add('hidden');
+        if (dashboardScreen) dashboardScreen.classList.remove('hidden');
 
         // Seleccionar la primera finca del usuario por defecto
         const userFarms = fincas.filter(f => f.propietario === currentUserRole);
@@ -142,8 +148,8 @@ if (socketActivo) {
         currentUserRole = null;
         selectedFarmId = null;
         if (sensorInterval) clearInterval(sensorInterval);
-        dashboardScreen.classList.add('hidden');
-        loginScreen.classList.remove('hidden');
+        if (dashboardScreen) dashboardScreen.classList.add('hidden');
+        if (loginScreen) loginScreen.classList.remove('hidden');
     }
 
     /* --- LÓGICA DEL DASHBOARD DE SENSORES --- */
@@ -178,9 +184,8 @@ if (socketActivo) {
         renderFarmTabs();
         updateDashboardFarmInfo();
         populateFarmDropdowns();
-        // Opcional: refrescar sensores o mapa
-        if (contentSections[1].classList.contains('active')) {
-            init3DMap(true); // Forzar reinicio del mapa con nuevas dimensiones
+        if (typeof contentSections !== 'undefined' && contentSections[1] && contentSections[1].classList.contains('active')) {
+            if (typeof init3DMap === 'function') init3DMap(true);
         }
     };
 
@@ -215,8 +220,12 @@ if (socketActivo) {
     if (addFarmForm) {
         addFarmForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = document.getElementById('new-farm-name').value;
-            const hectares = parseFloat(document.getElementById('new-farm-hectares').value);
+            const nameEl = document.getElementById('new-farm-name');
+            const hectaresEl = document.getElementById('new-farm-hectares');
+            if (!nameEl || !hectaresEl) return;
+
+            const name = nameEl.value;
+            const hectares = parseFloat(hectaresEl.value);
 
             const newFarm = {
                 id: Date.now(),
@@ -251,7 +260,7 @@ if (socketActivo) {
 
         renderSensorUI(currentData);
         currentGlobalData = currentData;
-        handleDataInput(currentData);
+        if (typeof handleDataInput === 'function') handleDataInput(currentData);
 
         if (currentData.humedad < 30) {
             const now = Date.now();
@@ -268,15 +277,15 @@ if (socketActivo) {
 
     function simularDatos() {
         const nuevosDatos = {
-            humedad: Math.floor(Math.random() * 71) + 10, // Humedad entre 10% y 80%
-            temperatura: (Math.random() * 20 + 15).toFixed(1), // Temperatura entre 15°C y 35°C
-            ph: (Math.random() * 3 + 5).toFixed(1), // pH entre 5.0 y 8.0
-            iluminacion: Math.floor(Math.random() * 1901) + 100 // Iluminación entre 100 y 2000 lux
+            humedad: Math.floor(Math.random() * 71) + 10,
+            temperatura: (Math.random() * 20 + 15).toFixed(1),
+            ph: (Math.random() * 3 + 5).toFixed(1),
+            iluminacion: Math.floor(Math.random() * 1901) + 100
         };
 
         renderSensorUI(nuevosDatos);
         currentGlobalData = nuevosDatos;
-        handleDataInput(nuevosDatos);
+        if (typeof handleDataInput === 'function') handleDataInput(nuevosDatos);
 
         if (nuevosDatos.humedad < 30) {
             const now = Date.now();
@@ -297,6 +306,7 @@ if (socketActivo) {
     }
 
     function renderSensorUI(data) {
+        if (!sensorGrid) return;
         const ruleHumedadBaja = data.humedad < 30;
         const cardsDef = [
             {
@@ -376,14 +386,9 @@ if (socketActivo) {
     }
 
     function sendWhatsAppAlert(data) {
-        // 1. Configuras tus datos
-        const phoneNumber = "+34623190486"; // Tu número con el prefijo internacional
-        const apiKey = "9687095"; // La clave que te dio el bot
-
-        // 2. Construyes el mensaje
+        const phoneNumber = "+34623190486"; 
+        const apiKey = "9687095"; 
         const mensaje = `🚨 ALERTA CRÍTICA - AgriSync 🚨%0AAtención: La humedad ha bajado a niveles críticos.%0A%0AHumedad: ${data.humedad}%%0ATemperatura: ${data.temperatura} °C%0ApH: ${data.ph}`;
-
-        // 3. Haces la petición a CallMeBot
         const url = `https://api.callmebot.com/whatsapp.php?phone=${phoneNumber}&text=${mensaje}&apikey=${apiKey}`;
 
         fetch(url)
@@ -394,94 +399,17 @@ if (socketActivo) {
             .catch(err => console.error('❌ Error de red con WhatsApp:', err));
     }
 
-    /*function sendSlackAlert(message) {
-        const webhookUrlInput = document.getElementById('slack-webhook-url');
-        const webhookUrl = webhookUrlInput ? webhookUrlInput.value.trim() : SLACK_WEBHOOK;
-        
-        if (!webhookUrl) {
-            console.error('❌ No se ha configurado la URL del Webhook de Slack');
-            return;
-        }
-
-        const payload = {
-            text: message
-        };
-
-        fetch(webhookUrl, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: {
-                'Content-type': 'application/json'
-            }
-        })
-        .then(res => {
-            if (res.ok) console.log('✅ Alerta de Slack enviada');
-            else console.error('❌ Error enviando Slack:', res.statusText);
-        })
-        .catch(err => console.error('❌ Error de red con Slack:', err));
-    }
-
-    // Lógica para Simulación de Control de Plagas
-    const btnSimulatePest = document.getElementById('btn-simulate-pest');
-    const pestAlertStatus = document.getElementById('pest-alert-status');
-    if (btnSimulatePest && pestAlertStatus) {
-        btnSimulatePest.addEventListener('click', () => {
-            // Mostrar estado en UI
-            btnSimulatePest.disabled = true;
-            btnSimulatePest.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Simulando...';
-            pestAlertStatus.classList.remove('hidden', 'text-green-600', 'text-red-600');
-            pestAlertStatus.classList.add('text-orange-600');
-            pestAlertStatus.innerText = 'Enviando imagen a IA...';
-
-            setTimeout(() => {
-                pestAlertStatus.classList.remove('text-orange-600');
-                pestAlertStatus.classList.add('text-red-600');
-                pestAlertStatus.innerText = '¡Plaga detectada! Enviando alertas...';
-
-                // Usamos CallMeBot con un mensaje específico de plaga
-                const pestData = {
-                    humedad: 'N/A',
-                    temperatura: 'N/A',
-                    ph: 'N/A'
-                };
-                
-                // Mensaje custom para WhatsApp (CallMeBot url encodea)
-                const phoneNumber = "+34623190486"; 
-                const apiKey = "9687095"; 
-                const mensajeWa = `🚨 ALERTA PLAGA DETECTADA 🚨%0ALa IA de Zapier ha detectado una posible plaga en la última imagen subida a Drive.%0ARevisa la parcela inmediatamente.`;
-                const urlWa = `https://api.callmebot.com/whatsapp.php?phone=${phoneNumber}&text=${mensajeWa}&apikey=${apiKey}`;
-                
-                fetch(urlWa).then(res => console.log('WhatsApp Plaga enviado'));
-
-                // Enviar Slack
-                const slackMessage = "🚨 *ALERTA DE PLAGA DETECTADA* 🚨\nLa IA de Zapier ha detectado una posible plaga en la última imagen subida a Google Drive.\n📍 *Ubicación:* Sector Principal\n🔍 *Recomendación:* Revisar la parcela y aplicar medidas de control.";
-                sendSlackAlert(slackMessage);
-
-                setTimeout(() => {
-                    btnSimulatePest.disabled = false;
-                    btnSimulatePest.innerHTML = '<i class="fas fa-paper-plane"></i> Lanzar Alerta de Plaga';
-                    pestAlertStatus.classList.remove('text-red-600');
-                    pestAlertStatus.classList.add('text-green-600');
-                    pestAlertStatus.innerText = '✅ Alertas enviadas correctamente a Zapier, Slack y WhatsApp.';
-                    
-                    setTimeout(() => {
-                        pestAlertStatus.classList.add('hidden');
-                    }, 5000);
-                }, 2000);
-
-            }, 1500);
-        });
-    }*/
-
     if (exportSheetsBtn) {
         exportSheetsBtn.addEventListener('click', () => {
             if (!currentGlobalData) return;
             const btnIcon = exportSheetsBtn.querySelector('i');
-            btnIcon.className = 'fa-solid fa-spinner fa-spin mr-3 text-white';
-            setTimeout(() => {
-                btnIcon.className = 'fa-solid fa-check mr-3 text-white';
-                setTimeout(() => { btnIcon.className = 'fa-solid fa-file-excel mr-3 text-white'; }, 2000);
-            }, 1000);
+            if (btnIcon) {
+                btnIcon.className = 'fa-solid fa-spinner fa-spin mr-3 text-white';
+                setTimeout(() => {
+                    btnIcon.className = 'fa-solid fa-check mr-3 text-white';
+                    setTimeout(() => { btnIcon.className = 'fa-solid fa-file-excel mr-3 text-white'; }, 2000);
+                }, 1000);
+            }
         });
     }
 
@@ -497,11 +425,19 @@ if (socketActivo) {
     if (sensorForm) {
         sensorForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const farmId = parseInt(document.getElementById('sensor-farm-select').value);
-            const plotName = document.getElementById('plot-name').value;
-            const cropType = document.getElementById('crop-type').value;
-            const metricType = document.getElementById('metric-type').value;
-            const idealValue = document.getElementById('ideal-value').value;
+            const farmIdSelect = document.getElementById('sensor-farm-select');
+            const plotNameEl = document.getElementById('plot-name');
+            const cropTypeEl = document.getElementById('crop-type');
+            const metricTypeEl = document.getElementById('metric-type');
+            const idealValueEl = document.getElementById('ideal-value');
+            
+            if (!farmIdSelect || !plotNameEl || !cropTypeEl || !metricTypeEl || !idealValueEl) return;
+
+            const farmId = parseInt(farmIdSelect.value);
+            const plotName = plotNameEl.value;
+            const cropType = cropTypeEl.value;
+            const metricType = metricTypeEl.value;
+            const idealValue = idealValueEl.value;
             const locationMode = document.getElementById('sensor-location-mode')?.value || 'todo';
 
             // Calcula posición con la fórmula matemática
@@ -527,7 +463,7 @@ if (socketActivo) {
                 cultivo: cropType,
                 metrica: metricType,
                 ideal: idealValue,
-                valorActual: (Math.random() * 100).toFixed(1), // Simulación
+                valorActual: (Math.random() * 100).toFixed(1),
                 locationMode: finalMode,
                 x: posX,
                 z: posZ
@@ -539,10 +475,10 @@ if (socketActivo) {
             renderCustomSensors();
 
             // Refrescar el mapa si está inicializado para ver el nuevo sensor
-            if (map3DInitialized && scene3D) {
-                crearSensor3D(posX, posZ, true);
+            if (typeof map3DInitialized !== 'undefined' && map3DInitialized && typeof scene3D !== 'undefined' && scene3D) {
+                if (typeof crearSensor3D === 'function') crearSensor3D(posX, posZ, true);
                 const totalMap = document.getElementById('total-sensores-mapa');
-                if (totalMap) totalMap.innerText = sensores3D.length;
+                if (totalMap && typeof sensores3D !== 'undefined') totalMap.innerText = sensores3D.length;
             }
 
             let alertMsg = `Sensor "${plotName}" añadido con éxito.`;
@@ -557,7 +493,6 @@ if (socketActivo) {
         const container = document.getElementById('contenedorSensores');
         if (!container) return;
 
-        // Filtrar por la finca seleccionada actualmente
         const filtered = sensoresPersonalizados.filter(s => s.farmId === selectedFarmId);
 
         if (filtered.length === 0) {
@@ -582,7 +517,6 @@ if (socketActivo) {
         `;
     }
 
-
     /* --- WIDGET DE CLIMA DINÁMICO --- */
     let weatherInitialized = false;
 
@@ -594,79 +528,86 @@ if (socketActivo) {
         const list     = document.getElementById('municipios-list');
         const contenedor = document.getElementById('contenedor-widget');
         if (!input || !list || !contenedor) return;
+        // Aseguramos que todo se ejecute cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    // Referencias a elementos del DOM (clima)
+    const input = document.getElementById('input-municipio'); // Asegúrate de que coincida con tus IDs reales
+    const list = document.getElementById('lista-municipios');
+    const contenedor = document.getElementById('weather-widget-container');
 
-        // Convierte lat/lon al formato forecast7.com: 37.89,-4.78 → "37d89n4d78"
-        function coordsToForecast7(lat, lon) {
-            const latAbs = Math.abs(lat).toFixed(2).replace('.', 'd');
-            const lonAbs = Math.abs(lon).toFixed(2).replace('.', 'd');
-            const latDir = lat >= 0 ? 'n' : 's';
-            return `${latAbs}${latDir}${lonAbs}`;
-        }
+    // Convierte lat/lon al formato forecast7.com: 37.89,-4.78 → "37d89n4d78"
+    function coordsToForecast7(lat, lon) {
+        const latAbs = Math.abs(lat).toFixed(2).replace('.', 'd');
+        const lonAbs = Math.abs(lon).toFixed(2).replace('.', 'd');
+        const latDir = lat >= 0 ? 'n' : 's';
+        return `${latAbs}${latDir}${lonAbs}`;
+    }
 
-        // Inyecta el widget con las coordenadas del municipio
-        function cargarWidget(pueblo, coordStr) {
-            const slug = pueblo.toLowerCase()
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                .replace(/\s+/g, '-');
+    // Inyecta el widget con las coordenadas del municipio
+    function cargarWidget(pueblo, coordStr) {
+        if (!contenedor) return;
+        const slug = pueblo.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, '-');
 
-            contenedor.innerHTML = `<a class="weatherwidget-io"
-               href="https://forecast7.com/es/${coordStr}/${slug}/"
-               data-label_1="${pueblo.toUpperCase()}"
-               data-theme="pure">${pueblo.toUpperCase()} WEATHER</a>`;
+        contenedor.innerHTML = `<a class="weatherwidget-io"
+           href="https://forecast7.com/es/${coordStr}/${slug}/"
+           data-label_1="${pueblo.toUpperCase()}"
+           data-theme="pure">${pueblo.toUpperCase()} WEATHER</a>`;
 
-            const old = document.getElementById('weatherwidget-io-js');
-            if (old) old.remove();
-            const s = document.createElement('script');
-            s.id  = 'weatherwidget-io-js';
-            s.src = 'https://weatherwidget.io/js/widget.min.js';
-            document.body.appendChild(s);
-        }
+        const old = document.getElementById('weatherwidget-io-js');
+        if (old) old.remove();
+        const s = document.createElement('script');
+        s.id  = 'weatherwidget-io-js';
+        s.src = 'https://weatherwidget.io/js/widget.min.js';
+        document.body.appendChild(s);
+    }
 
-        // Cargar lista de municipios en el datalist
-        if (list.options.length === 0) {
-            console.log('Osiris: Cargando municipios...');
-            fetch('https://raw.githubusercontent.com/frontid/municipios-espanoles/master/municipios.json')
-                .then(r => r.json())
-                .then(data => {
-                    const frag = document.createDocumentFragment();
-                    data.forEach(m => {
-                        const opt = document.createElement('option');
-                        opt.value = m.nombre;
-                        frag.appendChild(opt);
-                    });
-                    list.appendChild(frag);
-                    console.log('Osiris: ' + list.options.length + ' municipios cargados');
-                })
-                .catch(err => console.error('Error cargando municipios:', err));
-        }
-
-        // Función principal: geocodifica el municipio y carga el widget
-        function buscarMunicipio() {
-            const pueblo = input.value.trim();
-            if (!pueblo) return;
-
-            contenedor.innerHTML = '<p style="padding:2rem;color:#555;text-align:center;font-style:italic;">\uD83D\uDD0D Cargando clima de <strong>' + pueblo + '</strong>...</p>';
-
-            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(pueblo) + ',+Espa\u00f1a&limit=1')
-                .then(r => r.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        cargarWidget(pueblo, coordsToForecast7(parseFloat(data[0].lat), parseFloat(data[0].lon)));
-                    } else {
-                        console.warn('Municipio no encontrado, usando fallback');
-                        cargarWidget(pueblo, '40d42n3d70');
-                    }
-                })
-                .catch(err => {
-                    console.error('Error geocodificando:', err);
-                    cargarWidget(pueblo, '40d42n3d70');
+    // Cargar lista de municipios en el datalist
+    if (list && list.options.length === 0) {
+        console.log('Osiris: Cargando municipios...');
+        fetch('https://raw.githubusercontent.com/frontid/municipios-espanoles/master/municipios.json')
+            .then(r => r.json())
+            .then(data => {
+                const frag = document.createDocumentFragment();
+                data.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.nombre;
+                    frag.appendChild(opt);
                 });
-        }
+                list.appendChild(frag);
+                console.log('Osiris: ' + list.options.length + ' municipios cargados');
+            })
+            .catch(err => console.error('Error cargando municipios:', err));
+    }
 
-        // Dispara al seleccionar del datalist (click o Tab)
+    // Función principal: geocodifica el municipio y carga el widget
+    function buscarMunicipio() {
+        if (!input || !contenedor) return;
+        const pueblo = input.value.trim();
+        if (!pueblo) return;
+
+        contenedor.innerHTML = '<p style="padding:2rem;color:#555;text-align:center;font-style:italic;">\uD83D\uDD0D Cargando clima de <strong>' + pueblo + '</strong>...</p>';
+
+        fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(pueblo) + ',+Espa\u00f1a&limit=1')
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    cargarWidget(pueblo, coordsToForecast7(parseFloat(data[0].lat), parseFloat(data[0].lon)));
+                } else {
+                    console.warn('Municipio no encontrado, usando fallback');
+                    cargarWidget(pueblo, '40d42n3d70');
+                }
+            })
+            .catch(err => {
+                console.error('Error geocodificando:', err);
+                cargarWidget(pueblo, '40d42n3d70');
+            });
+    }
+
+    // Eventos del Input
+    if (input) {
         input.addEventListener('change', buscarMunicipio);
-
-        // Dispara también al pulsar Enter
         input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -709,24 +650,26 @@ if (socketActivo) {
             }
 
             const filtered = historicalData.filter(record => record.fecha >= startStr && record.fecha <= endStr);
-            historyStatusMsg.classList.add('hidden');
-            historyTableContainer.classList.remove('hidden');
-            historyTableBody.innerHTML = '';
+            if (historyStatusMsg) historyStatusMsg.classList.add('hidden');
+            if (historyTableContainer) historyTableContainer.classList.remove('hidden');
+            if (historyTableBody) {
+                historyTableBody.innerHTML = '';
 
-            if (filtered.length === 0) {
-                historyTableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-text-light italic">No hay registros</td></tr>`;
-            } else {
-                filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).forEach(record => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-50 border-b border-gray-100 last:border-0';
-                    tr.innerHTML = `
-                        <td class="p-3 text-sm font-medium text-gray-800">${record.fecha}</td>
-                        <td class="p-3 text-sm text-gray-600">${record.finca}</td>
-                        <td class="p-3 text-sm text-center font-semibold text-orange-600">${record.temperatura} °C</td>
-                        <td class="p-3 text-sm text-center font-semibold text-blue-600">${record.humedad}%</td>
-                    `;
-                    historyTableBody.appendChild(tr);
-                });
+                if (filtered.length === 0) {
+                    historyTableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-text-light italic">No hay registros</td></tr>`;
+                } else {
+                    filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).forEach(record => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-gray-50 border-b border-gray-100 last:border-0';
+                        tr.innerHTML = `
+                            <td class="p-3 text-sm font-medium text-gray-800">${record.fecha}</td>
+                            <td class="p-3 text-sm text-gray-600">${record.finca}</td>
+                            <td class="p-3 text-sm text-center font-semibold text-orange-600">${record.temperatura} °C</td>
+                            <td class="p-3 text-sm text-center font-semibold text-blue-600">${record.humedad}%</td>
+                        `;
+                        historyTableBody.appendChild(tr);
+                    });
+                }
             }
         });
     }
@@ -735,6 +678,16 @@ if (socketActivo) {
     const userCardContainer = document.getElementById('user-card-container');
     const userOptionsPopup = document.getElementById('user-options-popup');
     const logoutBtnSidebar = document.getElementById('logout-btn-sidebar');
+
+    // Fallback seguro por si la función `logout` externa no se ha cargado todavía
+    const safeLogout = (e) => {
+        if (typeof logout === 'function') {
+            logout(e);
+        } else {
+            console.warn("Osiris: Función logout() no globalizada. Limpiando sesión por defecto...");
+            window.location.reload(); 
+        }
+    };
 
     if (userCardContainer && userOptionsPopup) {
         userCardContainer.addEventListener('click', (e) => {
@@ -749,7 +702,7 @@ if (socketActivo) {
     }
 
     if (logoutBtnSidebar) {
-        logoutBtnSidebar.addEventListener('click', logout);
+        logoutBtnSidebar.addEventListener('click', safeLogout);
     }
 
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
@@ -770,7 +723,7 @@ if (socketActivo) {
                     sec.id === sectionId ? sec.classList.add('active') : sec.classList.remove('active');
                 });
 
-                if (sectionId === 'section-parcela') init3DMap();
+                if (sectionId === 'section-parcela' && typeof init3DMap === 'function') init3DMap();
                 if (sectionId === 'section-estadisticas') {
                     console.log("Osiris: Click en Estadísticas. Intentando inicializar en 200ms...");
                     setTimeout(() => {
@@ -789,6 +742,7 @@ let scene3D = null, camera3D = null, renderer3D = null, sensores3D = [], ground3
 if (typeof window !== 'undefined') {
     window.init3DMap = init3DMap;
 }
+
 function init3DMap(reset = false) {
     const container = document.getElementById('canvas-3d-container');
     if (!container) return;
@@ -801,7 +755,6 @@ function init3DMap(reset = false) {
 
     map3DInitialized = true;
     
-    // 🛠️ PARCHE 1: Extractor ultra seguro para encontrar el array de fincas de n8n
     let listaFincas = [];
     if (typeof fincas !== 'undefined') {
         listaFincas = fincas;
@@ -809,19 +762,17 @@ function init3DMap(reset = false) {
         listaFincas = window.fincas;
     }
 
-    const farm = listaFincas.find(f => f.id === selectedFarmId) || { hectareas: 5 };
+    // Validación segura de ID de finca seleccionada
+    const currentFarmId = typeof selectedFarmId !== 'undefined' ? selectedFarmId : null;
+    const farm = listaFincas.find(f => f.id === currentFarmId) || { hectares: 5 };
     
-    // Forzamos un respaldo numérico estricto por si las hectáreas llegan vacías desde n8n
     const hectareasSeguras = farm.hectareas || 5;
     const baseWidth = Math.sqrt(hectareasSeguras) * 20; 
     const baseDepth = baseWidth * 0.75;
 
     scene3D = new THREE.Scene();
-    
-    // ✅ CAMBIO 1: Fondo oscuro "Modo Noche" para Osiris
     scene3D.background = new THREE.Color(0x0d1f12); 
 
-    // Medidas iniciales por defecto (el ResizeObserver se encargará de ajustarlas al tamaño real)
     const width = container.clientWidth || window.innerWidth * 0.6;
     const height = container.clientHeight || 500;
 
@@ -832,16 +783,12 @@ function init3DMap(reset = false) {
     renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer3D.setSize(width, height);
     
-    // ✅ CAMBIO 2: Activar el mapeado de sombras en el renderizador
     renderer3D.shadowMap.enabled = true;
     renderer3D.shadowMap.type = THREE.PCFSoftShadowMap; 
 
     container.innerHTML = '';
     container.appendChild(renderer3D.domElement);
 
-    // ==========================================
-    // ✅ CAMBIO 3: Esquema de 4 Luces (Cinemático)
-    // ==========================================
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); 
     scene3D.add(ambientLight);
 
@@ -859,11 +806,9 @@ function init3DMap(reset = false) {
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
     rimLight.position.set(0, -20, -baseWidth);
     scene3D.add(rimLight);
-    // ==========================================
 
     scene3D.add(new THREE.GridHelper(baseWidth * 1.5, 16, 0x444444, 0x222222)); 
 
-    // ✅ CAMBIO 4: Suelo (ground3D) con los nuevos parámetros
     ground3D = new THREE.Mesh(
         new THREE.PlaneGeometry(baseWidth, baseDepth),
         new THREE.MeshPhongMaterial({ 
@@ -878,33 +823,22 @@ function init3DMap(reset = false) {
     ground3D.receiveShadow = true; 
     scene3D.add(ground3D);
 
-    // 🔄 BUCLE DE ANIMACIÓN
     const animate = () => {
         requestAnimationFrame(animate);
         
-        if (typeof controls3D !== 'undefined' && controls3D) {
-            controls3D.target.set(0, 0, 0);
-            controls3D.update();
-        } else if (window.controls3D) {
-            window.controls3D.target.set(0, 0, 0);
-            window.controls3D.update();
+        let activeControls = null;
+        if (typeof controls3D !== 'undefined' && controls3D) activeControls = controls3D;
+        else if (window.controls3D) activeControls = window.controls3D;
+
+        if (activeControls) {
+            activeControls.target.set(0, 0, 0);
+            activeControls.update();
         }
 
-        if (camera3D) {
-            camera3D.lookAt(0, 0, 0);
-        }
-
+        if (camera3D) camera3D.lookAt(0, 0, 0);
         if (renderer3D) renderer3D.render(scene3D, camera3D);
     };
     animate();
-
-    window.addEventListener('resize', () => {
-        if (!container || !camera3D || !renderer3D) return;
-        camera3D.aspect = container.clientWidth / container.clientHeight;
-        camera3D.updateProjectionMatrix();
-        renderer3D.setSize(container.clientWidth, container.clientHeight);
-        camera3D.lookAt(0, 0, 0);
-    });
 
     optimizarColocacionIA();
 
@@ -918,29 +852,21 @@ function init3DMap(reset = false) {
         });
     }
 
-    // 🛠️ VIGILANTE DE TAMAÑO ELECTRÓNICO (Para estirar el mapa cuando React le dé tamaño real al div)
-    const contenedorParaObservar = document.getElementById('canvas-3d-container');
-    if (contenedorParaObservar) {
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (let entry of entries) {
-                const w = entry.contentRect.width;
-                const h = entry.contentRect.height;
+    const resizeObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+            const w = entry.contentRect.width;
+            const h = entry.contentRect.height;
 
-                if (w > 0 && h > 0 && camera3D && renderer3D) {
-                    camera3D.aspect = w / h;
-                    camera3D.updateProjectionMatrix();
-                    renderer3D.setSize(w, h);
-                    
-                    camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
-                    camera3D.lookAt(0, 0, 0);
-                }
+            if (w > 0 && h > 0 && camera3D && renderer3D) {
+                camera3D.aspect = w / h;
+                camera3D.updateProjectionMatrix();
+                renderer3D.setSize(w, h);
+                camera3D.position.set(0, baseWidth * 1.8, baseWidth * 2.2);
+                camera3D.lookAt(0, 0, 0);
             }
-        });
-        resizeObserver.observe(contenedorParaObservar);
-    }
-
-    // 🌍 Exponer la función al objeto global window
-    window.init3DMap = init3DMap;
+        }
+    });
+    resizeObserver.observe(container);
 }
 
 export function crearSensor3D(x, z, isCustom = false) {
@@ -951,22 +877,15 @@ export function crearSensor3D(x, z, isCustom = false) {
     const topColor = isCustom ? 0x3b82f6 : 0x22c55e;
     const emissiveColor = isCustom ? 0x1d4ed8 : 0x0d7e25;
 
-    // 1. Cuerpo cilíndrico del sensor
     const sensorMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: color, metalness: 0.3, roughness: 0.6 }));
     sensorMesh.position.set(x, 2, z);
-    
-    // 👇 CAMBIO 1: El cuerpo del sensor proyectará sombra
     sensorMesh.castShadow = true; 
 
-    // 2. Cúpula esférica del sensor
     const sensorTop = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), new THREE.MeshStandardMaterial({ color: topColor, emissive: emissiveColor, emissiveIntensity: 0.3 }));
     sensorTop.position.set(0, 2.2, 0);
-    
-    // 👇 CAMBIO 2: La tapa esférica superior también proyectará sombra
     sensorTop.castShadow = true; 
     
     sensorMesh.add(sensorTop);
-
     scene3D.add(sensorMesh);
     sensores3D.push(sensorMesh);
 }
@@ -976,11 +895,12 @@ function optimizarColocacionIA() {
     sensores3D.forEach(sensor => scene3D.remove(sensor));
     sensores3D = [];
 
-    const farm = fincas.find(f => f.id === selectedFarmId) || { hectareas: 5 };
+    let listaFincas = typeof fincas !== 'undefined' ? fincas : (window.fincas || []);
+    const currentFarmId = typeof selectedFarmId !== 'undefined' ? selectedFarmId : null;
+    const farm = listaFincas.find(f => f.id === currentFarmId) || { hectares: 5 };
     const baseWidth = Math.sqrt(farm.hectareas) * 20;
     const baseDepth = baseWidth * 0.75;
 
-    // Distribuir exactamente 12 sensores según fórmula (4 columnas x 3 filas) para un espaciado adecuado
     const numCols = 4;
     const numRows = 3;
     const spacingX = baseWidth / numCols;
@@ -994,13 +914,12 @@ function optimizarColocacionIA() {
         }
     }
 
-    // Colocar también los sensores personalizados
-    const filteredSensores = sensoresPersonalizados.filter(s => s.farmId === selectedFarmId);
+    const listaPersonalizados = typeof sensoresPersonalizados !== 'undefined' ? sensoresPersonalizados : [];
+    const filteredSensores = listaPersonalizados.filter(s => s.farmId === currentFarmId);
     filteredSensores.forEach(s => {
         crearSensor3D(s.x || 0, s.z || 0, true);
     });
 
-    // Actualizar contadores en UI si existen
     const totalMap = document.getElementById('total-sensores-mapa');
     if (totalMap) totalMap.innerText = sensores3D.length;
 }
@@ -1008,26 +927,37 @@ function optimizarColocacionIA() {
 // ==========================================
 // MÓDULO: DASHBOARD ANALÍTICO (FUTURE-PROOF)
 // ==========================================
-
 let sessionHistory = [];
 let lineChartInstance = null;
 let radarChartInstance = null;
+let chartScriptLoading = false; // Bandera para evitar inyecciones múltiples
 
-/**
- * Inicializa las gráficas usando Chart.js
- */
 function initAnalyticsCharts() {
     console.log("Osiris: Intentando inicializar Chart.js...");
     
-    if (typeof Chart === 'undefined') {
-        console.error("Osiris: La librería Chart.js no está cargada. Reintentando cargar script...");
-        const script = document.createElement('script');
-        script.src = "https://cdn.jsdelivr.net/npm/chart.js";
-        script.onload = () => initAnalyticsCharts();
-        document.head.appendChild(script);
+    if (typeof Chart !== 'undefined') {
+        renderCharts();
         return;
     }
 
+    if (chartScriptLoading) return; // Si ya se está cargando, salir del paso
+    chartScriptLoading = true;
+
+    console.error("Osiris: La librería Chart.js no está cargada. Cargando script...");
+    const script = document.createElement('script');
+    script.src = "https://cdn.jsdelivr.net/npm/chart.js";
+    script.onload = () => {
+        chartScriptLoading = false;
+        renderCharts();
+    };
+    script.onerror = () => {
+        chartScriptLoading = false;
+        console.error("No se pudo cargar Chart.js desde la CDN.");
+    };
+    document.head.appendChild(script);
+}
+
+function renderCharts() {
     const ctxLine = document.getElementById('lineChart');
     const ctxRadar = document.getElementById('radarChart');
 
@@ -1036,10 +966,13 @@ function initAnalyticsCharts() {
         return;
     }
 
+    if (lineChartInstance) lineChartInstance.destroy();
+    if (radarChartInstance) radarChartInstance.destroy();
+
     lineChartInstance = new Chart(ctxLine, {
         type: 'line',
         data: {
-            labels: ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'], // Placeholders para los 10 registros
+            labels: ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
             datasets: [
                 {
                     label: 'Humedad (%)',
@@ -1072,70 +1005,55 @@ function initAnalyticsCharts() {
     });
 
     radarChartInstance = new Chart(ctxRadar, {
-            type: 'radar',
-            data: {
-                labels: ['Humedad', 'Temperatura', 'pH', 'Luz (x100)'],
-                datasets: [
-                    {
-                        label: 'Actual',
-                        data: [0, 0, 0, 0],
-                        borderColor: '#1a5d1a',
-                        backgroundColor: 'rgba(26, 93, 26, 0.4)',
-                        borderWidth: 2
-                    },
-                    {
-                        label: 'Ideal',
-                        data: [60, 24, 6.5, 8],
-                        borderColor: '#4caf50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                        borderDash: [5, 5],
-                        borderWidth: 2
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        min: 0,
-                        max: 100
-                    }
+        type: 'radar',
+        data: {
+            labels: ['Humedad', 'Temperatura', 'pH', 'Luz (x100)'],
+            datasets: [
+                {
+                    label: 'Actual',
+                    data: [0, 0, 0, 0],
+                    borderColor: '#1a5d1a',
+                    backgroundColor: 'rgba(26, 93, 26, 0.4)',
+                    borderWidth: 2
+                },
+                {
+                    label: 'Ideal',
+                    data: [60, 24, 6.5, 8],
+                    borderColor: '#4caf50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    borderDash: [5, 5],
+                    borderWidth: 2
                 }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { beginAtZero: true, min: 0, max: 100 }
             }
+        }
     });
 }
 
-/**
- * Procesa la entrada de datos (Simulador o Socket)
- */
 function handleDataInput(sensorData) {
-    // Si no hay sesión activa, ignorar
-    if (!document.getElementById('dashboard-screen').classList.contains('active')) return;
+    const dashboardScreen = document.getElementById('dashboard-screen');
+    if (!dashboardScreen || !dashboardScreen.classList.contains('active')) return;
 
     sessionHistory.push(sensorData);
     if (sessionHistory.length > 10) sessionHistory.shift();
 
     updateChartsUI();
-    
-    // FUTURE-PROOF: Aquí se integrará la llamada a la DB real (fetch/axios)
-    // console.log("Data ready for DB Sync:", sensorData);
 }
 
-/**
- * Actualiza la interfaz de las gráficas
- */
 function updateChartsUI() {
     if (!lineChartInstance || !radarChartInstance || sessionHistory.length === 0) return;
 
-    // Actualizar Líneas
     lineChartInstance.data.labels = sessionHistory.map((_, i) => `T-${sessionHistory.length - 1 - i}`);
     lineChartInstance.data.datasets[0].data = sessionHistory.map(d => d.humedad);
     lineChartInstance.data.datasets[1].data = sessionHistory.map(d => parseFloat(d.temperatura));
     lineChartInstance.update('none');
 
-    // Actualizar Radar (último dato)
     const last = sessionHistory[sessionHistory.length - 1];
     radarChartInstance.data.datasets[0].data = [
         last.humedad, 
@@ -1145,6 +1063,5 @@ function updateChartsUI() {
     ];
     radarChartInstance.update('none');
 }
-
-// Exponer handleDataInput globalmente para facilitar la integración
 window.handleDataInput = handleDataInput;
+};
