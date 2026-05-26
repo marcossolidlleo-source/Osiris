@@ -320,6 +320,7 @@ export default function App() {
                 selectedFarm={selectedFarm}
                 sessionHistory={sessionHistory}
                 userRole={userEmail}
+                agriculturalData={agriculturalData}
               />
             )}
             {activeSection === 'sensores' && <WeatherSection />}

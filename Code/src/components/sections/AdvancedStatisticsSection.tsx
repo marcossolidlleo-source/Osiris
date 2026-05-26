@@ -25,9 +25,10 @@ interface Props {
   selectedFarm: Farm | undefined;
   sessionHistory: SensorData[];
   userRole: string;
+  agriculturalData: any[];
 }
 
-export default function AdvancedStatisticsSection({ selectedFarm, sessionHistory, userRole }: Props) {
+export default function AdvancedStatisticsSection({ selectedFarm, sessionHistory, userRole, agriculturalData  }: Props) {
   const [dateRange, setDateRange] = useState<'7' | '30' | '365'>('7');
   const [stats, setStats] = useState<StatisticsData | null>(null);
   const [showReport, setShowReport] = useState(false);
@@ -39,101 +40,111 @@ export default function AdvancedStatisticsSection({ selectedFarm, sessionHistory
   const radarChartRef = useRef<Chart | null>(null);
 
   useEffect(() => {
-    if (!sessionHistory || sessionHistory.length === 0) return;
+  const dias = parseInt(dateRange);
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - dias);
 
-    const humedad = sessionHistory.map(d => d.humedad);
-    const temperatura = sessionHistory.map(d => parseFloat(d.temperatura));
-    const ph = sessionHistory.map(d => parseFloat(d.ph));
-    const iluminacion = sessionHistory.map(d => d.iluminacion);
+  const filtered = agriculturalData.filter((r: any) => {
+    const fecha = new Date(r.created_at);
+    return fecha >= cutoff && r.temperatura_ambiente !== null && r.humedad_suelo !== null;
+  });
 
-    setStats({
-      avgHumedad: Number((humedad.reduce((a, b) => a + b, 0) / humedad.length).toFixed(1)),
-      avgTemperatura: Number((temperatura.reduce((a, b) => a + b, 0) / temperatura.length).toFixed(1)),
-      avgPh: Number((ph.reduce((a, b) => a + b, 0) / ph.length).toFixed(2)),
-      avgIluminacion: Number((iluminacion.reduce((a, b) => a + b, 0) / iluminacion.length).toFixed(0)),
-      maxHumedad: Math.max(...humedad),
-      minHumedad: Math.min(...humedad),
-      maxTemperatura: Number(Math.max(...temperatura).toFixed(1)),
-      minTemperatura: Number(Math.min(...temperatura).toFixed(1)),
-      totalRegistros: sessionHistory.length,
-      costoTotal: Math.random() * 5000 + 1000,
-      horasRiego: Math.random() * 100 + 50,
-      horasTrabajo: Math.random() * 200 + 100,
-    });
+  if (filtered.length === 0) return;
 
-    if (!lineRef.current || !radarRef.current) return;
-    if (lineChartRef.current) lineChartRef.current.destroy();
-    if (radarChartRef.current) radarChartRef.current.destroy();
+  const humedad = filtered.map((r: any) => Number(r.humedad_suelo));
+  const temperatura = filtered.map((r: any) => Number(r.temperatura_ambiente));
+  const ph = filtered.map((r: any) => Number(r.nivel_ph));
+  const iluminacion = filtered.map((r: any) => Number(r.intensidad_luminica));
+  const labels = filtered.map((r: any) => r.created_at?.split('T')[0] ?? '');
 
-    lineChartRef.current = new Chart(lineRef.current, {
-      type: 'line',
-      data: {
-        labels: sessionHistory.map((_, i) => `${i + 1}`),
-        datasets: [
-          {
-            label: 'Humedad (%)',
-            data: humedad,
-            borderColor: '#1a5d1a',
-            backgroundColor: 'rgba(26, 93, 26, 0.1)',
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true,
-          },
-          {
-            label: 'Temperatura (°C)',
-            data: temperatura,
-            borderColor: '#4caf50',
-            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { grid: { display: false } },
-          y: { beginAtZero: true, min: 0, max: 100, grid: { color: '#f3f4f6' } },
+  setStats({
+    avgHumedad: Number((humedad.reduce((a, b) => a + b, 0) / humedad.length).toFixed(1)),
+    avgTemperatura: Number((temperatura.reduce((a, b) => a + b, 0) / temperatura.length).toFixed(1)),
+    avgPh: Number((ph.reduce((a, b) => a + b, 0) / ph.length).toFixed(2)),
+    avgIluminacion: Number((iluminacion.reduce((a, b) => a + b, 0) / iluminacion.length).toFixed(0)),
+    maxHumedad: Math.max(...humedad),
+    minHumedad: Math.min(...humedad),
+    maxTemperatura: Number(Math.max(...temperatura).toFixed(1)),
+    minTemperatura: Number(Math.min(...temperatura).toFixed(1)),
+    totalRegistros: filtered.length,
+    costoTotal: Math.random() * 5000 + 1000,
+    horasRiego: Math.random() * 100 + 50,
+    horasTrabajo: Math.random() * 200 + 100,
+  });
+
+  if (!lineRef.current || !radarRef.current) return;
+  if (lineChartRef.current) lineChartRef.current.destroy();
+  if (radarChartRef.current) radarChartRef.current.destroy();
+
+  lineChartRef.current = new Chart(lineRef.current, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Humedad (%)',
+          data: humedad,
+          borderColor: '#1a5d1a',
+          backgroundColor: 'rgba(26, 93, 26, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true,
         },
+        {
+          label: 'Temperatura (°C)',
+          data: temperatura,
+          borderColor: '#f97316',
+          backgroundColor: 'rgba(249, 115, 22, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
+        y: { beginAtZero: true, min: 0, max: 100, grid: { color: '#f3f4f6' } },
       },
-    });
+    },
+  });
 
-    radarChartRef.current = new Chart(radarRef.current, {
-      type: 'radar',
-      data: {
-        labels: ['Humedad', 'Temperatura', 'pH', 'Luz (x100)'],
-        datasets: [
-          {
-            label: 'Actual',
-            data: [
-              (humedad.reduce((a, b) => a + b, 0) / humedad.length),
-              (temperatura.reduce((a, b) => a + b, 0) / temperatura.length),
-              (ph.reduce((a, b) => a + b, 0) / ph.length) * 10,
-              (iluminacion.reduce((a, b) => a + b, 0) / iluminacion.length) / 100,
-            ],
-            borderColor: '#1a5d1a',
-            backgroundColor: 'rgba(26, 93, 26, 0.4)',
-            borderWidth: 2,
-          },
-          {
-            label: 'Ideal',
-            data: [60, 24, 65, 8],
-            borderColor: '#4caf50',
-            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-            borderDash: [5, 5],
-            borderWidth: 2,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom' } },
-      },
-    });
-  }, [sessionHistory]);
+  radarChartRef.current = new Chart(radarRef.current, {
+    type: 'radar',
+    data: {
+      labels: ['Humedad', 'Temperatura', 'pH x10', 'Luz /100'],
+      datasets: [
+        {
+          label: 'Actual',
+          data: [
+            humedad.reduce((a, b) => a + b, 0) / humedad.length,
+            temperatura.reduce((a, b) => a + b, 0) / temperatura.length,
+            (ph.reduce((a, b) => a + b, 0) / ph.length) * 10,
+            (iluminacion.reduce((a, b) => a + b, 0) / iluminacion.length) / 100,
+          ],
+          borderColor: '#1a5d1a',
+          backgroundColor: 'rgba(26, 93, 26, 0.4)',
+          borderWidth: 2,
+        },
+        {
+          label: 'Ideal',
+          data: [60, 24, 65, 8],
+          borderColor: '#4caf50',
+          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+          borderDash: [5, 5],
+          borderWidth: 2,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+    },
+  });
+}, [agriculturalData, dateRange]);
 
   const handleGenerateReport = async () => {
     setGenerating(true);
