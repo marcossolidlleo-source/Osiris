@@ -219,7 +219,7 @@ function init3DMap(reset = false) {
     camera3D = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000);
     window.camera3D = camera3D; // 👈 añade esto
     window.scene3D = scene3D; 
-    camera3D.position.set(0, 1, 80);
+    camera3D.position.set(0, 15, 50);
     camera3D.lookAt(0, 0, 0);
 
     renderer3D = new THREE.WebGLRenderer({ antialias: true });

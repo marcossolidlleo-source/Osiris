@@ -328,24 +328,6 @@ useEffect(() => {
                   onSelectFarm={setSelectedFarmId}
                   customSensors={customSensors}
                 />
-                <div className="w-full bg-[#0d1f12] rounded-2xl shadow-lg border border-gray-200 relative">
-                  <div 
-                    id="canvas-3d-container" 
-                    className="w-full rounded-xl"
-                    style={{ height: '600px' }}
-                    ref={(el) => {
-                      if (!el) return;
-                      const observer = new IntersectionObserver((entries) => {
-                        if (entries[0].isIntersecting) {
-                          const globalInit = (window as any).init3DMap;
-                          if (typeof globalInit === 'function') globalInit(true);
-                          observer.disconnect();
-                        }
-                      }, { threshold: 0.1 });
-                      observer.observe(el);
-                    }}
-                  />
-                </div>
               </div>
             )}
             {activeSection === 'estadisticas' && (

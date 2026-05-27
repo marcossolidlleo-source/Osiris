@@ -53,7 +53,7 @@ export default function MapSection({ selectedFarm, farms, onSelectFarm, customSe
     const width = container.clientWidth || 800;
     const height = container.clientHeight || 500;
     const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000);
-    camera.position.set(0, 100, 150);
+    camera.position.set(0, 20, 80);
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -263,7 +263,7 @@ export default function MapSection({ selectedFarm, farms, onSelectFarm, customSe
         ))}
       </div>
 
-      <div ref={containerRef} className="w-full h-[500px] bg-[#0f172a] rounded-2xl overflow-hidden shadow-inner relative" />
+      <div ref={containerRef} className="w-full h-[500px] bg-[#0f172a] rounded-2xl shadow-inner relative"></div>
 
       {/* Plot planner */}
       <div className="mt-6 p-5 bg-emerald-50 rounded-2xl border border-emerald-100 shadow-inner">
