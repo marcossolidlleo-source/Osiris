@@ -369,7 +369,7 @@ useEffect(() => {
       {showCropGuide && <CropGuideModal onClose={() => setShowCropGuide(false)} 
         fincaId={selectedFarmId}
         />}
-      <Chatbot />
+      <Chatbot userEmail={userEmail} />
     </div>
   );
 }

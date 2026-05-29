@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 
-export default function Chatbot() {
+interface ChatbotProps {
+  userEmail?: string;
+}
+
+export default function Chatbot({ userEmail }: ChatbotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ text: string; sender: 'bot' | 'user' }>>([
     { text: '👋 ¡Hola! Soy AgroBot, tu asistente en Osiris. ¿En qué puedo ayudarte hoy?', sender: 'bot' }
@@ -26,8 +30,15 @@ export default function Chatbot() {
     setIsTyping(true);
 
     try {
-      const user = JSON.parse(localStorage.getItem('osiris_user') || '{}');
-      const correo = user.email || '';
+      let correo = userEmail || '';
+      if (!correo) {
+        try {
+          const user = JSON.parse(localStorage.getItem('osiris_user') || '{}');
+          correo = user.email || '';
+        } catch (e) {
+          console.error('Error parsing osiris_user:', e);
+        }
+      }
 
       const response = await fetch('https://n8ntfp.duckdns.org/webhook/agrobot', {
         method: 'POST',
