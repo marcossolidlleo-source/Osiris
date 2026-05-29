@@ -26,10 +26,13 @@ export default function Chatbot() {
     setIsTyping(true);
 
     try {
+      const user = JSON.parse(localStorage.getItem('osiris_user') || '{}');
+      const correo = user.email || '';
+
       const response = await fetch('https://n8ntfp.duckdns.org/webhook/agrobot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ mensaje: text, correo })
       });
 
       const data = await response.json();

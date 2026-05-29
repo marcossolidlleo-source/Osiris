@@ -2122,10 +2122,13 @@
                                 addMessage(text, "user");
                                 const typing = addMessage("AgroBot está escribiendo...", "typing");
                                 try {
+                                    const user = JSON.parse(localStorage.getItem('osiris_user') || 'null') || {};
+                                    const correo = user.email || (typeof currentUserRole !== 'undefined' && currentUserRole === 'Administrador' ? 'admin@osiris.com' : 'usuario@osiris.com');
+
                                     const res = await fetch(N8N_WEBHOOK, {
                                         method: "POST",
                                         headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({ message: text })
+                                        body: JSON.stringify({ mensaje: text, correo })
                                     });
                                     const data = await res.json();
                                     typing.remove();
