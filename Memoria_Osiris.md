@@ -37,7 +37,7 @@ El análisis del proyecto revela una arquitectura distribuida orientada a micros
 - **Frontend (Cliente Web):** Desarrollado en HTML, CSS (TailwindCSS) y JavaScript Vanilla. Representa la capa de presentación y maneja la lógica de la interfaz.
 - **Backend / Middleware (Servidor Externo):** Aunque no presente directamente en el repositorio local, se infiere la existencia de un servidor alojado en una Máquina Virtual (IP: `158.158.108.187:3001`) gestionando conexiones a través de **Node.js + Socket.io** para emitir/recibir eventos hacia el cliente.
 - **Capa Física / IoT (ESP32):** El código infiere la integración con un microcontrolador (ESP32) para la captura física de los datos climatológicos y geográficos reales, apoyado en el GPS del cliente.
-- **Servicios de Terceros (APIs):** Integración con `formsubmit.co` para el envío de alertas por correo electrónico, y `Landbot.io` para asistencia automatizada.
+- **Servicios de Terceros (APIs):** Integración con `formsubmit.co` para el envío de alertas por correo electrónico.
 
 **Diagrama Funcional / Textual de Despliegue:**
 ```text
@@ -47,8 +47,8 @@ El análisis del proyecto revela una arquitectura distribuida orientada a micros
       |                        |
       |   (Telemetría JSON)    |   (Socket)
       |                        |
-[ Landbot API ]             [ ESP32 / Sensores Físicos ]
-[ FormSubmit API ]          (Toma de Temp, Humedad, pH, Lux)
+[ FormSubmit API ]          [ ESP32 / Sensores Físicos ]
+                            (Toma de Temp, Humedad, pH, Lux)
 ```
 
 ### 5. Implementación

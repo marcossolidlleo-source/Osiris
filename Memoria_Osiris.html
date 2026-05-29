@@ -221,7 +221,7 @@
             <li><strong>Frontend (Cliente Web):</strong> Desarrollado en HTML, CSS (TailwindCSS) y JavaScript Vanilla. Representa la capa de presentación y maneja la lógica de la interfaz.</li>
             <li><strong>Backend / Middleware (Servidor Externo):</strong> Aunque no presente directamente en el repositorio local, se infiere la existencia de un servidor alojado en una Máquina Virtual (IP: <code>158.158.108.187:3001</code>) gestionando conexiones a través de <strong>Node.js + Socket.io</strong> para emitir/recibir eventos hacia el cliente.</li>
             <li><strong>Capa Física / IoT (ESP32):</strong> El código infiere la integración con un microcontrolador (ESP32) para la captura física de los datos climatológicos y geográficos reales, apoyado en el GPS del cliente.</li>
-            <li><strong>Servicios de Terceros (APIs):</strong> Integración con <code>formsubmit.co</code> para el envío de alertas por correo electrónico, y <code>Landbot.io</code> para asistencia automatizada.</li>
+            <li><strong>Servicios de Terceros (APIs):</strong> Integración con <code>formsubmit.co</code> para el envío de alertas por correo electrónico.</li>
         </ul>
         
         <h3>Diagrama Funcional / Textual de Despliegue:</h3>
@@ -231,8 +231,8 @@
       |                        |
       |   (Telemetría JSON)    |   (Socket)
       |                        |
-[ Landbot API ]             [ ESP32 / Sensores Físicos ]
-[ FormSubmit API ]          (Toma de Temp, Humedad, pH, Lux)</code></pre>
+[ FormSubmit API ]          [ ESP32 / Sensores Físicos ]
+                            (Toma de Temp, Humedad, pH, Lux)</code></pre>
     </div>
     
     <div class="section">

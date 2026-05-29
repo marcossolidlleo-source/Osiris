@@ -26,7 +26,7 @@ export default function Chatbot() {
     setIsTyping(true);
 
     try {
-      const response = await fetch('https://n8ntfp.duckdns.org/webhook-test/chat-bot', {
+      const response = await fetch('https://n8ntfp.duckdns.org/webhook/agrobot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text })

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a5d1a" />
+      <stop offset="100%" stop-color="#2e7d32" />
+    </linearGradient>
+  </defs>
+  <!-- Rounded smooth card background -->
+  <rect width="512" height="512" rx="140" fill="url(#bg)" />
+  <!-- A clean seedling/sprout in white -->
+  <path d="M256 390c-4.4 0-8-3.6-8-8v-94c0-30.9-25.1-56-56-56h-24c-22.1 0-40-17.9-40-40V120c0-4.4 3.6-8 8-8h72c53 0 96 43 96 96v174c0 4.4-3.6 8-8 8z" fill="#ffffff" />
+  <path d="M256 390c4.4 0 8-3.6 8-8v-62c0-44.2 35.8-80 80-80h24c22.1 0 40-17.9 40-40V128c0-4.4-3.6-8-8-8h-72c-53 0-96 43-96 96v166c0 4.4 3.6 8 8 8z" fill="#ffffff" opacity="0.85" />
+  <path d="M256 432c-6.6 0-12-5.4-12-12v-50c0-6.6 5.4-12 12-12s12 5.4 12 12v50c0 6.6-5.4 12-12 12z" fill="#ffffff" opacity="0.7" />
+</svg>
