@@ -59,6 +59,33 @@ export default function AboutSection() {
           ))}
         </div>
       </div>
+
+      {/* Redes Sociales / RRSS */}
+      <div className="mt-8 pt-8 border-t border-gray-100 text-center">
+        <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+          <i className="fas fa-share-alt text-emerald-500" /> Síguenos en Redes Sociales
+        </h3>
+        <div className="flex justify-center gap-4">
+          {[
+            { name: 'Instagram', icon: 'fab fa-instagram', url: 'https://instagram.com/osiris_agri', color: 'hover:text-pink-600 hover:bg-pink-50 border-pink-100 text-pink-500' },
+            { name: 'Twitter/X', icon: 'fab fa-twitter', url: 'https://twitter.com/osiris_agri', color: 'hover:text-sky-500 hover:bg-sky-50 border-sky-100 text-sky-400' },
+            { name: 'LinkedIn', icon: 'fab fa-linkedin-in', url: 'https://linkedin.com/company/osiris-agri', color: 'hover:text-blue-700 hover:bg-blue-50 border-blue-100 text-blue-600' },
+            { name: 'GitHub', icon: 'fab fa-github', url: 'https://github.com/osiris-agri', color: 'hover:text-gray-900 hover:bg-gray-50 border-gray-100 text-gray-800' },
+            { name: 'YouTube', icon: 'fab fa-youtube', url: 'https://youtube.com/osiris_agri', color: 'hover:text-red-600 hover:bg-red-50 border-red-100 text-red-500' }
+          ].map(social => (
+            <a
+              key={social.name}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`w-11 h-11 rounded-xl border flex items-center justify-center text-lg transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-md ${social.color}`}
+              title={social.name}
+            >
+              <i className={social.icon} />
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
