@@ -67,11 +67,8 @@ export default function AboutSection() {
         </h3>
         <div className="flex justify-center gap-4">
           {[
-            { name: 'Instagram', icon: 'fab fa-instagram', url: 'https://instagram.com/osiris_agri', color: 'hover:text-pink-600 hover:bg-pink-50 border-pink-100 text-pink-500' },
-            { name: 'Twitter/X', icon: 'fab fa-twitter', url: 'https://twitter.com/osiris_agri', color: 'hover:text-sky-500 hover:bg-sky-50 border-sky-100 text-sky-400' },
-            { name: 'LinkedIn', icon: 'fab fa-linkedin-in', url: 'https://linkedin.com/company/osiris-agri', color: 'hover:text-blue-700 hover:bg-blue-50 border-blue-100 text-blue-600' },
-            { name: 'GitHub', icon: 'fab fa-github', url: 'https://github.com/osiris-agri', color: 'hover:text-gray-900 hover:bg-gray-50 border-gray-100 text-gray-800' },
-            { name: 'YouTube', icon: 'fab fa-youtube', url: 'https://youtube.com/osiris_agri', color: 'hover:text-red-600 hover:bg-red-50 border-red-100 text-red-500' }
+            { name: 'Instagram', icon: 'fab fa-instagram', url: 'https://instagram.com/osirisoficical', color: 'hover:text-pink-600 hover:bg-pink-50 border-pink-100 text-pink-500' },
+            { name: 'LinkedIn', icon: 'fab fa-linkedin-in', url: 'https://www.linkedin.com/company/osiristfp/', color: 'hover:text-blue-700 hover:bg-blue-50 border-blue-100 text-blue-600' }
           ].map(social => (
             <a
               key={social.name}
